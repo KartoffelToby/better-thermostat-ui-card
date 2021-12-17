@@ -1,0 +1,10 @@
+{
+  "common": {
+      "version": "version"
+  },
+  "extra_states": {
+    "window_open": "Fenêtre ouverte",
+    "night_mode": "Mode nuit",
+    "summer": "Été"
+  }
+}
