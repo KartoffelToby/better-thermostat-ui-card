@@ -6,16 +6,13 @@ This project is in a early stage of development. Its a 1:1 adaption of the defau
 
 As for now the main improvment is the ability to see the extra status from ai_thermostat like if a window open is deteteced, or nightmode is on or summer mode.
 
-<img style="width:200px; height:200px; object-fit:cover;" src="assets/1.png" width="200px">
-<img style="width:200px; height:200px; object-fit:cover;" src="assets/2.png" width="200px">
-<img style="width:200px; height:200px; object-fit:cover;" src="assets/3.png" width="200px">
-<img style="width:200px; height:200px; object-fit:cover;" src="assets/4.png" width="200px">
+<img style="width:200px; height:200px; object-fit:cover;" src="assets/1.png" width="200px"><img style="width:200px; height:200px; object-fit:cover;" src="assets/2.png" width="200px"><img style="width:200px; height:200px; object-fit:cover;" src="assets/3.png" width="200px"><img style="width:200px; height:200px; object-fit:cover;" src="assets/4.png" width="200px">
 
 ## Goals
 
-- [X] Add ai_thermostat support for showing the extra status
-- [] Improve the UI for Touch devices
-- [] Show also the Humidity in the UI
+[X] Add ai_thermostat support for showing the extra status
+[] Improve the UI for Touch devices
+[] Show also the Humidity in the UI
 
 ## Options
 
