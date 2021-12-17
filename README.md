@@ -10,9 +10,9 @@ As for now the main improvment is the ability to see the extra status from ai_th
 
 ## Goals
 
-[X] Add ai_thermostat support for showing the extra status
-[] Improve the UI for Touch devices
-[] Show also the Humidity in the UI
+- [X] Add ai_thermostat support for showing the extra status
+- [ ] Improve the UI for Touch devices
+- [ ] Show also the Humidity in the UI
 
 ## Options
 
