@@ -2,13 +2,17 @@ import * as en from './languages/en.json';
 import * as de from './languages/de.json';
 import * as fr from './languages/fr.json';
 import * as ru from './languages/ru.json';
+import * as pl from './languages/pl.json';
+import * as sk from './languages/sk.json';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const languages: any = {
   en: en,
   de: de,
   fr: fr,
-  ru: ru
+  ru: ru,
+  sk: sk,
+  pl: pl
 };
 
 export function localize(string: string, search = '', replace = ''): string {
