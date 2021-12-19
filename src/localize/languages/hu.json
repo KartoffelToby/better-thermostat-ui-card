@@ -1,0 +1,10 @@
+{
+  "common": {
+      "version": "Verzió"
+  },
+  "extra_states": {
+    "window_open": "Ablak nyitva",
+    "night_mode": "Éjszakai mód",
+    "summer": "Nyár"
+  }
+}
