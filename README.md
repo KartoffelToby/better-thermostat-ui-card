@@ -1,4 +1,4 @@
-[![Version - 0.0.6](https://img.shields.io/badge/Version-0.0.5-009688?style=for-the-badge)](https://github.com/KartoffelToby/ai_thermostat/releases)
+[![Version - 0.0.6](https://img.shields.io/badge/Version-0.0.6-009688?style=for-the-badge)](https://github.com/KartoffelToby/ai_thermostat/releases)
 
 # Better Thermostat UI for ai_thermostat
 
