@@ -1,0 +1,10 @@
+{
+  "common": {
+      "version": "versiyon"
+  },
+  "extra_states": {
+    "window_open": "Pencere açık",
+    "night_mode": "Gece modu",
+    "summer": "Yaz"
+  }
+}
