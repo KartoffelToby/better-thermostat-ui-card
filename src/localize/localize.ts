@@ -8,6 +8,8 @@ import * as hu from './languages/hu.json';
 import * as da from './languages/da.json';
 import * as es from './languages/es.json';
 import * as tr from './languages/tr.json';
+import * as it from './languages/it.json';
+import * as da from './languages/da.json';
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,7 +23,9 @@ const languages: any = {
   pl: pl,
   da: da,
   es: es,
-  tr: tr
+  tr: tr,
+  it: it,
+  da: da
 };
 
 export function localize(string: string, search = '', replace = ''): string {
