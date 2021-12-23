@@ -1,0 +1,10 @@
+{
+  "common": {
+      "version": "版本"
+  },
+  "extra_states": {
+    "window_open": "窗户打开",
+    "night_mode": "夜间模式",
+    "summer": "夏季"
+  }
+}
