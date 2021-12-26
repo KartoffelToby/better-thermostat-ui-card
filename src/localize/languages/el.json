@@ -1,0 +1,10 @@
+{
+  "common": {
+      "version": "έκδοση"
+  },
+  "extra_states": {
+    "window_open": "Παράθυρο ανοικτό",
+    "night_mode": "Λειτουργία νυκτός",
+    "summer": "Καλοκαίρι"
+  }
+}
