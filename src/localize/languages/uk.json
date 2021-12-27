@@ -1,0 +1,10 @@
+{
+    "common": {
+        "version": "версія"
+    },
+    "extra_states": {
+        "window_open": "Вікно відчинено",
+        "night_mode": "Нічний режим",
+        "summer": "Літо"
+    }
+}
