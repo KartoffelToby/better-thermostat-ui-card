@@ -1,4 +1,4 @@
-[![Version - 0.0.9](https://img.shields.io/badge/Version-0.0.9-009688?style=for-the-badge)](https://github.com/KartoffelToby/ai_thermostat/releases)
+[![Version - 0.1.1](https://img.shields.io/badge/Version-0.1.1-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
 
 # Better Thermostat UI for ai_thermostat
 
@@ -33,14 +33,18 @@ What we have so far:
 - DE
 - FR
 - RU
-- PL
 - SK
-- DA
 - HU
+- PL
+- DA
 - ES
 - TR
 - IT
-- DA
+- PT
+- CN
+- UK
+- EL
+- NL
 
 ## Support me
 <a href="https://www.buymeacoffee.com/kartoffeltoby" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>

@@ -9,10 +9,11 @@ import * as da from './languages/da.json';
 import * as es from './languages/es.json';
 import * as tr from './languages/tr.json';
 import * as it from './languages/it.json';
-import * as da from './languages/da.json';
 import * as pt from './languages/pt.json';
 import * as cn from './languages/cn.json';
-
+import * as uk from './languages/uk.json';
+import * as el from './languages/el.json';
+import * as nl from './languages/nl.json';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const languages: any = {
@@ -27,9 +28,11 @@ const languages: any = {
   es: es,
   tr: tr,
   it: it,
-  da: da,
   pt: pt,
-  cn: cn
+  cn: cn,
+  uk: uk,
+  el: el,
+  nl: nl,
 };
 
 export function localize(string: string, search = '', replace = ''): string {
