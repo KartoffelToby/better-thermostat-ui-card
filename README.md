@@ -29,22 +29,21 @@ It would be awsome if you help me to translate this card to other languages.
 Create a PR, the Translation is done in json files checkout the en translation [here](src/localize/languages/en.json)
 
 What we have so far:
-- EN
+- EN - Reference 
+- CN
+- DA
 - DE
+- EL
+- ES
 - FR
+- HU
+- NL
+- PL
+- PT
 - RU
 - SK
-- HU
-- PL
-- DA
-- ES
 - TR
-- IT
-- PT
-- CN
 - UK
-- EL
-- NL
 
 ## Support me
 <a href="https://www.buymeacoffee.com/kartoffeltoby" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
