@@ -1,4 +1,4 @@
-[![Version - 0.1.1](https://img.shields.io/badge/Version-0.1.1-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
+[![Version - 0.1.2](https://img.shields.io/badge/Version-0.1.2-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
 
 # Better Thermostat UI for ai_thermostat
 
@@ -38,6 +38,7 @@ What we have so far:
 - FR
 - HU
 - NL
+- NO
 - PL
 - PT
 - RU
