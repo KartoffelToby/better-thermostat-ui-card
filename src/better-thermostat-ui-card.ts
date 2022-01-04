@@ -268,8 +268,8 @@ export class BetterThermostatUiCard extends LitElement {
                       : ""
                   }
                 ${
-                stateObj.attributes.summer &&
-                stateObj.attributes.summer !== "none"
+                !stateObj.attributes.winter &&
+                stateObj.attributes.winter !== "none"
                     ? html`
                         -
                         ${localize("extra_states.summer")}
