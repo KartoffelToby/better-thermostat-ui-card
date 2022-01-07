@@ -1,0 +1,10 @@
+{
+  "common": {
+      "version": "verze"
+  },
+  "extra_states": {
+    "window_open": "Otevřené okno",
+    "night_mode": "Noční režim",
+    "summer": "Léto"
+  }
+}
