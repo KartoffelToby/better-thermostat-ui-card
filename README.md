@@ -1,4 +1,4 @@
-[![Version - 0.1.2](https://img.shields.io/badge/Version-0.1.2-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
+[![Version - 0.1.3](https://img.shields.io/badge/Version-0.1.3-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
 
 # Better Thermostat UI for ai_thermostat
 
@@ -31,6 +31,7 @@ Create a PR, the Translation is done in json files checkout the en translation [
 What we have so far:
 - EN - Reference 
 - CN
+- CS
 - DA
 - DE
 - EL
@@ -42,6 +43,7 @@ What we have so far:
 - PL
 - PT
 - RU
+- SL
 - SK
 - TR
 - UK
