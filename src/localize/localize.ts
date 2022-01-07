@@ -15,6 +15,8 @@ import * as uk from './languages/uk.json';
 import * as el from './languages/el.json';
 import * as nl from './languages/nl.json';
 import * as no from './languages/no.json';
+import * as cs from './languages/cs.json';
+import * as sl from './languages/sl.json';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const languages: any = {
@@ -34,7 +36,9 @@ const languages: any = {
   uk: uk,
   el: el,
   nl: nl,
-  no: no
+  no: no,
+  cs: cs,
+  sl: sl
 };
 
 export function localize(string: string, search = '', replace = ''): string {
