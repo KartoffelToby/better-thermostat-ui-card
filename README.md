@@ -2,7 +2,7 @@
 
 # Better Thermostat UI for ai_thermostat
 
-This project is in a early stage of development. Its a 1:1 adaption of the default HA Thermostat Card, but with some improvements for the custom [ai_thermostat](https://github.com/KartoffelToby/ai_thermostat) integration. (you need at least 0.8.5)
+This project is in a early stage of development. Its a 1:1 adaption of the default HA Thermostat Card, but with some improvements for the custom [better_thermostat](https://github.com/KartoffelToby/better_thermostat) integration. (you need at least 1.0.0)
 
 As for now the main improvment is the ability to see the extra status from ai_thermostat like if a window open is deteteced, or nightmode is on or summer mode.
 
