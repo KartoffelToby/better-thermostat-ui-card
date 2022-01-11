@@ -1,6 +1,6 @@
 [![Version - 0.1.3](https://img.shields.io/badge/Version-0.1.3-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
 
-# Better Thermostat UI for ai_thermostat
+# UI Card for Better Thermostat
 
 This project is in a early stage of development. Its a 1:1 adaption of the default HA Thermostat Card, but with some improvements for the custom [better_thermostat](https://github.com/KartoffelToby/better_thermostat) integration. (you need at least 1.0.0)
 
