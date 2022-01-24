@@ -3,8 +3,8 @@
       "version": "wersja"
   },
   "extra_states": {
-    "window_open": "Otwarte okno",
-    "night_mode": "Tryb nocny",
-    "summer": "Lato"
+    "window_open": "otwarte okno",
+    "night_mode": "tryb nocny",
+    "summer": "lato"
   }
 }
