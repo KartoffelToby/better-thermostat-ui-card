@@ -1,0 +1,10 @@
+{
+  "common": {
+      "version": "versiune"
+  },
+  "extra_states": {
+    "window_open": "Fereastră deschisă",
+    "night_mode": "Mod noapte",
+    "summer": "Vară"
+  }
+}
