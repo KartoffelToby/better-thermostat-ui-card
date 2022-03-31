@@ -1,0 +1,10 @@
+{
+  "common": {
+      "version": "version"
+  },
+  "extra_states": {
+    "window_open": "Fönster öppet",
+    "night_mode": "Nattläge",
+    "summer": "Sommar"
+  }
+}
