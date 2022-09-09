@@ -1,0 +1,10 @@
+{
+  "common": {
+      "version": "version"
+  },
+  "extra_states": {
+    "window_open": "Ikkuna auki",
+    "night_mode": "Yötila",
+    "summer": "Kesä"
+  }
+}
