@@ -30,24 +30,27 @@ Create a PR, the Translation is done in json files checkout the en translation [
 
 What we have so far:
 - EN - Reference 
+- BG
 - CN
 - CS
 - DA
 - DE
 - EL
 - ES
+- FI
 - FR
 - HU
 - NL
 - NO
 - PL
 - PT
+- RO
 - RU
+- SE
 - SL
 - SK
 - TR
 - UK
-- SE
 
 ## Support me
 <a href="https://www.buymeacoffee.com/kartoffeltoby" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
