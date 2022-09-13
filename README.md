@@ -28,29 +28,31 @@ It would be awsome if you help me to translate this card to other languages.
 
 Create a PR, the Translation is done in json files checkout the en translation [here](src/localize/languages/en.json)
 
+Please add your language to this list as well while you are making your PR. put it in alfabetical order and according to [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+
 What we have so far:
-- EN - Reference 
-- BG
-- CN
-- CS
-- DA
-- DE
-- EL
-- ES
-- FI
-- FR
-- HU
-- NL
-- NO
-- PL
-- PT
-- RO
-- RU
-- SE
-- SL
-- SK
-- TR
-- UK
+- en - Reference 
+- bg
+- cn
+- cs
+- da
+- de
+- el
+- es
+- fi
+- fr
+- hu
+- nl
+- no
+- pl
+- pt
+- ro
+- ru
+- sv
+- sl
+- sk
+- tr
+- uk
 
 ## Support me
 <a href="https://www.buymeacoffee.com/kartoffeltoby" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
