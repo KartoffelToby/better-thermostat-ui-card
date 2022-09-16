@@ -174,7 +174,7 @@ export class BetterThermostatUiCard extends LitElement {
                 dx="1"
                 y="60%"
                 text-anchor="middle"
-                style="font-size: 8px;"
+                style="font-size: 11px;"
               >
                 ${
                   stateObj.attributes.current_temperature !== null &&
@@ -249,33 +249,6 @@ export class BetterThermostatUiCard extends LitElement {
                         `component.climate.state._.${stateObj.state}`
                       )
                 }
-                ${
-                  stateObj.attributes.window_open &&
-                  stateObj.attributes.window_open !== "none"
-                    ? html`
-                        -
-                        ${localize("extra_states.window_open")}
-                      `
-                    : ""
-                }
-                ${
-                    stateObj.attributes.night_mode &&
-                    stateObj.attributes.night_mode !== "none"
-                      ? html`
-                          -
-                          ${localize("extra_states.night_mode")}
-                        `
-                      : ""
-                  }
-                ${
-                !stateObj.attributes.call_for_heat &&
-                stateObj.attributes.call_for_heat !== "none"
-                    ? html`
-                        -
-                        ${localize("extra_states.summer")}
-                    `
-                    : ""
-                }
               </text>
             </g>
           </svg>
@@ -301,7 +274,20 @@ export class BetterThermostatUiCard extends LitElement {
             <div class="content">
               <div id="controls">
                 <div id="slider" class="${stateObj.attributes.window_open ? 'window': ''}">
-                  <div id="title">${name}</div>
+                  <div id="title">${name}</div><div id="bt_status">
+                  ${
+                    stateObj.attributes.window_open &&
+                    stateObj.attributes.window_open !== "none"
+                      ? this._renderStatusIcon("window_open"): ""}
+                  ${
+                    stateObj.attributes.night_mode &&
+                    stateObj.attributes.night_mode !== "none"
+                      ? this._renderStatusIcon("night_mode"): ""}
+                  ${
+                    !stateObj.attributes.call_for_heat &&
+                    stateObj.attributes.call_for_heat !== "none"
+                      ? this._renderStatusIcon("summer"): ""}
+                  </div>
                   ${slider}
                   <div id="slider-center">
                     <div id="temperature">${currentTemperature} ${setValues}</div>
@@ -481,10 +467,10 @@ export class BetterThermostatUiCard extends LitElement {
         }
         return html `
           <ha-svg-icon
-            class="test"
+            class="status-icon ${type}"
             tabindex="0"
             .path=${modeIcons[type]}
-            .label=${this.hass!.localize(`component.climate.extra_state._.${type}`)}
+            .title=${localize(`extra_states.${type}`)}
           >
           </ha-svg-icon>
         `;
@@ -686,6 +672,23 @@ export class BetterThermostatUiCard extends LitElement {
             --brightness-font-size: 1.2rem;
             --rail-border-color: transparent;
           }
+          #bt_status {
+            padding: 0 0 0.8em 0;
+            display: flex;
+            flex-flow: row;
+            justify-content: center;
+            gap: 0.3em;
+            min-height: 30px;
+          }
+          ha-svg-icon.status-icon.window_open {
+            color: #1d9187 !important;
+          }
+          ha-svg-icon.status-icon.night_mode {
+            color: #fffa6c !important;
+          }
+          ha-svg-icon.status-icon.summer {
+            color: #ff6046 !important;
+          } 
           .auto,
           .heat_cool {
             --mode-color: var(--state-climate-auto-color);
@@ -747,7 +750,9 @@ export class BetterThermostatUiCard extends LitElement {
           }
           #title {
             text-align: center;
-            padding: 1em;
+            padding: 0.6em;
+            font-weight: 600;
+            font-size: 1.4em;
           }
           round-slider {
             --round-slider-path-color: var(--slider-track-color);
@@ -769,7 +774,7 @@ export class BetterThermostatUiCard extends LitElement {
             pointer-events: none;
             height: 100%;
             width: 100%;
-            transform: translate(-50%, -43%);
+            transform: translate(-50%, -35%);
           }
           #temperature {
             position: absolute;
@@ -782,7 +787,7 @@ export class BetterThermostatUiCard extends LitElement {
           #set-values {
             max-width: 80%;
             transform: translate(0, -40%);
-            font-size: 14px;
+            font-size: 18px;
           }
           #set-mode {
             fill: var(--secondary-text-color);

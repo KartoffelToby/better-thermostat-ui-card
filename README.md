@@ -1,4 +1,6 @@
-[![Version - 0.1.3](https://img.shields.io/badge/Version-0.1.3-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
+[![Version - 0.2.0](https://img.shields.io/badge/Version-0.2.0-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
+[![Discord](https://img.shields.io/discord/925725316540923914.svg?style=for-the-badge)](https://discord.gg/9BUegWTG3K)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
 # UI Card for Better Thermostat
 
@@ -6,11 +8,11 @@ This project is in a early stage of development. Its a 1:1 adaption of the defau
 
 As for now the main improvment is the ability to see the extra status from ai_thermostat like if a window open is deteteced, or nightmode is on or summer mode.
 
-<img style="width:200px; height:200px; object-fit:cover;" src="assets/1.png" width="200px"><img style="width:200px; height:200px; object-fit:cover;" src="assets/2.png" width="200px"><img style="width:200px; height:200px; object-fit:cover;" src="assets/3.png" width="200px"><img style="width:200px; height:200px; object-fit:cover;" src="assets/4.png" width="200px">
+<img style="width:200px; height:200px; object-fit:cover;" src="assets/1.png" width="200px"><img style="width:200px; height:200px; object-fit:cover;" src="assets/2.png" width="200px"><img style="width:200px; height:200px; object-fit:cover;" src="assets/3.png" width="200px"><img style="width:200px; height:200px; object-fit:cover;" src="assets/4.png" width="200px"><img style="width:200px; height:200px; object-fit:cover;" src="assets/5.png" width="200px">
  
 ## Goals
 
-- [X] Add ai_thermostat support for showing the extra status
+- [X] Add better_thermostat support for showing the extra status
 - [ ] Improve the UI for Touch devices
 - [ ] Show also the Humidity in the UI
 
@@ -19,7 +21,7 @@ As for now the main improvment is the ability to see the extra status from ai_th
 | Name                 | Type    | Default      | Description                                                                                            |
 | -------------------- | ------- | ------------ | ------------------------------------------------------------------------------------------------------ |
 | type                 | string  | **Required** | `custom:better-thermostat-ui-card`                                                                          |
-| entity               | string  | **Required** | The entity id of climate entity (must be a ai_thermostat entity). Example: `climate.hvac`                                               |
+| entity               | string  | **Required** | The entity id of climate entity (must be a better_thermostat entity). Example: `climate.hvac`                                               |
 
 
 ## Help wanted!
@@ -55,4 +57,4 @@ What we have so far:
 - uk
 
 ## Support me
-<a href="https://www.buymeacoffee.com/kartoffeltoby" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+<a href="https://www.buymeacoffee.com/kartoffeltoby"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=kartoffeltoby&button_colour=0ac982&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"></a>
