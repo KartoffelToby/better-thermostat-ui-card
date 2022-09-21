@@ -38,8 +38,8 @@ import {
     mdiSnowflake,
     mdiWaterPercent,
     mdiWindowOpenVariant,
-    mdiWeatherNight,
-    mdiSunThermometer
+    mdiSunThermometer,
+    mdiLeaf
 } from "@mdi/js";
 import {
     HassEntity
@@ -70,7 +70,7 @@ const modeIcons: {
     fan_only: mdiFan,
     dry: mdiWaterPercent,
     window_open: mdiWindowOpenVariant,
-    night_mode: mdiWeatherNight,
+    eco: mdiLeaf, 
     summer: mdiSunThermometer
 };
 
@@ -280,9 +280,9 @@ export class BetterThermostatUiCard extends LitElement {
                     stateObj.attributes.window_open !== "none"
                       ? this._renderStatusIcon("window_open"): ""}
                   ${
-                    stateObj.attributes.night_mode &&
-                    stateObj.attributes.night_mode !== "none"
-                      ? this._renderStatusIcon("night_mode"): ""}
+                    stateObj.attributes.saved_temperature &&
+                    stateObj.attributes.saved_temperature !== "none"
+                      ? this._renderStatusIcon("eco"): ""}
                   ${
                     !stateObj.attributes.call_for_heat &&
                     stateObj.attributes.call_for_heat !== "none"
@@ -683,8 +683,8 @@ export class BetterThermostatUiCard extends LitElement {
           ha-svg-icon.status-icon.window_open {
             color: #1d9187 !important;
           }
-          ha-svg-icon.status-icon.night_mode {
-            color: #fffa6c !important;
+          ha-svg-icon.status-icon.eco {
+            color: #6cff71 !important;
           }
           ha-svg-icon.status-icon.summer {
             color: #ff6046 !important;
