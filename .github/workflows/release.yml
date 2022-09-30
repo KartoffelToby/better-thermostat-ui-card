@@ -15,7 +15,7 @@ jobs:
       - name: Build the file
         run: |
           cd /home/runner/work/better-thermostat-ui-card/better-thermostat-ui-card
-          npm install
+          npm install --force
           npm run build
       # Upload build file to the releas as an asset.
       - name: Upload zip to release
