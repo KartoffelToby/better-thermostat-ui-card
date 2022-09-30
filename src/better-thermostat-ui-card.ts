@@ -86,6 +86,7 @@ console.info(
 (window as any).customCards.push({
     type: 'better-thermostat-ui-card',
     name: 'Better Thermostat UI Card',
+    preview: true,
     description: 'A template custom card for you to create something awesome',
 });
 
@@ -174,7 +175,7 @@ export class BetterThermostatUiCard extends LitElement {
                 dx="1"
                 y="60%"
                 text-anchor="middle"
-                style="font-size: 11px;"
+                style="font-size: 8px;"
               >
                 ${
                   stateObj.attributes.current_temperature !== null &&
@@ -183,7 +184,7 @@ export class BetterThermostatUiCard extends LitElement {
                         stateObj.attributes.current_temperature,
                         this.hass.locale
                       )}
-                <tspan dx="-1" dy="-3.5" style="font-size: 4px;">
+                <tspan dx="-1" dy="-3.5" style="font-size: 3px;">
                   ${this.hass.config.unit_system.temperature}
                 </tspan>`
                     : ""
@@ -278,15 +279,15 @@ export class BetterThermostatUiCard extends LitElement {
                   ${
                     stateObj.attributes.window_open &&
                     stateObj.attributes.window_open !== "none"
-                      ? this._renderStatusIcon("window_open"): ""}
+                      ? this._renderStatusIcon("window_open"): this._renderOffStatusIcon("window_open")}
                   ${
                     stateObj.attributes.saved_temperature &&
                     stateObj.attributes.saved_temperature !== "none"
-                      ? this._renderStatusIcon("eco"): ""}
+                      ? this._renderStatusIcon("eco"): this._renderOffStatusIcon("eco")}
                   ${
                     !stateObj.attributes.call_for_heat &&
                     stateObj.attributes.call_for_heat !== "none"
-                      ? this._renderStatusIcon("summer"): ""}
+                      ? this._renderStatusIcon("summer"): this._renderOffStatusIcon("summer")}
                   </div>
                   ${slider}
                   <div id="slider-center">
@@ -475,6 +476,21 @@ export class BetterThermostatUiCard extends LitElement {
           </ha-svg-icon>
         `;
     }
+
+    private _renderOffStatusIcon(type:string): TemplateResult {
+      if (!modeIcons[type]) {
+          return html ``;
+      }
+      return html `
+        <ha-svg-icon
+          class="status-icon-off ${type}"
+          tabindex="0"
+          .path=${modeIcons[type]}
+          .title=${localize(`extra_states.${type}`)}
+        >
+        </ha-svg-icon>
+      `;
+  }
 
     private _renderIcon(mode: string, currentMode: string): TemplateResult {
         if (!modeIcons[mode]) {
@@ -677,7 +693,7 @@ export class BetterThermostatUiCard extends LitElement {
             display: flex;
             flex-flow: row;
             justify-content: center;
-            gap: 0.3em;
+            gap: 1.2em;
             min-height: 30px;
           }
           ha-svg-icon.status-icon.window_open {
@@ -688,7 +704,10 @@ export class BetterThermostatUiCard extends LitElement {
           }
           ha-svg-icon.status-icon.summer {
             color: #ff6046 !important;
-          } 
+          }
+          ha-svg-icon.status-icon-off {
+            color: #7a7a7a6e !important;
+          }
           .auto,
           .heat_cool {
             --mode-color: var(--state-climate-auto-color);
@@ -697,7 +716,7 @@ export class BetterThermostatUiCard extends LitElement {
             --mode-color: var(--state-climate-cool-color);
           }
           .heat {
-            --mode-color: var(--state-climate-heat-color);
+            --mode-color: var(--label-badge-red);
           }
           .manual {
             --mode-color: var(--state-climate-manual-color);
@@ -750,9 +769,10 @@ export class BetterThermostatUiCard extends LitElement {
           }
           #title {
             text-align: center;
-            padding: 0.6em;
             font-weight: 600;
-            font-size: 1.4em;
+            font-size: 1em;
+            padding-bottom: 1em;
+            margin-top: -0.5em;
           }
           round-slider {
             --round-slider-path-color: var(--slider-track-color);
