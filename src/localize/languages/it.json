@@ -1,10 +1,12 @@
 {
     "common": {
-        "version": "versione"
+        "version": "versione",
+        "current": "Corrente"
     },
     "extra_states": {
       "window_open": "Finestra aperta",
       "night_mode": "Modalità notturna",
+      "eco": "Eco",
       "summer": "Estate"
     }
   }

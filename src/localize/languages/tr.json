@@ -1,10 +1,12 @@
 {
   "common": {
-      "version": "versiyon"
+      "version": "versiyon",
+      "current": "şimdiki"
   },
   "extra_states": {
     "window_open": "Pencere açık",
     "night_mode": "Gece modu",
+    "eco": "Eco",
     "summer": "Yaz"
   }
 }

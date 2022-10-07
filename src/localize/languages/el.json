@@ -1,10 +1,12 @@
 {
   "common": {
-      "version": "έκδοση"
+      "version": "έκδοση",
+      "current": "τρέχουσα"
   },
   "extra_states": {
     "window_open": "Παράθυρο ανοικτό",
     "night_mode": "Λειτουργία νυκτός",
+    "eco": "Εξοικονόμηση",
     "summer": "Καλοκαίρι"
   }
 }

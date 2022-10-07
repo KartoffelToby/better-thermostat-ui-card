@@ -1,10 +1,12 @@
 {
   "common": {
-      "version": "version"
+      "version": "version",
+      "current": "current"
   },
   "extra_states": {
     "window_open": "Window open",
     "night_mode": "Night mode",
+    "eco": "Eco",
     "summer": "Summer"
   }
 }

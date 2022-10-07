@@ -1,10 +1,12 @@
 {
   "common": {
-      "version": "版本"
+      "version": "版本",
+      "current": "当前"
   },
   "extra_states": {
     "window_open": "窗户打开",
     "night_mode": "夜间模式",
+    "eco": "节能",
     "summer": "夏季"
   }
 }

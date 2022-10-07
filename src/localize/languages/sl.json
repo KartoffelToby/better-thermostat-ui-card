@@ -1,10 +1,12 @@
 {
   "common": {
-      "version": "različica"
+      "version": "različica",
+      "current": "trenutno"
   },
   "extra_states": {
     "window_open": "Okno odprto",
     "night_mode": "Nočni način",
+    "eco": "Eko",
     "summer": "Poletje"
   }
 }

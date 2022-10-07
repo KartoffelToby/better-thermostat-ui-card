@@ -1,10 +1,12 @@
 {
   "common": {
-      "version": "версия"
+      "version": "версия",
+      "currrent": "текущий"
   },
   "extra_states": {
     "window_open": "Отворен прозорец",
     "night_mode": "Нощен режим",
+    "eco": "Екологичен режим",
     "summer": "Лято"
   }
 }

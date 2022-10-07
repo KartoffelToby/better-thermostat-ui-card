@@ -1,10 +1,12 @@
 {
   "common": {
-      "version": "Verzió"
+      "version": "Verzió",
+      "current": "Aktuális"
   },
   "extra_states": {
     "window_open": "Ablak nyitva",
     "night_mode": "Éjszakai mód",
+    "eco": "Eco",
     "summer": "Nyár"
   }
 }

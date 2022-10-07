@@ -57,6 +57,8 @@ import {
     localize
 } from './localize/localize';
 
+import './round-slider';
+
 const UNAVAILABLE = "unavailable";
 const UNKNOWN = "unknown";
 const modeIcons: {
@@ -154,21 +156,23 @@ export class BetterThermostatUiCard extends LitElement {
 
         const slider =
             stateObj.state === UNAVAILABLE ?
-            html ` <round-slider disabled="true"></round-slider> ` :
+            html ` <bt-round-slider disabled="true"></bt-round-slider> ` :
             html `
-                <round-slider
+                <bt-round-slider id="round_slider"
                   .value=${targetTemp}
-                  .low=${stateObj.attributes.target_temp_low}
+                  .current=${stateObj.attributes.current_temperature}
                   .high=${stateObj.attributes.target_temp_high}
                   .min=${stateObj.attributes.min_temp}
                   .max=${stateObj.attributes.max_temp}
                   .step=${this._stepSize}
+                  handleSize="13"
                   @value-changing=${this._dragEvent}
                   @value-changed=${this._setTemperature}
-                ></round-slider>
+                ></bt-round-slider>
               `;
 
-        const currentTemperature = svg `
+        const setValues = svg `
+            <!--<div class="indicator"></div>-->
             <svg viewBox="0 0 40 20">
               <text
                 x="50%"
@@ -177,66 +181,70 @@ export class BetterThermostatUiCard extends LitElement {
                 text-anchor="middle"
                 style="font-size: 8px;"
               >
-                ${
-                  stateObj.attributes.current_temperature !== null &&
-                  !isNaN(stateObj.attributes.current_temperature)
-                    ? svg`${this.formatNumber(
-                        stateObj.attributes.current_temperature,
-                        this.hass.locale
-                      )}
-                <tspan dx="-1" dy="-3.5" style="font-size: 3px;">
-                  ${this.hass.config.unit_system.temperature}
-                </tspan>`
-                    : ""
-                }
+              ${
+                stateObj.state === UNAVAILABLE
+                  ? this.hass.localize("state.default.unavailable")
+                  : this._setTemp === undefined || this._setTemp === null
+                  ? ""
+                  : Array.isArray(this._setTemp)
+                  ? this._stepSize === 1
+                    ? svg`
+                        ${this.formatNumber(this._setTemp[0], this.hass.locale, {
+                          maximumFractionDigits: 0,
+                        })} -
+                        ${this.formatNumber(this._setTemp[1], this.hass.locale, {
+                          maximumFractionDigits: 0,
+                        })}
+                        `
+                    : svg`
+                        ${this.formatNumber(this._setTemp[0], this.hass.locale, {
+                          minimumFractionDigits: 1,
+                          maximumFractionDigits: 1,
+                        })} -
+                        ${this.formatNumber(this._setTemp[1], this.hass.locale, {
+                          minimumFractionDigits: 1,
+                          maximumFractionDigits: 1,
+                        })}
+                        `
+                  : this._stepSize === 1
+                  ? svg`
+                        ${this.formatNumber(this._setTemp, this.hass.locale, {
+                          maximumFractionDigits: 0,
+                        })}
+                        `
+                  : svg`
+                        ${this.formatNumber(this._setTemp, this.hass.locale, {
+                          minimumFractionDigits: 1,
+                          maximumFractionDigits: 1,
+                        })}
+                      `
+              }
+              <tspan dx="-1" dy="-3.5" style="font-size: 3px;">
+              ${this.hass.config.unit_system.temperature}
+            </tspan>
               </text>
             </svg>
           `;
 
-        const setValues = svg `
+        const currentTemperature = svg `
           <svg id="set-values">
             <g>
+              <text text-anchor="middle" dy="-22">${localize(`common.current`)}</text>
               <text text-anchor="middle" class="set-value">
-                ${
-                  stateObj.state === UNAVAILABLE
-                    ? this.hass.localize("state.default.unavailable")
-                    : this._setTemp === undefined || this._setTemp === null
-                    ? ""
-                    : Array.isArray(this._setTemp)
-                    ? this._stepSize === 1
-                      ? svg`
-                          ${this.formatNumber(this._setTemp[0], this.hass.locale, {
-                            maximumFractionDigits: 0,
-                          })} -
-                          ${this.formatNumber(this._setTemp[1], this.hass.locale, {
-                            maximumFractionDigits: 0,
-                          })}
-                          `
-                      : svg`
-                          ${this.formatNumber(this._setTemp[0], this.hass.locale, {
-                            minimumFractionDigits: 1,
-                            maximumFractionDigits: 1,
-                          })} -
-                          ${this.formatNumber(this._setTemp[1], this.hass.locale, {
-                            minimumFractionDigits: 1,
-                            maximumFractionDigits: 1,
-                          })}
-                          `
-                    : this._stepSize === 1
-                    ? svg`
-                          ${this.formatNumber(this._setTemp, this.hass.locale, {
-                            maximumFractionDigits: 0,
-                          })}
-                          `
-                    : svg`
-                          ${this.formatNumber(this._setTemp, this.hass.locale, {
-                            minimumFractionDigits: 1,
-                            maximumFractionDigits: 1,
-                          })}
-                          `
-                }
+              ${
+                stateObj.attributes.current_temperature !== null &&
+                !isNaN(stateObj.attributes.current_temperature)
+                  ? svg`${this.formatNumber(
+                      stateObj.attributes.current_temperature,
+                      this.hass.locale
+                    )}
+              <tspan dx="-1" dy="-4.5" style="font-size: 10px;">
+                ${this.hass.config.unit_system.temperature}
+              </tspan>`
+                  : ""
+              }
               </text>
-              <text
+              <!--<text
                 dy="22"
                 text-anchor="middle"
                 id="set-mode"
@@ -250,7 +258,7 @@ export class BetterThermostatUiCard extends LitElement {
                         `component.climate.state._.${stateObj.state}`
                       )
                 }
-              </text>
+              </text>-->
             </g>
           </svg>
         `;
@@ -278,20 +286,23 @@ export class BetterThermostatUiCard extends LitElement {
                   <div id="title">${name}</div><div id="bt_status">
                   ${
                     stateObj.attributes.window_open &&
-                    stateObj.attributes.window_open !== "none"
+                    stateObj.attributes.window_open !== "none" &&
+                    stateObj.state !== UNAVAILABLE
                       ? this._renderStatusIcon("window_open"): this._renderOffStatusIcon("window_open")}
                   ${
                     stateObj.attributes.saved_temperature &&
-                    stateObj.attributes.saved_temperature !== "none"
+                    stateObj.attributes.saved_temperature !== "none" &&
+                    stateObj.state !== UNAVAILABLE
                       ? this._renderStatusIcon("eco"): this._renderOffStatusIcon("eco")}
                   ${
                     !stateObj.attributes.call_for_heat &&
-                    stateObj.attributes.call_for_heat !== "none"
+                    stateObj.attributes.call_for_heat !== "none" &&
+                    stateObj.state !== UNAVAILABLE
                       ? this._renderStatusIcon("summer"): this._renderOffStatusIcon("summer")}
                   </div>
                   ${slider}
                   <div id="slider-center">
-                    <div id="temperature">${currentTemperature} ${setValues}</div>
+                    <div id="temperature">${setValues}</div>
                   </div>
                 </div>
               </div>
@@ -302,6 +313,9 @@ export class BetterThermostatUiCard extends LitElement {
                     .sort(this.compareClimateHvacModes)
                     .map((modeItem) => this._renderIcon(modeItem, mode))}
                 </div>
+              </div>
+              <div id="current-infos">
+                ${currentTemperature}
               </div>
             </div>
           </ha-card>
@@ -656,7 +670,7 @@ export class BetterThermostatUiCard extends LitElement {
                     locale,
                     this.getDefaultFormatOptions(num, options)
                 ).format(Number(num));
-            } catch (err: any) {
+            } catch (err) {
                 // Don't fail when using "TEST" language
                 // eslint-disable-next-line no-console
                 console.error(err);
@@ -687,6 +701,20 @@ export class BetterThermostatUiCard extends LitElement {
             --name-font-size: 1.2rem;
             --brightness-font-size: 1.2rem;
             --rail-border-color: transparent;
+          }
+          .indicator {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            background-color: var(--label-badge-red);
+            border-radius: 50%;
+            content: " ";
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            filter: blur(45px);
+            opacity: 0.8;
           }
           #bt_status {
             padding: 0 0 0.8em 0;
@@ -774,15 +802,15 @@ export class BetterThermostatUiCard extends LitElement {
             padding-bottom: 1em;
             margin-top: -0.5em;
           }
-          round-slider {
+          bt-round-slider {
             --round-slider-path-color: var(--slider-track-color);
             --round-slider-bar-color: var(--mode-color);
-            padding-bottom: 10%;
             position: relative;
           }
-          .window round-slider {
+          .window bt-round-slider {
             --round-slider-bar-color: #00bcd461 !important;
           }
+
           #slider-center {
             position: absolute;
             box-sizing: border-box;
@@ -800,14 +828,18 @@ export class BetterThermostatUiCard extends LitElement {
             position: absolute;
             transform: translate(-50%, -50%);
             width: 100%;
-            height: 50%;
             top: 50%;
             left: 50%;
           }
+          #current-infos {
+            display: flex;
+            flex-flow: row;
+            justify-content: center;
+            gap: 1.2em;
+            padding-bottom: 1em;
+            font-size: 16px;
+          }
           #set-values {
-            max-width: 80%;
-            transform: translate(0, -40%);
-            font-size: 18px;
           }
           #set-mode {
             fill: var(--secondary-text-color);
@@ -817,8 +849,7 @@ export class BetterThermostatUiCard extends LitElement {
             display: flex-vertical;
             justify-content: center;
             text-align: center;
-            padding: 16px;
-            margin-top: -60px;
+            margin-top: -45px;
             font-size: var(--name-font-size);
           }
           #modes > * {
