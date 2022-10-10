@@ -11,6 +11,7 @@ import {
     CSSResultGroup,
   } from "lit";
   import { customElement, property, state } from "lit/decorators.js";
+  import gsap from 'gsap';
   @customElement('bt-round-slider')
   class RoundSlider extends LitElement {
     @property({ type: Number }) public value: number | undefined;
@@ -318,6 +319,37 @@ import {
   
     protected updated(changedProperties: PropertyValues) {
       // Adjust margin in the bar slider stroke width is greater than the handle size
+      /*
+      setTimeout(() => {
+        const val = { distance: 0 };
+        const path = this.shadowRoot.querySelector('path.shadowpath');
+        const pathOverflow = this.shadowRoot.querySelector('path.overflow');
+        const bar = this.shadowRoot?.querySelector('path.bar')
+        const circle = this.shadowRoot.querySelector('path.handle');
+        console.log({path,circle})
+        // Create a tween
+        gsap.to(val, {
+          // Animate from distance 0 to the total distance
+          distance: path.getTotalLength(),
+          duration: 5,
+          repeat: -1,
+          // Function call on each frame of the animation
+          onUpdate: () => {
+            // Query a point at the new distance value
+            const point = path.getPointAtLength(val.distance);
+            // Update the circle coordinates
+            const d=`M ${point.x} ${point.y} L ${point.x + 0.001} ${point.y + 0.001}`;
+            circle.setAttribute('d', d);
+            pathOverflow.setAttribute('d', d);
+            bar.setAttribute('d', this._renderArc(
+              point.y,
+              point.y + point.x
+            ));
+          }
+        });
+      },3000);
+      */
+
       if (this.shadowRoot.querySelector(".slider")) {
         const styles = window.getComputedStyle(
           this.shadowRoot.querySelector(".slider")
@@ -489,7 +521,7 @@ import {
                   : svg`${this._renderHandle("low")} ${this._renderHandle(
                       "high"
                     )}`
-                : svg`${this._renderHandle("current")}${this._renderHandle("value")}`
+                : svg`${this._renderHandle("value")}${this._renderHandle("current")}`
               : ``}
           </g>
         </svg>
@@ -511,6 +543,7 @@ import {
         }
         .current-handle {
             pointer-events: none;
+            z-index: 90;
             stroke: var(--round-slider-path-color, lightgray);
         }
         .slider {

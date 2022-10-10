@@ -1,6 +1,6 @@
 {
   "name": "better-thermostat-ui",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Lovelace better-thermostat-ui",
   "keywords": [
     "home-assistant",
@@ -18,7 +18,9 @@
   "author": "",
   "dependencies": {
     "@mdi/js": "^7.0.96",
+    "@types/gsap": "^3.0.0",
     "custom-card-helpers": "^1.9.0",
+    "gasp": "^0.0.2",
     "home-assistant-js-websocket": "^8.0.0",
     "lit": "^2.4.0"
   },

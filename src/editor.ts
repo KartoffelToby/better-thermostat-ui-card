@@ -16,15 +16,20 @@ const options = {
 
 @customElement('better-thermostat-ui-card-editor')
 export class BetterThermostatUiCardEditor extends LitElement implements LovelaceCardEditor {
-  @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() private _config?: BetterThermostatUiCardConfig;
+  @property({ attribute: false })
+  public hass!: HomeAssistant;
+  @state() private _config?: any;
   @state() private _toggle?: boolean;
   @state() private _helpers?: any;
   private _initialized = false;
 
-  public setConfig(config: BetterThermostatUiCardConfig): void {
+  public setConfig(config: any): void {
     this._config = config;
 
+    if (!this._config.entity) {
+      this._config.entity = this.getEntitiesByType('climate')[0];
+      fireEvent(this, 'config-changed', { config: this._config });
+    }
     this.loadCardHelpers();
   }
 
@@ -64,6 +69,12 @@ export class BetterThermostatUiCardEditor extends LitElement implements Lovelace
     return this._config?.double_tap_action || { action: 'none' };
   }
 
+  getEntitiesByType(type) {
+    return Object.keys(this.hass.states).filter(
+      (eid) => eid.substr(0, eid.indexOf('.')) === type
+    );
+  }
+
   protected render(): TemplateResult | void {
     if (!this.hass || !this._helpers) {
       return html``;
@@ -79,32 +90,20 @@ export class BetterThermostatUiCardEditor extends LitElement implements Lovelace
 
     return html`
       <div class="card-config">
-        <div class="option" @click=${this._toggleOption} .option=${'required'}>
-          <div class="row">
-            <ha-icon .icon=${`mdi:${options.required.icon}`}></ha-icon>
-            <div class="title">${options.required.name}</div>
-          </div>
-          <div class="secondary">${options.required.secondary}</div>
-        </div>
-        ${options.required.show
-          ? html`
-              <div class="values">
-                <paper-dropdown-menu
-                  label="Entity (Required)"
-                  @value-changed=${this._valueChanged}
-                  .configValue=${'entity'}
-                >
-                  <paper-listbox slot="dropdown-content" .selected=${entities.indexOf(this._entity)}>
-                    ${entities.map(entity => {
-                      return html`
-                        <paper-item>${entity}</paper-item>
-                      `;
-                    })}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
-            `
-          : ''}
+        <paper-dropdown-menu
+          label="entity"
+          @value-changed=${this._valueChanged}
+          .configValue=${'entity'}
+        >
+          <paper-listbox
+            slot="dropdown-content"
+            .selected=${entities.indexOf(this._entity)}
+          >
+            ${entities.map((entity) => {
+              return html` <paper-item>${entity}</paper-item> `;
+            })}
+          </paper-listbox>
+        </paper-dropdown-menu>
       </div>
     `;
   }
@@ -133,7 +132,7 @@ export class BetterThermostatUiCardEditor extends LitElement implements Lovelace
     this._toggle = !this._toggle;
   }
 
-  private _valueChanged(ev): void {
+  _valueChanged(ev) {
     if (!this._config || !this.hass) {
       return;
     }
@@ -143,13 +142,12 @@ export class BetterThermostatUiCardEditor extends LitElement implements Lovelace
     }
     if (target.configValue) {
       if (target.value === '') {
-        const tmpConfig = { ...this._config };
-        delete tmpConfig[target.configValue];
-        this._config = tmpConfig;
+        delete this._config[target.configValue];
       } else {
         this._config = {
           ...this._config,
-          [target.configValue]: target.checked !== undefined ? target.checked : target.value,
+          [target.configValue]:
+            target.checked !== undefined ? target.checked : target.value,
         };
       }
     }

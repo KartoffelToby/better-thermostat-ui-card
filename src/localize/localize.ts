@@ -50,12 +50,12 @@ const languages: any = {
 };
 
 export function localize(string: string, search = '', replace = ''): string {
-  const lang = (localStorage.getItem('selectedLanguage') || navigator.language).replace(/['"]+/g, '').replace('-', '_');
-
+  const localLangStore = localStorage.getItem('i18nextLng') || localStorage.getItem('lang') ||  navigator.language || 'en';
+  const lang = RegExp("^.{0,2}").exec((localLangStore).replace(/['"]+/g, '').replace('-', '_')) || ['en'];
   let translated: string;
 
   try {
-    translated = string.split('.').reduce((o, i) => o[i], languages[lang]);
+    translated = string.split('.').reduce((o, i) => o[i], languages[lang[0]]);
   } catch (e) {
     translated = string.split('.').reduce((o, i) => o[i], languages['en']);
   }

@@ -39,7 +39,8 @@ import {
     mdiWaterPercent,
     mdiWindowOpenVariant,
     mdiSunThermometer,
-    mdiLeaf
+    mdiLeaf,
+    mdiThermometer,
 } from "@mdi/js";
 import {
     HassEntity
@@ -73,7 +74,9 @@ const modeIcons: {
     dry: mdiWaterPercent,
     window_open: mdiWindowOpenVariant,
     eco: mdiLeaf, 
-    summer: mdiSunThermometer
+    summer: mdiSunThermometer,
+    temperature:  mdiThermometer,
+    humidity: mdiWaterPercent
 };
 
 /* eslint no-console: 0 */
@@ -154,6 +157,7 @@ export class BetterThermostatUiCard extends LitElement {
             stateObj.attributes.temperature :
             stateObj.attributes.min_temp;
 
+
         const slider =
             stateObj.state === UNAVAILABLE ?
             html ` <bt-round-slider disabled="true"></bt-round-slider> ` :
@@ -226,25 +230,48 @@ export class BetterThermostatUiCard extends LitElement {
             </svg>
           `;
 
+        const currentHumidity = svg `
+          <div class="humindity">
+              <ha-svg-icon
+                class="info-icon"
+                tabindex="0"
+                .path=${modeIcons['humidity']}
+                .title=${localize(`common.current`)}
+              >
+              </ha-svg-icon>
+              <span>
+                ${svg`${this.formatNumber(
+                  stateObj.attributes.humidity,
+                  this.hass.locale
+                )}`}
+                <span class="h-indication">%</span>
+              </span>
+          </div>     
+        `;
+
         const currentTemperature = svg `
-          <svg id="set-values">
-            <g>
-              <text text-anchor="middle" dy="-22">${localize(`common.current`)}</text>
-              <text text-anchor="middle" class="set-value">
-              ${
-                stateObj.attributes.current_temperature !== null &&
-                !isNaN(stateObj.attributes.current_temperature)
-                  ? svg`${this.formatNumber(
-                      stateObj.attributes.current_temperature,
-                      this.hass.locale
-                    )}
-              <tspan dx="-1" dy="-4.5" style="font-size: 10px;">
-                ${this.hass.config.unit_system.temperature}
-              </tspan>`
-                  : ""
-              }
-              </text>
-              <!--<text
+          <div class="temperature">
+              <ha-svg-icon
+                class="info-icon"
+                tabindex="0"
+                .path=${modeIcons['temperature']}
+                .title=${localize(`common.current`)}
+              >
+              </ha-svg-icon>
+              <span>
+                ${svg`${this.formatNumber(
+                  stateObj.attributes.current_temperature,
+                  this.hass.locale
+                )}`}
+                ${svg`<svg id="set-values" style="transform: translateY(-2px);"><g><text text-anchor="middle" class="set-value"><tspan dx="-1" dy="-8.5" style="font-size: 10px;">
+                  ${this.hass.config.unit_system.temperature}
+                </tspan></text><g></svg>`}
+              </span>
+          </div>     
+        `;
+
+        /*
+                     <!--<text
                 dy="22"
                 text-anchor="middle"
                 id="set-mode"
@@ -259,9 +286,7 @@ export class BetterThermostatUiCard extends LitElement {
                       )
                 }
               </text>-->
-            </g>
-          </svg>
-        `;
+              */
 
         setTimeout(() => this._rescale_svg(), 100);
 
@@ -316,6 +341,9 @@ export class BetterThermostatUiCard extends LitElement {
               </div>
               <div id="current-infos">
                 ${currentTemperature}
+                ${
+                  stateObj.attributes.humidity !== null && stateObj.attributes.humidity > 0 ? currentHumidity : ""
+                }
               </div>
             </div>
           </ha-card>
@@ -371,7 +399,6 @@ export class BetterThermostatUiCard extends LitElement {
         if (!stateObj) {
             return;
         }
-
         const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
 
         if (!oldHass || oldHass.states[this._config.entity] !== stateObj) {
@@ -694,6 +721,21 @@ export class BetterThermostatUiCard extends LitElement {
           :host {
             display: block;
           }
+          .humindity, .temperature {
+            display: grid;
+            justify-items: center;
+            gap: 0.3em;
+            font-weight: bold;
+          }
+          .info-icon {
+            opacity: 0.75;
+            height: 20px;
+          }
+          .h-indication {
+            font-size: 10px;
+            transform: translateY(-4px);
+            display: inline-block;
+          }
           ha-card {
             height: 100%;
             position: relative;
@@ -725,7 +767,7 @@ export class BetterThermostatUiCard extends LitElement {
             min-height: 30px;
           }
           ha-svg-icon.status-icon.window_open {
-            color: #1d9187 !important;
+            color: #00bcd4 !important;
           }
           ha-svg-icon.status-icon.eco {
             color: #6cff71 !important;
@@ -808,7 +850,7 @@ export class BetterThermostatUiCard extends LitElement {
             position: relative;
           }
           .window bt-round-slider {
-            --round-slider-bar-color: #00bcd461 !important;
+            --round-slider-bar-color: #00bcd4 !important;
           }
 
           #slider-center {
@@ -836,7 +878,8 @@ export class BetterThermostatUiCard extends LitElement {
             flex-flow: row;
             justify-content: center;
             gap: 1.2em;
-            padding-bottom: 1em;
+            padding-bottom: 0.5em;
+            padding-top: 0.3em
             font-size: 16px;
           }
           #set-values {
