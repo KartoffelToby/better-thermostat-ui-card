@@ -11,7 +11,6 @@ import {
     CSSResultGroup,
   } from "lit";
   import { customElement, property, state } from "lit/decorators.js";
-  import gsap from 'gsap';
   @customElement('bt-round-slider')
   class RoundSlider extends LitElement {
     @property({ type: Number }) public value: number | undefined;
@@ -116,6 +115,14 @@ import {
       value = Math.min(this.max, Math.max(this.min, value));
       const fraction = (value - this.min) / (this.max - this.min);
       return this._start + fraction * this._len;
+    }
+
+    private _value2percent(value: number): number {    
+      return ((value - this.min) / (this.max - this.min)) * 100;
+    }
+
+    private _value2bar(value: number): number {
+      return -(((value - this.min) / (this.max - this.min)) * 590) - 590;
     }
   
     private _angle2value(angle: number): number {
@@ -323,16 +330,14 @@ import {
       setTimeout(() => {
         const val = { distance: 0 };
         const path = this.shadowRoot.querySelector('path.shadowpath');
-        const pathOverflow = this.shadowRoot.querySelector('path.overflow');
-        const bar = this.shadowRoot?.querySelector('path.bar')
-        const circle = this.shadowRoot.querySelector('path.handle');
+        const circle = this.shadowRoot.querySelector('path.current-handle');
         console.log({path,circle})
         // Create a tween
         gsap.to(val, {
           // Animate from distance 0 to the total distance
-          distance: path.getTotalLength(),
-          duration: 5,
-          repeat: -1,
+          distance: this._value2angle(this['current']),
+          duration: 15,
+          repeat: 0,
           // Function call on each frame of the animation
           onUpdate: () => {
             // Query a point at the new distance value
@@ -341,13 +346,9 @@ import {
             const d=`M ${point.x} ${point.y} L ${point.x + 0.001} ${point.y + 0.001}`;
             circle.setAttribute('d', d);
             pathOverflow.setAttribute('d', d);
-            bar.setAttribute('d', this._renderArc(
-              point.y,
-              point.y + point.x
-            ));
           }
         });
-      },3000);
+      },100);
       */
 
       if (this.shadowRoot.querySelector(".slider")) {
@@ -417,21 +418,21 @@ import {
   
       if (id === "current") {
         return svg`
-            <g class="${id} current-handle">
-            <path
+            <g class="current current-handle" style="offset-path: path('${this._renderArc(this._start, this._end).replace(/(\r\n|\n|\r)/gm, "")}'); offset-distance: ${this._value2percent(this[id])}%;">
+              <path
                 id=${id}
-                class="current-handle"
                 d="
-                M ${pos.x} ${pos.y}
-                L ${pos.x + 0.001} ${pos.y + 0.001}
+                M 0 0
+                L 0.001 0.001
                 "
+                class="current-handle"
                 vector-effect="non-scaling-stroke"
                 stroke-width="11"
                 tabindex="1"
                 role="slider"
                 aria-valuenow=${this[id]}
                 aria-disabled="true"
-                aria-label=${label || ""}
+                aria-label=${this.current || ""}
                 />
             </g>
             `;
@@ -439,13 +440,13 @@ import {
         // Two handles are drawn. One visible, and one invisible that's twice as
         // big. Makes it easier to click.
         return svg`
-            <g class="${id} handle">
+            <g class="${id} handle ${this.dragging ? 'drag': ''}" style="offset-path: path('${this._renderArc(this._start, this._end).replace(/(\r\n|\n|\r)/gm, "")}'); offset-distance: ${this._value2percent(this[id])}%;">
             <path
                 id=${id}
                 class="overflow"
                 d="
-                M ${pos.x} ${pos.y}
-                L ${pos.x + 0.001} ${pos.y + 0.001}
+                M 0 0
+                L 0.001 0.001
                 "
                 vector-effect="non-scaling-stroke"
                 stroke="rgba(0,0,0,0)"
@@ -455,8 +456,8 @@ import {
                 id=${id}
                 class="handle"
                 d="
-                M ${pos.x} ${pos.y}
-                L ${pos.x + 0.001} ${pos.y + 0.001}
+                M 0 0
+                L 0.001 0.001
                 "
                 vector-effect="non-scaling-stroke"
                 stroke-width="${2 * this.handleSize * this._scale}"
@@ -494,11 +495,12 @@ import {
               vector-effect="non-scaling-stroke"
             />
             <path
-              class="bar"
+              class="bar ${this.dragging ? 'drag': ''}"
+              style="stroke-dashoffset: ${this._value2bar(this.value)};"
               vector-effect="non-scaling-stroke"
               d=${this._renderArc(
                 this._value2angle(this.low != null ? this.low : this.min),
-                this._value2angle(this.high != null ? this.high : this.value)
+                this._value2angle(this.high != null ? this.high : this.max)
               )}
             />
             <path
@@ -545,6 +547,14 @@ import {
             pointer-events: none;
             z-index: 90;
             stroke: var(--round-slider-path-color, lightgray);
+            transition: offset-distance 15s ease-in-out
+        }
+        .handle {
+          transition: offset-distance 600ms ease-in-out, stroke 1.6s ease-in-out;
+          transition-delay: 0;
+        }
+        .handle.drag {
+          transition: none;
         }
         .slider {
           fill: none;
@@ -556,6 +566,13 @@ import {
         }
         .bar {
           stroke: var(--round-slider-bar-color, deepskyblue);
+          transition: stroke-dashoffset 600ms ease-in-out, stroke 1.6s ease-in-out;
+          transform: rotate(360deg);
+          stroke-dasharray: 590;
+          stroke-dashoffset: 590;
+        }
+        .bar.drag {
+          transition: none;
         }
         svg[disabled] .bar {
           stroke: var(--round-slider-disabled-bar-color, darkgray);

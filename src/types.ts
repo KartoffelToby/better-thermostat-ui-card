@@ -10,6 +10,7 @@ declare global {
 // TODO Add your configuration elements here for type-checking
 export interface BetterThermostatUiCardConfig extends LovelaceCardConfig {
   entity: string;
+  eco_temperature?: number;
   theme?: string;
   name?: string;
 }

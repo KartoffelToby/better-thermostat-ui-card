@@ -117,7 +117,7 @@ export class BetterThermostatUiCard extends LitElement {
     }) public hass ? : HomeAssistant;
 
 
-    @state() private _config ? : BetterThermostatUiCardConfig;
+    @state() private _config ? : any;
     @state() private _setTemp ? : number | number[];
 
     @query("ha-card") private _card ? : any;
@@ -125,11 +125,10 @@ export class BetterThermostatUiCard extends LitElement {
     public getCardSize(): number {
         return 7;
     }
-    public setConfig(config: BetterThermostatUiCardConfig): void {
+    public setConfig(config: any): void {
         if (!config.entity || config.entity.split(".")[0] !== "climate") {
             throw new Error("Specify an entity from within the climate domain");
         }
-
         this._config = config;
     }
 
@@ -157,7 +156,6 @@ export class BetterThermostatUiCard extends LitElement {
             stateObj.attributes.temperature :
             stateObj.attributes.min_temp;
 
-
         const slider =
             stateObj.state === UNAVAILABLE ?
             html ` <bt-round-slider disabled="true"></bt-round-slider> ` :
@@ -181,9 +179,9 @@ export class BetterThermostatUiCard extends LitElement {
               <text
                 x="50%"
                 dx="1"
-                y="60%"
+                y="50%"
                 text-anchor="middle"
-                style="font-size: 8px;"
+                style="font-size: 10px;"
               >
               ${
                 stateObj.state === UNAVAILABLE
@@ -223,7 +221,7 @@ export class BetterThermostatUiCard extends LitElement {
                         })}
                       `
               }
-              <tspan dx="-1" dy="-3.5" style="font-size: 3px;">
+              <tspan dx="-1" dy="-5.5" style="font-size: 3px;">
               ${this.hass.config.unit_system.temperature}
             </tspan>
               </text>
@@ -232,13 +230,6 @@ export class BetterThermostatUiCard extends LitElement {
 
         const currentHumidity = svg `
           <div class="humindity">
-              <ha-svg-icon
-                class="info-icon"
-                tabindex="0"
-                .path=${modeIcons['humidity']}
-                .title=${localize(`common.current`)}
-              >
-              </ha-svg-icon>
               <span>
                 ${svg`${this.formatNumber(
                   stateObj.attributes.humidity,
@@ -251,13 +242,6 @@ export class BetterThermostatUiCard extends LitElement {
 
         const currentTemperature = svg `
           <div class="temperature">
-              <ha-svg-icon
-                class="info-icon"
-                tabindex="0"
-                .path=${modeIcons['temperature']}
-                .title=${localize(`common.current`)}
-              >
-              </ha-svg-icon>
               <span>
                 ${svg`${this.formatNumber(
                   stateObj.attributes.current_temperature,
@@ -308,42 +292,41 @@ export class BetterThermostatUiCard extends LitElement {
             <div class="content">
               <div id="controls">
                 <div id="slider" class="${stateObj.attributes.window_open ? 'window': ''}">
-                  <div id="title">${name}</div><div id="bt_status">
-                  ${
-                    stateObj.attributes.window_open &&
-                    stateObj.attributes.window_open !== "none" &&
-                    stateObj.state !== UNAVAILABLE
-                      ? this._renderStatusIcon("window_open"): this._renderOffStatusIcon("window_open")}
-                  ${
-                    stateObj.attributes.saved_temperature &&
-                    stateObj.attributes.saved_temperature !== "none" &&
-                    stateObj.state !== UNAVAILABLE
-                      ? this._renderStatusIcon("eco"): this._renderOffStatusIcon("eco")}
-                  ${
-                    !stateObj.attributes.call_for_heat &&
-                    stateObj.attributes.call_for_heat !== "none" &&
-                    stateObj.state !== UNAVAILABLE
-                      ? this._renderStatusIcon("summer"): this._renderOffStatusIcon("summer")}
-                  </div>
+                  <div id="title">${name}</div>
                   ${slider}
                   <div id="slider-center">
+                    <div id="bt_status">
+                    ${
+                      stateObj.attributes.window_open &&
+                      stateObj.attributes.window_open !== "none" &&
+                      stateObj.state !== UNAVAILABLE
+                        ? this._renderStatusIcon("window_open", true): this._renderStatusIcon("window_open", false)}
+                    ${
+                      !stateObj.attributes.call_for_heat &&
+                      stateObj.attributes.call_for_heat !== "none" &&
+                      stateObj.state !== UNAVAILABLE
+                        ? this._renderStatusIcon("summer", true): this._renderStatusIcon("summer", false)}
+                    </div>
                     <div id="temperature">${setValues}</div>
+                    <div id="current-infos">
+                      ${currentTemperature}
+                      ${
+                        stateObj.attributes.humidity !== null && stateObj.attributes.humidity > 0 ? currentHumidity : ""
+                      }
+                    </div>
                   </div>
                 </div>
               </div>
               <div id="info" .title=${name}>
                 <div id="modes">
-                  ${(stateObj.attributes.hvac_modes || [])
-                    .concat()
-                    .sort(this.compareClimateHvacModes)
-                    .map((modeItem) => this._renderIcon(modeItem, mode))}
+                  ${this._renderIcon("heat", mode)}
+                  ${
+                    stateObj.attributes.saved_temperature &&
+                    stateObj.attributes.saved_temperature !== "none" &&
+                    stateObj.state !== UNAVAILABLE
+                      ? this._renderIcon("eco","eco"): this._renderIcon("eco", "none")}
+                  ${this._renderIcon("off", mode)}
                 </div>
-              </div>
-              <div id="current-infos">
-                ${currentTemperature}
-                ${
-                  stateObj.attributes.humidity !== null && stateObj.attributes.humidity > 0 ? currentHumidity : ""
-                }
               </div>
             </div>
           </ha-card>
@@ -415,6 +398,8 @@ export class BetterThermostatUiCard extends LitElement {
         const card = this._card;
         if (card) {
             card.updateComplete.then(() => {
+                const currentText:any = this.shadowRoot!.querySelector("#current-infos") !;
+                currentText?.setAttribute("data-before", localize("common.current"));
                 const svgRoot = this.shadowRoot!.querySelector("#set-values") !;
                 const box = svgRoot.querySelector("g") !.getBBox() !;
                 svgRoot.setAttribute(
@@ -503,13 +488,13 @@ export class BetterThermostatUiCard extends LitElement {
         return Object.keys(Object.fromEntries(filtered));
     }
 
-    private _renderStatusIcon(type:string): TemplateResult {
+    private _renderStatusIcon(type:string, state:boolean): TemplateResult {
         if (!modeIcons[type]) {
             return html ``;
         }
         return html `
           <ha-svg-icon
-            class="status-icon ${type}"
+            class="${state ? 'status-icon' : 'status-icon-off'} ${type}"
             tabindex="0"
             .path=${modeIcons[type]}
             .title=${localize(`extra_states.${type}`)}
@@ -518,27 +503,13 @@ export class BetterThermostatUiCard extends LitElement {
         `;
     }
 
-    private _renderOffStatusIcon(type:string): TemplateResult {
-      if (!modeIcons[type]) {
-          return html ``;
-      }
-      return html `
-        <ha-svg-icon
-          class="status-icon-off ${type}"
-          tabindex="0"
-          .path=${modeIcons[type]}
-          .title=${localize(`extra_states.${type}`)}
-        >
-        </ha-svg-icon>
-      `;
-  }
-
     private _renderIcon(mode: string, currentMode: string): TemplateResult {
         if (!modeIcons[mode]) {
             return html ``;
         }
         return html `
           <ha-icon-button
+            title="${currentMode === mode ? mode : ''}"
             class=${classMap({ "selected-icon": currentMode === mode })}
             .mode=${mode}
             @click=${this._handleAction}
@@ -557,10 +528,24 @@ export class BetterThermostatUiCard extends LitElement {
     }
 
     private _handleAction(e: MouseEvent): void {
-        this.hass!.callService("climate", "set_hvac_mode", {
+        if ((e.currentTarget as any).mode === "eco") {
+            const stateObj = this.hass!.states[this._config!.entity] as any;
+            if (stateObj.attributes.saved_temperature === null) {
+              this.hass!.callService("better_thermostat", "set_temp_target_temperature", {
+                  entity_id: this._config!.entity,
+                  temperature: this._config?.eco_temperature || 18,
+              });
+            } else {
+              this.hass!.callService("better_thermostat", "restore_saved_target_temperature", {
+                  entity_id: this._config!.entity,
+              });
+            }
+        } else {
+          this.hass!.callService("climate", "set_hvac_mode", {
             entity_id: this._config!.entity,
             hvac_mode: (e.currentTarget as any).mode,
-        });
+          });
+        }
     }
 
     private hasConfigChanged(element: any, changedProps: PropertyValues): boolean {
@@ -765,11 +750,15 @@ export class BetterThermostatUiCard extends LitElement {
             justify-content: center;
             gap: 1.2em;
             min-height: 30px;
+            padding-top: 2em;
+          }
+          ha-svg-icon {
+            transition: color 1.6s ease-in-out;
           }
           ha-svg-icon.status-icon.window_open {
             color: #00bcd4 !important;
           }
-          ha-svg-icon.status-icon.eco {
+          ha-svg-icon.status-icon.eco, ha-icon-button[title="eco"] {
             color: #6cff71 !important;
           }
           ha-svg-icon.status-icon.summer {
@@ -865,13 +854,12 @@ export class BetterThermostatUiCard extends LitElement {
             height: 100%;
             width: 100%;
             transform: translate(-50%, -35%);
+            display: flex;
+            flex-flow: column;
           }
           #temperature {
-            position: absolute;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            top: 50%;
-            left: 50%;
+            height: 5em;
+            display: inline-flex;
           }
           #current-infos {
             display: flex;
@@ -879,8 +867,21 @@ export class BetterThermostatUiCard extends LitElement {
             justify-content: center;
             gap: 1.2em;
             padding-bottom: 0.5em;
-            padding-top: 0.3em
-            font-size: 16px;
+            padding-top: 0.7em;
+            font-size: 18px !important;
+          }
+          #current-infos:before {
+            content: attr(data-before);
+            width: 65%;
+            height: 2px;
+            display: inline-block;
+            position: absolute;
+            z-index: 9999;
+            top: 45%;
+            color: rgba(158, 158, 158, 0.44);
+            border-bottom: 1px solid rgba(158, 158, 158, 0.44);
+            padding: 2em;
+            font-size: 9px;
           }
           #set-values {
           }
