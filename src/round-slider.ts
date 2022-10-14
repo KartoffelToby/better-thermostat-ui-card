@@ -326,31 +326,6 @@ import {
   
     protected updated(changedProperties: PropertyValues) {
       // Adjust margin in the bar slider stroke width is greater than the handle size
-      /*
-      setTimeout(() => {
-        const val = { distance: 0 };
-        const path = this.shadowRoot.querySelector('path.shadowpath');
-        const circle = this.shadowRoot.querySelector('path.current-handle');
-        console.log({path,circle})
-        // Create a tween
-        gsap.to(val, {
-          // Animate from distance 0 to the total distance
-          distance: this._value2angle(this['current']),
-          duration: 15,
-          repeat: 0,
-          // Function call on each frame of the animation
-          onUpdate: () => {
-            // Query a point at the new distance value
-            const point = path.getPointAtLength(val.distance);
-            // Update the circle coordinates
-            const d=`M ${point.x} ${point.y} L ${point.x + 0.001} ${point.y + 0.001}`;
-            circle.setAttribute('d', d);
-            pathOverflow.setAttribute('d', d);
-          }
-        });
-      },100);
-      */
-
       if (this.shadowRoot.querySelector(".slider")) {
         const styles = window.getComputedStyle(
           this.shadowRoot.querySelector(".slider")
@@ -478,7 +453,6 @@ import {
   
     protected render(): TemplateResult {
       const view = this._boundaries;
-  
       return html`
         <svg
           @mousedown=${this.dragStart}
@@ -488,6 +462,9 @@ import {
           ?disabled=${this.disabled}
           focusable="false"
         >
+          <filter id="shadow-svg">
+            <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="cyan" flood-opacity="1"/>
+          </filter>
           <g class="slider">
             <path
               class="path"
@@ -526,6 +503,8 @@ import {
                 : svg`${this._renderHandle("value")}${this._renderHandle("current")}`
               : ``}
           </g>
+          <use filter="url(#shadow-svg)" xlink:href="#current"/>
+          <use filter="url(#shadow-svg)" xlink:href="#value"/>
         </svg>
       `;
     }

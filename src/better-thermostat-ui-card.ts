@@ -179,9 +179,9 @@ export class BetterThermostatUiCard extends LitElement {
               <text
                 x="50%"
                 dx="1"
-                y="50%"
+                y="70%"
                 text-anchor="middle"
-                style="font-size: 10px;"
+                style="font-size: 15px;"
               >
               ${
                 stateObj.state === UNAVAILABLE
@@ -221,7 +221,7 @@ export class BetterThermostatUiCard extends LitElement {
                         })}
                       `
               }
-              <tspan dx="-1" dy="-5.5" style="font-size: 3px;">
+              <tspan dx="-2" dy="-6.5" style="font-size: 5px;">
               ${this.hass.config.unit_system.temperature}
             </tspan>
               </text>
@@ -229,29 +229,45 @@ export class BetterThermostatUiCard extends LitElement {
           `;
 
         const currentHumidity = svg `
-          <div class="humindity">
-              <span>
-                ${svg`${this.formatNumber(
-                  stateObj.attributes.humidity,
-                  this.hass.locale
-                )}`}
-                <span class="h-indication">%</span>
-              </span>
-          </div>     
+          <svg viewBox="0 0 40 20">
+          <text
+            x="50%"
+            dx="1"
+            y="70%"
+            text-anchor="middle"
+            style="font-size: 16px;"
+          >
+              ${svg`${this.formatNumber(
+                stateObj.attributes.humidity,
+                this.hass.locale
+              )}`}
+              <tspan dx="-2" dy="-5.5" style="font-size: 7px;">
+              %
+              </tspan>
+            </text>
+          </svg>    
         `;
 
         const currentTemperature = svg `
-          <div class="temperature">
-              <span>
+            <svg viewBox="0 0 40 20">
+            <text
+              x="50%"
+              dx="1"
+              y="70%"
+              text-anchor="middle"
+              style="font-size: 16px;"
+            >
                 ${svg`${this.formatNumber(
                   stateObj.attributes.current_temperature,
                   this.hass.locale
                 )}`}
-                ${svg`<svg id="set-values" style="transform: translateY(-2px);"><g><text text-anchor="middle" class="set-value"><tspan dx="-1" dy="-8.5" style="font-size: 10px;">
+                <tspan dx="-2" dy="-5.5" style="font-size: 7px;">
+                ${svg`
                   ${this.hass.config.unit_system.temperature}
-                </tspan></text><g></svg>`}
-              </span>
-          </div>     
+                `}
+                </tspan>
+              </text>
+            </svg>   
         `;
 
         /*
@@ -292,20 +308,28 @@ export class BetterThermostatUiCard extends LitElement {
             <div class="content">
               <div id="controls">
                 <div id="slider" class="${stateObj.attributes.window_open ? 'window': ''}">
-                  <div id="title">${name}</div>
                   ${slider}
                   <div id="slider-center">
                     <div id="bt_status">
                     ${
-                      stateObj.attributes.window_open &&
-                      stateObj.attributes.window_open !== "none" &&
-                      stateObj.state !== UNAVAILABLE
-                        ? this._renderStatusIcon("window_open", true): this._renderStatusIcon("window_open", false)}
+                      this._config.disable_window === true
+                      ? html `` 
+                      : 
+                          stateObj.attributes.window_open &&
+                          stateObj.attributes.window_open !== "none" &&
+                          stateObj.state !== UNAVAILABLE
+                            ? this._renderStatusIcon("window_open", true): this._renderStatusIcon("window_open", false)
+                      
+                    }
                     ${
-                      !stateObj.attributes.call_for_heat &&
-                      stateObj.attributes.call_for_heat !== "none" &&
-                      stateObj.state !== UNAVAILABLE
-                        ? this._renderStatusIcon("summer", true): this._renderStatusIcon("summer", false)}
+                      this._config.disable_summer === true
+                      ? html `` 
+                      : 
+                        !stateObj.attributes.call_for_heat &&
+                        stateObj.attributes.call_for_heat !== "none" &&
+                        stateObj.state !== UNAVAILABLE
+                          ? this._renderStatusIcon("summer", true): this._renderStatusIcon("summer", false)
+                    }
                     </div>
                     <div id="temperature">${setValues}</div>
                     <div id="current-infos">
@@ -328,6 +352,7 @@ export class BetterThermostatUiCard extends LitElement {
                   ${this._renderIcon("off", mode)}
                 </div>
               </div>
+              <div id="title">${name}</div>
             </div>
           </ha-card>
         `;
@@ -398,6 +423,7 @@ export class BetterThermostatUiCard extends LitElement {
         const card = this._card;
         if (card) {
             card.updateComplete.then(() => {
+              try {
                 const currentText:any = this.shadowRoot!.querySelector("#current-infos") !;
                 currentText?.setAttribute("data-before", localize("common.current"));
                 const svgRoot = this.shadowRoot!.querySelector("#set-values") !;
@@ -408,6 +434,7 @@ export class BetterThermostatUiCard extends LitElement {
                 );
                 svgRoot.setAttribute("width", `${box.width}`);
                 svgRoot.setAttribute("height", `${box.height}`);
+              } catch (e) {}
             });
         }
     }
@@ -497,7 +524,7 @@ export class BetterThermostatUiCard extends LitElement {
             class="${state ? 'status-icon' : 'status-icon-off'} ${type}"
             tabindex="0"
             .path=${modeIcons[type]}
-            .title=${localize(`extra_states.${type}`)}
+            title=${localize(`extra_states.${type}`)}
           >
           </ha-svg-icon>
         `;
@@ -507,6 +534,7 @@ export class BetterThermostatUiCard extends LitElement {
         if (!modeIcons[mode]) {
             return html ``;
         }
+        const localizeMode = this.hass!.localize(`component.climate.state._.${mode}`) || localize(`extra_states.${mode}`);
         return html `
           <ha-icon-button
             title="${currentMode === mode ? mode : ''}"
@@ -515,7 +543,7 @@ export class BetterThermostatUiCard extends LitElement {
             @click=${this._handleAction}
             tabindex="0"
             .path=${modeIcons[mode]}
-            .label=${this.hass!.localize(`component.climate.state._.${mode}`)}
+            .label=${localizeMode}
           >
           </ha-icon-button>
         `;
@@ -705,6 +733,7 @@ export class BetterThermostatUiCard extends LitElement {
         return css `
           :host {
             display: block;
+            min-width: 300px;
           }
           .humindity, .temperature {
             display: grid;
@@ -728,6 +757,9 @@ export class BetterThermostatUiCard extends LitElement {
             --name-font-size: 1.2rem;
             --brightness-font-size: 1.2rem;
             --rail-border-color: transparent;
+            padding: 0.8em;
+            padding-bottom: 0.3em;
+            box-sizing: border-box;
           }
           .indicator {
             position: absolute;
@@ -750,7 +782,7 @@ export class BetterThermostatUiCard extends LitElement {
             justify-content: center;
             gap: 1.2em;
             min-height: 30px;
-            padding-top: 2em;
+            padding-top: 0;
           }
           ha-svg-icon {
             transition: color 1.6s ease-in-out;
@@ -830,8 +862,8 @@ export class BetterThermostatUiCard extends LitElement {
             text-align: center;
             font-weight: 600;
             font-size: 1em;
-            padding-bottom: 1em;
-            margin-top: -0.5em;
+            padding-top: 0.5em;
+            margin-bottom: 0.5em;
           }
           bt-round-slider {
             --round-slider-path-color: var(--slider-track-color);
@@ -847,7 +879,7 @@ export class BetterThermostatUiCard extends LitElement {
             box-sizing: border-box;
             border-radius: 100%;
             left: 50%;
-            top: 50%;
+            top: 45%;
             text-align: center;
             overflow-wrap: break-word;
             pointer-events: none;
@@ -858,30 +890,38 @@ export class BetterThermostatUiCard extends LitElement {
             flex-flow: column;
           }
           #temperature {
-            height: 5em;
+            height: 35%;
             display: inline-flex;
+            justify-content: center;
           }
           #current-infos {
-            display: flex;
+            display: inline-flex;
             flex-flow: row;
             justify-content: center;
-            gap: 1.2em;
+            gap: 0.4em;
             padding-bottom: 0.5em;
             padding-top: 0.7em;
             font-size: 18px !important;
+            height: 30px;
+            position: relative;
+            width: 65%;
+            overflow: visible;
+            margin: 0 auto;
+            margin-top: 0.6em;
           }
           #current-infos:before {
             content: attr(data-before);
-            width: 65%;
+            width: 95%;
             height: 2px;
             display: inline-block;
             position: absolute;
             z-index: 9999;
-            top: 45%;
-            color: rgba(158, 158, 158, 0.44);
-            border-bottom: 1px solid rgba(158, 158, 158, 0.44);
+            top: -65%;
+            color: var(--primary-text-color);
+            border-bottom: 1px solid var(--primary-text-color);
             padding: 2em;
             font-size: 9px;
+            opacity: 0.65;
           }
           #set-values {
           }

@@ -50,7 +50,7 @@ const languages: any = {
 };
 
 export function localize(string: string, search = '', replace = ''): string {
-  const localLangStore = localStorage.getItem('i18nextLng') || localStorage.getItem('lang') ||  navigator.language || 'en';
+  const localLangStore = localStorage.getItem('selectedLanguage') || localStorage.getItem('i18nextLng') || localStorage.getItem('lang') ||  navigator.language || 'en';
   const lang = RegExp("^.{0,2}").exec((localLangStore).replace(/['"]+/g, '').replace('-', '_')) || ['en'];
   let translated: string;
 

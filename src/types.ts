@@ -11,6 +11,8 @@ declare global {
 export interface BetterThermostatUiCardConfig extends LovelaceCardConfig {
   entity: string;
   eco_temperature?: number;
+  disable_window?: boolean;
+  disable_summer?: boolean;
   theme?: string;
   name?: string;
 }

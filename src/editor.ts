@@ -53,6 +53,14 @@ export class BetterThermostatUiCardEditor extends LitElement implements Lovelace
     return this._config?.eco_temperature || 18;
   }
 
+  get _disable_window(): boolean {
+    return this._config?.disable_window || false;
+  }
+
+  get _disable_summer(): boolean {
+    return this._config?.disable_summer || false;
+  }
+
   get _show_warning(): boolean {
     return this._config?.show_warning || false;
   }
