@@ -558,7 +558,8 @@ export class BetterThermostatUiCard extends LitElement {
     private _handleAction(e: MouseEvent): void {
         if ((e.currentTarget as any).mode === "eco") {
             const stateObj = this.hass!.states[this._config!.entity] as any;
-            if (stateObj.attributes.saved_temperature === null) {
+            const saved_temp = stateObj?.attributes?.saved_temperature || null;
+            if (saved_temp === null) {
               this.hass!.callService("better_thermostat", "set_temp_target_temperature", {
                   entity_id: this._config!.entity,
                   temperature: this._config?.eco_temperature || 18,
