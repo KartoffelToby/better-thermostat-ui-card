@@ -462,9 +462,6 @@ import {
           ?disabled=${this.disabled}
           focusable="false"
         >
-          <filter id="shadow-svg">
-            <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="cyan" flood-opacity="1"/>
-          </filter>
           <g class="slider">
             <path
               class="path"
@@ -503,8 +500,6 @@ import {
                 : svg`${this._renderHandle("value")}${this._renderHandle("current")}`
               : ``}
           </g>
-          <use filter="url(#shadow-svg)" xlink:href="#current"/>
-          <use filter="url(#shadow-svg)" xlink:href="#value"/>
         </svg>
       `;
     }
