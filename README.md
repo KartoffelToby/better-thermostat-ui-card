@@ -8,7 +8,8 @@ This project is in a early stage of development. Its a 1:1 adaption of the defau
 
 As for now the main improvment is the ability to see the extra status from better_thermostat like if a window open is deteteced, or nightmode is on or summer mode.
 
-<img style="width:200px; height:200px; object-fit:cover;" src="assets/1.png" width="200px">
+![Better Thermostat UI Card](/assets/1.png)
+
  
 ## Goals
 
