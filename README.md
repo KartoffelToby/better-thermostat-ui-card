@@ -39,6 +39,7 @@ Please add your language to this list as well while you are making your PR. put 
 What we have so far:
 - en - Reference 
 - bg
+- ca
 - cn
 - cs
 - da
