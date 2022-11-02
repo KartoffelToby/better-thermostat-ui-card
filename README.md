@@ -21,20 +21,20 @@ As for now the main improvment is the ability to see the extra status from bette
 
 | Name                 | Type    | Default      | Description                                                                                            |
 | -------------------- | ------- | ------------ | ------------------------------------------------------------------------------------------------------ |
-| type                 | string  | **Required** | `custom:better-thermostat-ui-card`                                                                          |
-| entity               | string  | **Required** | The entity id of climate entity (must be a better_thermostat entity). Example: `climate.hvac`                                               |
-| eco_temperature      | number  | **optional** | target temp for night/away/eco mode triggerd by ui button                                                                          |
-| disable_window      | boolean  | **optional** | turn of the window open indicator                                                                          |
-| disable_summer      | boolean  | **optional** | trun of the summer indicator                                                                          |
+| type                 | string  | **Required** | `custom:better-thermostat-ui-card`                                                                     |
+| entity               | string  | **Required** | The entity id of climate entity (must be a better_thermostat entity). Example: `climate.hvac`          |
+| eco_temperature      | number  | **optional** | target temp for night/away/eco mode triggerd by ui button                                              |
+| disable_window      | boolean  | **optional** | turn off the window open indicator                                                                     |
+| disable_summer      | boolean  | **optional** | trun off the summer indicator                                                                          |
 
 
 ## Help wanted!
 
 It would be awsome if you help me to translate this card to other languages.
 
-Create a PR, the Translation is done in json files checkout the en translation [here](src/localize/languages/en.json)
+Create a PR, the Translation is done in json files checkout the en translation [here](https://github.com/KartoffelToby/better-thermostat-ui-card/blob/master/src/localize/languages/en.json)
 
-Please add your language to this list as well while you are making your PR. put it in alfabetical order and according to [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+Please add your language to this list as well while you are making your PR. Put it in alfabetical order and according to [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
 
 What we have so far:
 - en - Reference 
