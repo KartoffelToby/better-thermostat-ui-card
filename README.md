@@ -1,4 +1,4 @@
-[![Version - 0.8.1](https://img.shields.io/badge/Version-0.8.1-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
+[![Version - 0.8.2](https://img.shields.io/badge/Version-0.8.2-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
 [![Discord](https://img.shields.io/discord/925725316540923914.svg?style=for-the-badge)](https://discord.gg/9BUegWTG3K)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 

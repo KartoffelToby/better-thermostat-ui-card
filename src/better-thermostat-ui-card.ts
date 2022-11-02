@@ -119,6 +119,7 @@ export class BetterThermostatUiCard extends LitElement {
 
     @state() private _config ? : any;
     @state() private _setTemp ? : number | number[];
+    @state() private _setHumidity?: number | number[];
 
     @query("ha-card") private _card ? : any;
 
@@ -179,9 +180,9 @@ export class BetterThermostatUiCard extends LitElement {
               <text
                 x="50%"
                 dx="1"
-                y="70%"
+                y="40%"
                 text-anchor="middle"
-                style="font-size: 15px;"
+                style="font-size: 9px;"
               >
               ${
                 stateObj.state === UNAVAILABLE
@@ -221,7 +222,7 @@ export class BetterThermostatUiCard extends LitElement {
                         })}
                       `
               }
-              <tspan dx="-2" dy="-6.5" style="font-size: 5px;">
+              <tspan dx="-2" dy="-4.5" style="font-size: 3px;">
               ${this.hass.config.unit_system.temperature}
             </tspan>
               </text>
@@ -333,10 +334,12 @@ export class BetterThermostatUiCard extends LitElement {
                     </div>
                     <div id="temperature">${setValues}</div>
                     <div id="current-infos">
-                      ${currentTemperature}
-                      ${
-                        stateObj.attributes.humidity !== null && stateObj.attributes.humidity > 0 ? currentHumidity : ""
-                      }
+                      <div>
+                        ${currentTemperature}
+                        ${
+                          stateObj.attributes.humidity !== null && stateObj.attributes.humidity > 0 ? currentHumidity : ""
+                        }
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -411,6 +414,7 @@ export class BetterThermostatUiCard extends LitElement {
 
         if (!oldHass || oldHass.states[this._config.entity] !== stateObj) {
             this._setTemp = this._getSetTemp(stateObj);
+            this._setHumidity = this._getHumidity(stateObj);
         }
     }
 
@@ -466,6 +470,13 @@ export class BetterThermostatUiCard extends LitElement {
         }
 
         return stateObj.attributes.temperature;
+    }
+
+    private _getHumidity(stateObj: HassEntity): undefined | number | [number, number] {
+        if (stateObj.attributes.humidity) {
+            return stateObj.attributes.humidity;
+        }
+        return 0;
     }
 
     private _dragEvent(e): void {
@@ -734,7 +745,6 @@ export class BetterThermostatUiCard extends LitElement {
         return css `
           :host {
             display: block;
-            min-width: 300px;
           }
           .humindity, .temperature {
             display: grid;
@@ -891,28 +901,37 @@ export class BetterThermostatUiCard extends LitElement {
             flex-flow: column;
           }
           #temperature {
+            /*
             height: 35%;
             display: inline-flex;
             justify-content: center;
+            */
+            height: 30%;
           }
           #current-infos {
-            display: inline-flex;
-            flex-flow: row;
-            justify-content: center;
-            gap: 0.4em;
-            padding-bottom: 0.5em;
+            display: inherit;
+            padding-bottom: 1.5em;
             padding-top: 0.7em;
-            font-size: 18px !important;
             height: 30px;
             position: relative;
-            width: 65%;
+            width: 100%;
             overflow: visible;
-            margin: 0 auto;
-            margin-top: 0.6em;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #current-infos div {
+          width: 60%;
+          display: inherit;
+          margin: 0px 12%;
+          gap: 1em;
+        }
+          #current-infos svg {
+            width: inherit;
           }
           #current-infos:before {
             content: attr(data-before);
-            width: 95%;
+            width: 70%;
             height: 2px;
             display: inline-block;
             position: absolute;
@@ -923,6 +942,11 @@ export class BetterThermostatUiCard extends LitElement {
             padding: 2em;
             font-size: 9px;
             opacity: 0.65;
+            overflow: visible;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+}
           }
           #set-values {
           }
@@ -947,6 +971,9 @@ export class BetterThermostatUiCard extends LitElement {
           }
           text {
             fill: var(--primary-text-color);
+          }
+          svg {
+            overflow: visible;
           }
         `;
     }

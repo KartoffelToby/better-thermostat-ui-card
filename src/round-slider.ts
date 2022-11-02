@@ -11,6 +11,14 @@ import {
     CSSResultGroup,
   } from "lit";
   import { customElement, property, state } from "lit/decorators.js";
+  import gsap from "gsap";
+  import { MotionPathPlugin } from "gsap/MotionPathPlugin";
+  gsap.registerPlugin(MotionPathPlugin);
+  import { ResizeObserver } from "@juggle/resize-observer";
+
+  const ro = new ResizeObserver(entries => {
+    entries.forEach(entry => entry.target.resizedCallback(entry.contentRect));
+  });
   @customElement('bt-round-slider')
   class RoundSlider extends LitElement {
     @property({ type: Number }) public value: number | undefined;
@@ -31,6 +39,10 @@ import {
     @property() public valueLabel: string | undefined;
     @property() public lowLabel: string | undefined;
     @property() public highLabel: string | undefined;
+
+    private init: boolean = false;
+
+    private dasharray: number = 590.48;
   
     @state() private _scale = 1;
   
@@ -43,7 +55,7 @@ import {
       type: string;
       cooldown: number;
     };
-  
+
     constructor() {
       super();
       this.dragEnd = this.dragEnd.bind(this);
@@ -62,6 +74,7 @@ import {
         passive: false,
       });
       document.addEventListener("keydown", this._keyStep);
+      ro.observe(this);
     }
   
     disconnectedCallback() {
@@ -71,6 +84,14 @@ import {
       document.removeEventListener("mousemove", this.drag);
       document.removeEventListener("touchmove", this.drag);
       document.removeEventListener("keydown", this._keyStep);
+      ro.unobserve(this);
+    }
+
+    resizedCallback({ width, height }) {
+      this.dasharray = (width*2+90.48);
+      this.dragging = true;
+      this.update()
+      this.dragging = false;
     }
   
     private get _start(): number {
@@ -121,9 +142,10 @@ import {
       return ((value - this.min) / (this.max - this.min)) * 100;
     }
 
-    private _value2bar(value: number): number {
-      return -(((value - this.min) / (this.max - this.min)) * 590) - 590;
+    private _percent2bar(percent: number): number {
+      return this.dasharray - ((this.dasharray / 100) * percent);
     }
+
   
     private _angle2value(angle: number): number {
       return (
@@ -188,13 +210,9 @@ import {
   
       // Avoid double events mouseDown->focus
       if (this?._rotation && this?._rotation.type !== "focus") return;
-  
+      const that = this;
       // If the bar was touched, find the nearest handle and drag from that
       if (handle.classList.contains("shadowpath")) {
-        if (ev.type === "touchstart")
-          cooldown = window.setTimeout(() => {
-            if (this?._rotation) this?._rotation?.cooldown = undefined;
-          }, 200);
         if (this.low == null) {
           handle = this?.shadowRoot?.querySelector("#value");
         } else {
@@ -366,6 +384,47 @@ import {
         const scale = Math.max(rect.width, rect.height);
         this._scale = 2 / scale;
       }
+      if (changedProperties.has("value") && this.dragging === false && this.init) {
+        gsap.to(this.shadowRoot.querySelector("#value.handle"), {
+          duration: 5, 
+          repeat: 0,
+          repeatDelay: 0,
+          yoyo: false,
+          ease: "power1.inOut",
+          motionPath:{
+            path: this.shadowRoot.querySelector('#template'),
+            align: this.shadowRoot.querySelector('#template'),
+            autoRotate: false,
+            fromCurrent: true,
+            useRadians: true,
+            curviness: 2,
+            start: (this._value2percent(changedProperties.get("value")) / 100) || 0,
+            end: (this._value2percent(this.value) / 100) || 0
+          }
+        });
+      }
+      if (changedProperties.has("current") && this.init) {
+        gsap.to(this.shadowRoot.querySelector("#current"), {
+          duration: 25, 
+          repeat: 0,
+          repeatDelay: 0,
+          yoyo: false,
+          ease: "power1.inOut",
+          motionPath:{
+            path: this.shadowRoot.querySelector("#template"),
+            align: this.shadowRoot.querySelector("#template"),
+            autoRotate: false,
+            fromCurrent: true,
+            useRadians: true,
+            curviness: 2,
+            start: (this._value2percent(changedProperties.get("current")) / 100) || 0,
+            end: (this._value2percent(this.current) / 100) || 0
+          }
+        });
+       
+      }
+  
+      this.init = true;
     }
   
     _renderArc(start: number, end: number) {
@@ -380,10 +439,29 @@ import {
           ${endXY.x} ${endXY.y}
       `;
     }
+
+    private animateValue(start: number, end: number, duration: number) {
+      if (start === end) return;
+      const step = Math.abs(end - start) / duration;
+      console.log(start,end,step);
+      start = start + step;
+      const theta = this._value2angle(step);
+      const pos = this._angle2xy(theta);
+      this.shadowRoot.querySelector("path.handle").setAttribute("d", `
+        M ${pos.x} ${pos.y}
+        L ${pos.x + 0.001} ${pos.y + 0.001}
+      `);
+      requestAnimationFrame(this.animateValue(start, end, duration - 1));
+    }
   
     private _renderHandle(id: string): SVGTemplateResult {
       const theta = this._value2angle(this[id]);
       const pos = this._angle2xy(theta);
+      let dString = `
+        M ${pos.x} ${pos.y}
+        L ${pos.x + 0.001} ${pos.y + 0.001}
+      `;
+      if (!this.init) dString = "";
       const label =
         {
           value: this.valueLabel,
@@ -393,13 +471,10 @@ import {
   
       if (id === "current") {
         return svg`
-            <g class="current current-handle" style="offset-path: path('${this._renderArc(this._start, this._end).replace(/(\r\n|\n|\r)/gm, "")}'); offset-distance: ${this._value2percent(this[id])}%;">
+            <g class="current current-handle">
               <path
                 id=${id}
-                d="
-                M 0 0
-                L 0.001 0.001
-                "
+                d=${dString}
                 class="current-handle"
                 vector-effect="non-scaling-stroke"
                 stroke-width="11"
@@ -415,14 +490,11 @@ import {
         // Two handles are drawn. One visible, and one invisible that's twice as
         // big. Makes it easier to click.
         return svg`
-            <g class="${id} handle ${this.dragging ? 'drag': ''}" style="offset-path: path('${this._renderArc(this._start, this._end).replace(/(\r\n|\n|\r)/gm, "")}'); offset-distance: ${this._value2percent(this[id])}%;">
+            <g class="${id} handle ${this.dragging ? 'drag': ''}">
             <path
                 id=${id}
                 class="overflow"
-                d="
-                M 0 0
-                L 0.001 0.001
-                "
+                d=${dString}
                 vector-effect="non-scaling-stroke"
                 stroke="rgba(0,0,0,0)"
                 stroke-width="${4 * this.handleSize * this._scale}"
@@ -430,10 +502,7 @@ import {
             <path
                 id=${id}
                 class="handle"
-                d="
-                M 0 0
-                L 0.001 0.001
-                "
+                d=${dString}
                 vector-effect="non-scaling-stroke"
                 stroke-width="${2 * this.handleSize * this._scale}"
                 tabindex="0"
@@ -462,32 +531,32 @@ import {
           ?disabled=${this.disabled}
           focusable="false"
         >
-          <g class="slider">
-            <path
-              class="path"
-              d=${this._renderArc(this._start, this._end)}
-              vector-effect="non-scaling-stroke"
-            />
-            <path
-              class="bar ${this.dragging ? 'drag': ''}"
-              style="stroke-dashoffset: ${this._value2bar(this.value)};"
-              vector-effect="non-scaling-stroke"
-              d=${this._renderArc(
-                this._value2angle(this.low != null ? this.low : this.min),
-                this._value2angle(this.high != null ? this.high : this.max)
-              )}
-            />
-            <path
-              class="shadowpath"
-              d=${this._renderArc(this._start, this._end)}
-              vector-effect="non-scaling-stroke"
-              stroke="rgba(0,0,0,0)"
-              stroke-width="${3 * this.handleSize * this._scale}"
-              stroke-linecap="butt"
-            />
-          </g>
-  
+        <g class="slider">
+          <path
+            class="path"
+            d=${this._renderArc(this._start, this._end)}
+            vector-effect="non-scaling-stroke"
+          />
+          <path
+            class="bar ${this.dragging ? 'drag': ''}"
+            style="stroke-dashoffset: ${this._percent2bar(this._value2percent(this.value))}; stroke-dasharray: ${this.dasharray};"
+            vector-effect="non-scaling-stroke"
+            d=${this._renderArc(this._start, this._end)}
+          />
+          <path
+            class="shadowpath"
+            d=${this._renderArc(this._start, this._end)}
+            vector-effect="non-scaling-stroke"
+            stroke="rgba(0,0,0,0)"
+            stroke-width="${3 * this.handleSize * this._scale}"
+            stroke-linecap="butt"
+          />
+        </g>
           <g class="handles">
+            <path
+              id="template"
+              d=${this._renderArc(this._start, this._end)}
+            />
             ${this._showHandle
               ? this.low != null
                 ? this._reverseOrder
@@ -511,7 +580,7 @@ import {
           width: 100%;
         }
         svg {
-          overflow: visible;
+          overflow: visible !important;
           display: block;
         }
         path {
@@ -521,10 +590,8 @@ import {
             pointer-events: none;
             z-index: 90;
             stroke: var(--round-slider-path-color, lightgray);
-            transition: offset-distance 15s ease-in-out
         }
         .handle {
-          transition: offset-distance 600ms ease-in-out, stroke 1.6s ease-in-out;
           transition-delay: 0;
         }
         .handle.drag {
@@ -535,15 +602,19 @@ import {
           stroke-width: var(--round-slider-path-width, 3);
           stroke-linecap: var(--round-slider-linecap, round);
         }
+        #template {
+          stroke-width: 0;
+          stroke: transparent;
+          z-index: -1;
+          fill: transparent;
+        }
         .path {
           stroke: var(--round-slider-path-color, lightgray);
         }
         .bar {
+          transition: stroke-dashoffset 5s ease-in-out;
+          stroke-dashoffset: 0;
           stroke: var(--round-slider-bar-color, deepskyblue);
-          transition: stroke-dashoffset 600ms ease-in-out, stroke 1.6s ease-in-out;
-          transform: rotate(360deg);
-          stroke-dasharray: 590;
-          stroke-dashoffset: 590;
         }
         .bar.drag {
           transition: none;
