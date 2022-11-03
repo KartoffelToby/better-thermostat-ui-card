@@ -13,6 +13,9 @@ export interface BetterThermostatUiCardConfig extends LovelaceCardConfig {
   eco_temperature?: number;
   disable_window?: boolean;
   disable_summer?: boolean;
+  disable_eco?: boolean;
+  disable_heat?: boolean;
+  disable_off?: boolean;
   theme?: string;
-  name?: string;
+  name?: any;
 }

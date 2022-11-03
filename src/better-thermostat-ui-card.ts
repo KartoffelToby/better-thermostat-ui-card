@@ -148,9 +148,12 @@ export class BetterThermostatUiCard extends LitElement {
         }
 
         const mode = stateObj.state in modeIcons ? stateObj.state : "unknown-mode";
-        const name =
+        let name =
             this._config!.name ||
             this.computeStateName(this.hass!.states[this._config!.entity]);
+        if(this._config!.name === false) {
+            name = "";
+        }
         const targetTemp =
             stateObj.attributes.temperature !== null &&
             Number.isFinite(Number(stateObj.attributes.temperature)) ?
@@ -334,7 +337,7 @@ export class BetterThermostatUiCard extends LitElement {
                     </div>
                     <div id="temperature">${setValues}</div>
                     <div id="current-infos">
-                      <div>
+                      <div class="${stateObj.attributes.humidity !== null && stateObj.attributes.humidity > 0 ? 'two': 'one'}">
                         ${currentTemperature}
                         ${
                           stateObj.attributes.humidity !== null && stateObj.attributes.humidity > 0 ? currentHumidity : ""
@@ -346,13 +349,13 @@ export class BetterThermostatUiCard extends LitElement {
               </div>
               <div id="info" .title=${name}>
                 <div id="modes">
-                  ${this._renderIcon("heat", mode)}
-                  ${
+                  ${this._config.disable_heat ? html `` : this._renderIcon("heat", mode)}
+                  ${this._config.disable_eco ? html `` :
                     stateObj.attributes.saved_temperature &&
                     stateObj.attributes.saved_temperature !== "none" &&
                     stateObj.state !== UNAVAILABLE
                       ? this._renderIcon("eco","eco"): this._renderIcon("eco", "none")}
-                  ${this._renderIcon("off", mode)}
+                  ${this._config.disable_off ? html `` : this._renderIcon("off", mode)}
                 </div>
               </div>
               <div id="title">${name}</div>
@@ -920,8 +923,14 @@ export class BetterThermostatUiCard extends LitElement {
             left: 50%;
             transform: translateX(-50%);
         }
-        #current-infos div {
+        #current-infos div.two {
           width: 60%;
+          display: inherit;
+          margin: 0px 12%;
+          gap: 1em;
+        }
+        #current-infos div.one {
+          width: 100%;
           display: inherit;
           margin: 0px 12%;
           gap: 1em;

@@ -1,4 +1,4 @@
-[![Version - 0.8.2](https://img.shields.io/badge/Version-0.8.2-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
+[![Version - 0.9.0](https://img.shields.io/badge/Version-0.9.0-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
 [![Discord](https://img.shields.io/discord/925725316540923914.svg?style=for-the-badge)](https://discord.gg/9BUegWTG3K)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
@@ -26,7 +26,10 @@ As for now the main improvment is the ability to see the extra status from bette
 | eco_temperature      | number  | **optional** | target temp for night/away/eco mode triggerd by ui button                                              |
 | disable_window      | boolean  | **optional** | turn off the window open indicator                                                                     |
 | disable_summer      | boolean  | **optional** | trun off the summer indicator                                                                          |
-
+| disable_heat        | boolean  | **optional** | trun off the on/heat button                                                                          |
+| disable_eco         | boolean  | **optional** | trun off the eco button                                                                          |
+| disable_off         | boolean  | **optional** | trun off the off button                                                                         |
+| name                | string/boolean  | **optional** | override the default entity name, us false to 
 
 ## Help wanted!
 
