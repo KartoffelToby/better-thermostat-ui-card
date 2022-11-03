@@ -1,7 +1,7 @@
 {
   "common": {
       "version": "version",
-      "current": "current"
+      "current": "nuværende"
   },
   "extra_states": {
     "window_open": "Vindue åben",
