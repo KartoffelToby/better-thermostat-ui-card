@@ -3,6 +3,19 @@
       "version": "version",
       "current": "current"
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Disable window",
+        "disable_summer": "Disable summer",
+        "disable_eco": "Disable eco",
+        "disable_heat": "Disable heat",
+        "disable_off": "Disable off",
+        "eco_temperature": "Eco temperature",
+        "set_current_as_main": "Swap target with current temperature places"
+      }
+    }
+  },
   "extra_states": {
     "window_open": "Window open",
     "night_mode": "Night mode",

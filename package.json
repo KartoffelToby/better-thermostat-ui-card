@@ -1,6 +1,6 @@
 {
   "name": "better-thermostat-ui",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "Lovelace better-thermostat-ui",
   "keywords": [
     "home-assistant",
@@ -10,48 +10,49 @@
     "lovelace",
     "custom-cards",
     "better-thermostat",
-    "better_thermostat",
-    "ai_thermostat"
+    "better_thermostat"
   ],
   "module": "better-thermostat-ui-card.js",
-  "repository": "",
-  "author": "",
+  "repository": "https://github.com/KartoffelToby/better-thermostat-ui-card",
+  "author": "Tobias Haber",
+  "type": "module",
+  "scripts": {
+    "start": "rollup -c --watch",
+    "build": "rollup -c",
+    "format": "prettier --write .",
+    "start:hass": "docker run --rm -p8123:8123 -v ${PWD}/.hass_dev:/config homeassistant/home-assistant:beta",
+    "start:hass-cmd": "docker run --rm -p8123:8123 -v  %cd%/.hass_dev:/config homeassistant/home-assistant:beta"
+  },
   "dependencies": {
-    "@juggle/resize-observer": "^3.4.0",
+    "@babel/preset-env": "^7.20.2",
     "@mdi/js": "^7.0.96",
+    "@svgdotjs/svg.js": "^3.1.2",
     "@types/gsap": "^3.0.0",
+    "animejs": "^3.2.1",
     "custom-card-helpers": "^1.9.0",
     "gsap": "^3.11.3",
     "home-assistant-js-websocket": "^8.0.0",
-    "lit": "^2.4.0"
+    "lit": "^2.4.1",
+    "memoize-one": "^6.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.19.3",
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-proposal-decorators": "^7.19.3",
-    "@rollup/plugin-json": "^4.1.0",
-    "@typescript-eslint/eslint-plugin": "^5.39.0",
-    "@typescript-eslint/parser": "^5.39.0",
-    "eslint": "^8.24.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "@babel/core": "^7.20.2",
+    "@babel/preset-typescript": "^7.18.6",
+    "@material/mwc-ripple": "^0.27.0",
+    "@material/tab-bar": "^14.0.0",
+    "@rollup/plugin-babel": "^6.0.2",
+    "@rollup/plugin-commonjs": "^23.0.2",
+    "@rollup/plugin-json": "^5.0.1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-typescript": "^9.0.2",
+    "@types/color": "^3.0.3",
+    "@types/hammerjs": "^2.0.41",
+    "@types/node": "^18.11.9",
+    "eslint": "^8.28.0",
     "prettier": "^2.7.1",
-    "rollup": "^2.79.1",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup": "^3.4.0",
     "rollup-plugin-serve": "^2.0.1",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript2": "^0.34.1",
-    "rollup-plugin-uglify": "^6.0.4",
-    "typescript": "^4.8.4"
-  },
-  "scripts": {
-    "start": "rollup -c rollup.config.dev.js --watch",
-    "build": "npm run rollup",
-    "lint": "eslint src/*.ts",
-    "rollup": "rollup -c"
+    "typescript": "^4.9.3"
   }
 }

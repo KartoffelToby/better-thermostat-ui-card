@@ -22,6 +22,7 @@ import * as bg from './languages/bg.json';
 import * as fi from './languages/fi.json';
 import * as ro from './languages/ro.json';
 import * as ca from './languages/ca.json';
+import { HomeAssistant } from '../ha';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const languages: any = {
@@ -50,14 +51,15 @@ const languages: any = {
   ro: ro,
   ca: ca,
 };
+const DEFAULT_LANG = "en";
 
-export function localize(string: string, search = '', replace = ''): string {
-  const localLangStore = localStorage.getItem('selectedLanguage') || localStorage.getItem('i18nextLng') || localStorage.getItem('lang') ||  navigator.language || 'en';
-  const lang = RegExp("^.{0,2}").exec((localLangStore).replace(/['"]+/g, '').replace('-', '_')) || ['en'];
+export function localize({ hass, string, search = '', replace = '' }: { hass?: HomeAssistant; string: string; search?: string; replace?: string; }): string {
+  const lang = hass?.locale.language ?? DEFAULT_LANG;
+
   let translated: string;
 
   try {
-    translated = string.split('.').reduce((o, i) => o[i], languages[lang[0]]);
+    translated = string.split('.').reduce((o, i) => o[i], languages[lang]);
   } catch (e) {
     translated = string.split('.').reduce((o, i) => o[i], languages['en']);
   }
@@ -68,4 +70,25 @@ export function localize(string: string, search = '', replace = ''): string {
     translated = translated.replace(search, replace);
   }
   return translated;
+}
+
+
+function getTranslatedString(key: string, lang: string): string | undefined {
+    try {
+        return key
+            .split(".")
+            .reduce((o, i) => (o as Record<string, unknown>)[i], languages[lang]) as string;
+    } catch (_) {
+        return undefined;
+    }
+}
+
+export default function setupCustomlocalize(hass?: HomeAssistant) {
+    return function (key: string) {
+        const lang = hass?.locale.language ?? DEFAULT_LANG;
+
+        let translated = getTranslatedString(key, lang);
+        if (!translated) translated = getTranslatedString(key, DEFAULT_LANG);
+        return translated ?? key;
+    };
 }
