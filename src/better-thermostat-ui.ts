@@ -578,8 +578,6 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (changedProps.has("_config") !== undefined) {
       if(changedProps.get("_config") !== undefined) {
-        console.log(changedProps);
-
         this._hasSummer = false;
         this._hasWindow = false;
         this.humidity = 0;
@@ -641,8 +639,6 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       if (!this.hass || !this._config || (!changedProps.has("hass") && !changedProps.has("_config"))) {
           return;
       }
-
-      console.log(changedProps);
 
       const entity_id:any = this._config.entity;
 
