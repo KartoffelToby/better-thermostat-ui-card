@@ -393,7 +393,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
     if(this.value === _newValue) return;
     this.value = _newValue
     this._updateDisplay();
-    this._vibrate(3);
+    this._vibrate(2);
   }
 
   private _updateDragger(value:boolean) {
@@ -531,7 +531,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           this._setTemperature();
       },
       onPress: () => {
-        that._vibrate(50);
+        that._vibrate(30);
         valueHandler.classList.add("active");
         valueHandler.focus();
       },
