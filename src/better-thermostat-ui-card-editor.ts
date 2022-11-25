@@ -103,5 +103,6 @@ export class ClimateCardEditor extends LitElement implements LovelaceCardEditor 
 
     private _valueChanged(ev: CustomEvent): void {
         fireEvent(this, "config-changed", { config: ev.detail.value });
+        fireEvent(this, "hass", { config: ev.detail.value });
     }
 }

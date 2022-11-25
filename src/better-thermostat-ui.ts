@@ -389,8 +389,11 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   private _updateValue(value: number) {
-    this.value = Math.round(value / this.step) * this.step;
+    const _newValue = Math.round(value / this.step) * this.step;
+    if(this.value === _newValue) return;
+    this.value = _newValue
     this._updateDisplay();
+    this._vibrate(3);
   }
 
   private _updateDragger(value:boolean) {
@@ -465,6 +468,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
     return pointModifier(point);
   }
 
+  private _vibrate(delay:number) {
+    try {
+      navigator.vibrate(delay);
+    } catch(e){}
+  }
+
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     const that = this;
     const valueHandler: any = this?.shadowRoot?.querySelector(".value-handler");
@@ -522,6 +531,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           this._setTemperature();
       },
       onPress: () => {
+        that._vibrate(50);
         valueHandler.classList.add("active");
         valueHandler.focus();
       },
@@ -566,6 +576,15 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
+    if (changedProps.has("_config") !== undefined) {
+      if(changedProps.get("_config") !== undefined) {
+        console.log(changedProps);
+
+        this._hasSummer = false;
+        this._hasWindow = false;
+        this.humidity = 0;
+      }
+    }
     if (changedProps.get("hass") !== undefined) {
       this._init = false;
     }
@@ -619,9 +638,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   public willUpdate(changedProps: PropertyValues) {
-      if (!this.hass || !this._config || !changedProps.has("hass")) {
+      if (!this.hass || !this._config || (!changedProps.has("hass") && !changedProps.has("_config"))) {
           return;
       }
+
+      console.log(changedProps);
+
       const entity_id:any = this._config.entity;
 
       const stateObj = this.hass.states[entity_id] as ClimateEntity;
@@ -658,8 +680,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         if (attributes.current_temperature) {
           this.current = attributes.current_temperature;
         }
-        if (attributes?.humidity !== undefined && attributes?.humidity !== 0) {
-          this.humidity = attributes.humidity;
+        if (attributes?.humidity !== undefined) {
+          this.humidity = parseFloat(attributes.humidity);
         }
         if (attributes?.window_open !== undefined) {
           this._hasWindow = true;
@@ -772,7 +794,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                   this.hass.locale,
                   { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                 )}`}
-                <tspan dx="-3" dy="-5.5" style="font-size: 5px;">
+                <tspan dx="2" dy="-5.5" style="font-size: 5px;">
                   ${svg`
                     ${this.hass.config.unit_system.temperature}
                   `}
@@ -792,13 +814,13 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                       this.hass.locale,
                       { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                     )}`}
-                    <tspan dx="-1" dy="-2" style="font-size: 3px;">
+                    <tspan dx="1" dy="-2" style="font-size: 3px;">
                       ${svg`
                         ${this.hass.config.unit_system.temperature}
                       `}
                     </tspan>
                   </text>
-                  <path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d=${mdiHeatWave}/>
+                  <path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />
                 `: svg `
                   <text x="-12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:8px;">
                     ${svg`${formatNumber(
@@ -806,32 +828,26 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                       this.hass.locale,
                       { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                     )}`}
-                    <tspan dx="-1" dy="-2" style="font-size: 3px;">
+                    <tspan dx="1" dy="-2" style="font-size: 3px;">
                       ${svg`
                         ${this.hass.config.unit_system.temperature}
                       `}
                     </tspan>
                   </text>
-                  <path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-2.5,-4) scale(0.25)" fill="#9d9d9d"  d=${mdiHeatWave}/>
                   <text x="12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:8px;">
                     ${svg`${formatNumber(
                       this.humidity,
                       this.hass.locale,
                       { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                     )}`}
-                    <tspan dx="-1" dy="-2" style="font-size: 3px;">
+                    <tspan dx="1" dy="-2" style="font-size: 3px;">
                     %
                     </tspan>
                   </text>
+                  <path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d=${mdiHeatWave} />
                 `}
 
               </g>
-              <!--<g transform="translate(62.5,80)">  
-                <circle id="c-minus" cx="-20" cy="0" r="5" fill="#e7e7e8" />
-                <path  class="control" transform="translate(-24,-4) scale(0.35)" d=${mdiMinus} />
-                <circle id="c-plus" cx="20" cy="0" r="5" fill="#e7e7e8" />
-                <path  class="control" transform="translate(16,-4) scale(0.35)" d=${mdiPlus} />
-              </g>-->
                 </svg>
                 <div id="modes">
                 ${this?._hasSummer ? svg`
@@ -858,3 +874,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   `;
   };
 }
+
+/*
+              <!--<g transform="translate(62.5,80)">  
+                <circle id="c-minus" cx="-20" cy="0" r="5" fill="#e7e7e8" />
+                <path  class="control" transform="translate(-24,-4) scale(0.35)" d=${mdiMinus} />
+                <circle id="c-plus" cx="20" cy="0" r="5" fill="#e7e7e8" />
+                <path  class="control" transform="translate(16,-4) scale(0.35)" d=${mdiPlus} />
+              </g>-->
+*/

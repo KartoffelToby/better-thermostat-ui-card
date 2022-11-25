@@ -1,12 +1,13 @@
 import commonjs from "@rollup/plugin-commonjs";
-import nodeResolve from "@rollup/plugin-node-resolve";
+import resolve from '@rollup/plugin-node-resolve';
 import typescript from "@rollup/plugin-typescript";
 import babel from "@rollup/plugin-babel";
 import json from "@rollup/plugin-json";
 import { terser } from "rollup-plugin-terser";
 import serve from "rollup-plugin-serve";
 import ignore from "./rollup-ignore-plugin.js";
-
+import cssImports from 'rollup-plugin-import-css';
+import minifyHTML from 'rollup-plugin-minify-html-literals';
 const IGNORED_FILES = [
 
 ];
@@ -27,10 +28,12 @@ const plugins = [
     ignore({
         files: IGNORED_FILES.map((file) => require.resolve(file)),
     }),
+    resolve(),
+    minifyHTML.default(),
+    cssImports(),
     typescript({
         declaration: false,
     }),
-    nodeResolve(),
     json(),
     commonjs(),
     babel({
@@ -38,6 +41,7 @@ const plugins = [
         babelHelpers: "bundled",
     }),
     ...(dev ? [serve(serveOptions)] : [terser({
+        compress: {},
         warnings: true,
         output: {
           comments: function (node, comment) {
