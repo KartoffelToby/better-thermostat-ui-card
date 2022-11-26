@@ -29,7 +29,6 @@ const plugins = [
         files: IGNORED_FILES.map((file) => require.resolve(file)),
     }),
     resolve(),
-    minifyHTML.default(),
     cssImports(),
     typescript({
         declaration: false,
@@ -40,7 +39,7 @@ const plugins = [
         exclude: "node_modules/**",
         babelHelpers: "bundled",
     }),
-    ...(dev ? [serve(serveOptions)] : [terser({
+    terser({
         compress: {},
         warnings: true,
         output: {
@@ -53,7 +52,8 @@ const plugins = [
             }
           },
         },
-      })]),
+    }),
+    ...(dev ? [serve(serveOptions)] : []),
 ];
 
 export default [

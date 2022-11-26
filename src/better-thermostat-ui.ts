@@ -159,6 +159,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   @property({ type: Boolean, reflect: true }) public dragging = false;
 
   private _init: Boolean = true;
+  private _firstRender: Boolean = true;
   private _ignore: Boolean = false;
   private _hasWindow: Boolean = false;
   private _hasSummer: Boolean = false;
@@ -313,6 +314,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
       #value {
         fill: var(--mode-color);
+        r: 5;
+        z-index: 9999 !important;
         transition: r 0.3s ease-in-out, fill 0.6s ease-in-out;
       }
 
@@ -321,7 +324,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       }
 
       #value:hover, #value:active, #value:focus, #value.active {
-        r: 8;
+        r: 8 !important;
       }
 
       #current {
@@ -573,6 +576,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         end: (this._value2percent(this.current) / 100) || 0
       }
     });
+    this._init = false;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
@@ -596,7 +600,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
     const currentHandler: any = this?.shadowRoot?.querySelector(".current-handler")
     if (changedProperties.has("value")) {
       gsap.to(valueHandler, {
-        duration: (changedProperties.get("state") !== undefined ? 5 : 0), 
+        duration: (this._firstRender) ? 0 : 5, 
         repeat: 0,
         repeatDelay: 0,
         yoyo: false,
@@ -616,7 +620,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
     }
     if (changedProperties.has("current")) {
       gsap.to(currentHandler, {
-        duration: (changedProperties.get("state") !== undefined ? 25 : 0),
+        duration: (this._firstRender) ? 0 : 25,
         repeat: 0,
         repeatDelay: 0,
         yoyo: false,
@@ -633,6 +637,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         }
       });
     }
+    this._firstRender = false;
   }
 
   public willUpdate(changedProps: PropertyValues) {
