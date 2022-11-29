@@ -192,6 +192,19 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   public static styles: CSSResultGroup = css `
       :host {
           display: block;
+          overflow: hidden;
+          box-sizing: border-box;
+      }
+
+      ha-card {
+        height: 100%;
+        width: 100%;
+        vertical-align: middle;
+        justify-content: center;
+        justify-items: center;
+        padding-left: 1em;
+        padding-right: 1em;
+        box-sizing: border-box;
       }
 
       .unavailable {
@@ -221,9 +234,10 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           height: 100%;
       }
       .content {
-        margin: 1.5em;
-        margin-top: -1em;
-        margin-bottom: 1em;
+        margin: -0.5em auto;
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
       }
       .name {
         display: block;
@@ -240,7 +254,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         
         transform: scale(1.5);
         -webkit-backface-visibility: hidden;
-        max-width: 345px;
+        max-width: 255px;
       }
       
       path {
@@ -293,10 +307,13 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       }
 
       #modes {
+        z-index: 1;
+        position: relative;
         display: flex;
         width: auto;
         justify-content: center;
         margin-top: 1em;
+        margin-bottom: 1em;
       }
 
       #modes > * {
@@ -795,7 +812,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                   this.hass.locale,
                   { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                 )}`}
-                <tspan dx="2" dy="-5.5" style="font-size: 5px;">
+                <tspan dx="-2" dy="-5.5" style="font-size: 5px;">
                   ${svg`
                     ${this.hass.config.unit_system.temperature}
                   `}
@@ -815,7 +832,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                       this.hass.locale,
                       { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                     )}`}
-                    <tspan dx="1" dy="-2" style="font-size: 3px;">
+                    <tspan dx="-1" dy="-2" style="font-size: 3px;">
                       ${svg`
                         ${this.hass.config.unit_system.temperature}
                       `}
@@ -829,7 +846,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                       this.hass.locale,
                       { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                     )}`}
-                    <tspan dx="1" dy="-2" style="font-size: 3px;">
+                    <tspan dx="-1" dy="-2" style="font-size: 3px;">
                       ${svg`
                         ${this.hass.config.unit_system.temperature}
                       `}
