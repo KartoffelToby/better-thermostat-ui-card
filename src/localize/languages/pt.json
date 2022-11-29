@@ -1,7 +1,20 @@
 {
   "common": {
       "version": "versão",
-      "current": "atual"
+      "current": "actual"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Desactivar Janela",
+        "disable_summer": "Desactivar Verão",
+        "disable_eco": "Desactivar Eco",
+        "disable_heat": "Desactivar Aquecimento",
+        "disable_off": "Desactivar Off",
+        "eco_temperature": "Modo Eco",
+        "set_current_as_main": "Mudar para a temperatura local actual"
+      }
+    }
   },
   "extra_states": {
     "window_open": "Janela Aberta",
