@@ -9,7 +9,7 @@
           "disable_window": "Fenster-offen-Anzeige deaktivieren",
           "disable_summer": "Sommer-Anzeige deaktivieren",
           "disable_eco": "Eco-Anzeige deaktivieren",
-          "disable_heat": "Disable heat",
+          "disable_heat": "Heiz-Anzeige deaktivieren",
           "disable_off": "Aus-Anzeige deaktivieren",
           "eco_temperature": "Eco Temperatur",
           "set_current_as_main": "Zieltemperatur mit aktueller Temperatur tauschen"
