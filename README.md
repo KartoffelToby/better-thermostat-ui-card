@@ -4,9 +4,9 @@
 
 # UI Card for Better Thermostat
 
-This project is in a early stage of development. Its a 1:1 adaption of the default HA Thermostat Card, but with some improvements for the custom [better_thermostat](https://github.com/KartoffelToby/better_thermostat) integration. (you need at least 1.0.0)
+This project is in an early stage of development. It's a 1:1 adaptation of the default HA Thermostat Card, but with some improvements for the custom [better_thermostat](https://github.com/KartoffelToby/better_thermostat) integration. (you need at least 1.0.0)
 
-As for now the main improvment is the ability to see the extra status from better_thermostat like if a window open is deteteced, or nightmode is on or summer mode.
+As for now the main improvement is the ability to see the extra status from better_thermostat like if a window open is detected, or nightmode is on or summer mode.
 
 ![Better Thermostat UI Card](/assets/1.png)
 
@@ -37,7 +37,7 @@ It would be awsome if you help me to translate this card to other languages.
 
 Create a PR, the Translation is done in json files checkout the en translation [here](https://github.com/KartoffelToby/better-thermostat-ui-card/blob/master/src/localize/languages/en.json)
 
-Please add your language to this list as well while you are making your PR. Put it in alfabetical order and according to [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+Please add your language to this list as well while you are making your PR. Put it in alphabetical order and according to [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
 
 What we have so far:
 - en - Reference 
