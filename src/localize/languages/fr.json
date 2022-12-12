@@ -1,7 +1,20 @@
 {
   "common": {
       "version": "version",
-      "current": "Actuel"
+      "current": "Actuelle"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Desactiver fenêtre",
+        "disable_summer": "Desactiver été",
+        "disable_eco": "Desactiver mode eco",
+        "disable_heat": "Desactiver mode chauffe",
+        "disable_off": "Desactiver arret",
+        "eco_temperature": "Temperature Eco",
+        "set_current_as_main": "Echanger temperature cible avec temperature locale"
+      }
+    }
   },
   "extra_states": {
     "window_open": "Fenêtre ouverte",
