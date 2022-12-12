@@ -25,10 +25,10 @@ As for now the main improvment is the ability to see the extra status from bette
 | entity               | string  | **Required** | The entity id of climate entity (must be a better_thermostat entity). Example: `climate.hvac`          |
 | eco_temperature      | number  | **optional** | target temp for night/away/eco mode triggerd by ui button                                              |
 | disable_window      | boolean  | **optional** | turn off the window open indicator                                                                     |
-| disable_summer      | boolean  | **optional** | trun off the summer indicator                                                                          |
-| disable_heat        | boolean  | **optional** | trun off the on/heat button                                                                          |
-| disable_eco         | boolean  | **optional** | trun off the eco button                                                                          |
-| disable_off         | boolean  | **optional** | trun off the off button                                                                         |
+| disable_summer      | boolean  | **optional** | turn off the summer indicator                                                                          |
+| disable_heat        | boolean  | **optional** | turn off the on/heat button                                                                          |
+| disable_eco         | boolean  | **optional** | turn off the eco button                                                                          |
+| disable_off         | boolean  | **optional** | turn off the off button                                                                         |
 | name                | string/boolean  | **optional** | override the default entity name, us false to 
 
 ## Help wanted!
