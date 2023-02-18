@@ -3,10 +3,23 @@
       "version": "wersja",
       "current": "aktualna"
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Ukryj okno",
+        "disable_summer": "Ukryj lato",
+        "disable_eco": "Ukryj eko",
+        "disable_heat": "Ukryj grzanie",
+        "disable_off": "Ukryj wył.",
+        "eco_temperature": "Temperatura dla eko",
+        "set_current_as_main": "Zamień temperaturę docelową z aktualną"
+      }
+    }
+  },
   "extra_states": {
-    "window_open": "otwarte okno",
-    "night_mode": "tryb nocny",
-    "eco": "tryb ekonomiczny",
-    "summer": "lato"
+    "window_open": "Otwarte okno",
+    "night_mode": "Tryb nocny",
+    "eco": "Eko",
+    "summer": "Lato"
   }
 }
