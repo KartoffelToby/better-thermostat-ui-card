@@ -349,7 +349,7 @@ const ut=1;class ct{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,n)
       }
 
       .summer {
-        --mode-color: var(--state-not_home-color)
+        --mode-color: var(--label-badge-yellow)
       }
 
       .auto,
@@ -366,13 +366,13 @@ const ut=1;class ct{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,n)
         --mode-color: var(--state-climate-manual-color);
       }
       .off {
-        --mode-color: var(--state-climate-off-color);
+        --mode-color: var(--slider-track-color);
       }
       .fan_only {
         --mode-color: var(--state-climate-fan_only-color);
       }
       .eco {
-        --mode-color: var(--state-climate-eco-color);
+        --mode-color: var(--energy-non-fossil-color);
       }
       .dry {
         --mode-color: var(--state-climate-dry-color);
@@ -467,7 +467,7 @@ const ut=1;class ct{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,n)
         stroke: var(--disabled-text-color);
       }
       .summer.active {
-        fill: var(--state-not_home-color);
+        fill: var(--label-badge-yellow);
       }
       .window.active {
         fill: var(--energy-grid-consumption-color);
