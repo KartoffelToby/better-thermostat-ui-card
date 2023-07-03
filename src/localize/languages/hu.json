@@ -3,6 +3,19 @@
       "version": "Verzió",
       "current": "Aktuális"
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Ablak kikapcsolás",
+        "disable_summer": "Nyár kikapcsolás",
+        "disable_eco": "Eco kikapcsolás",
+        "disable_heat": "Fűtés kikacsolás",
+        "disable_off": "Kikapcsolás inaktiválás",
+        "eco_temperature": "Eco hőmérséklet",
+        "set_current_as_main": "Aktuális hőmérséklet használata"
+      }
+    }
+  },
   "extra_states": {
     "window_open": "Ablak nyitva",
     "night_mode": "Éjszakai mód",
