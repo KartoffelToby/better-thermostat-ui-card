@@ -52,6 +52,7 @@ What we have so far:
 - fi
 - fr
 - hu
+- it
 - nl
 - no
 - pl
