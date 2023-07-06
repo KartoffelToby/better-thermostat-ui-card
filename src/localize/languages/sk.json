@@ -3,6 +3,19 @@
       "version": "verzia",
       "current": "aktuálny"
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Zakázať okno",
+        "disable_summer": "Zakázať leto",
+        "disable_eco": "Zakázať eco",
+        "disable_heat": "Zakázať kúrenie",
+        "disable_off": "Vypnúť",
+        "eco_temperature": "Eco teplota",
+        "set_current_as_main": "Vymeňte cieľ za miesta s aktuálnou teplotou"
+      }
+    }
+  },
   "extra_states": {
     "window_open": "Okno otvorené",
     "night_mode": "Nočný mód",
