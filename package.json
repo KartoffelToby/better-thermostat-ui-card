@@ -1,6 +1,6 @@
 {
   "name": "better-thermostat-ui-card",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Lovelace better-thermostat-ui",
   "keywords": [
     "home-assistant",
@@ -24,7 +24,7 @@
     "start:hass-cmd": "docker run --rm -p8123:8123 -v  %cd%/.hass_dev:/config homeassistant/home-assistant:beta"
   },
   "dependencies": {
-    "@babel/preset-env": "^7.22.5",
+    "@babel/preset-env": "^7.22.7",
     "@mdi/js": "^7.2.96",
     "@svgdotjs/svg.js": "^3.2.0",
     "@types/gsap": "^3.0.0",
@@ -32,11 +32,11 @@
     "custom-card-helpers": "^1.9.0",
     "gsap": "^3.12.2",
     "home-assistant-js-websocket": "^8.1.0",
-    "lit": "^2.7.5",
+    "lit": "^2.7.6",
     "memoize-one": "^6.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.5",
+    "@babel/core": "^7.22.8",
     "@babel/preset-typescript": "^7.22.5",
     "@material/mwc-ripple": "^0.27.0",
     "@material/tab-bar": "^14.0.0",
@@ -47,10 +47,10 @@
     "@rollup/plugin-typescript": "^11.1.2",
     "@types/color": "^3.0.3",
     "@types/hammerjs": "^2.0.41",
-    "@types/node": "^20.3.3",
+    "@types/node": "^20.4.0",
     "eslint": "^8.44.0",
-    "prettier": "^2.8.8",
-    "rollup": "^3.26.0",
+    "prettier": "^3.0.0",
+    "rollup": "^3.26.2",
     "rollup-plugin-serve": "^2.0.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-import-css": "^3.3.1",

@@ -3,7 +3,6 @@ import {
   LitElement,
   html,
   css,
-  CSSResult,
   PropertyValueMap,
   svg,
   CSSResultGroup,
@@ -12,15 +11,12 @@ import {
 import {
   customElement,
   property,
-  query,
   state
 } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import {
   mdiWindowOpenVariant,
   mdiSunThermometer,
-  mdiPlus,
-  mdiMinus,
   mdiDotsVertical,
   mdiCalendarSync,
   mdiAutorenew,
@@ -31,12 +27,11 @@ import {
   mdiWaterPercent,
   mdiLeaf,
   mdiThermometer,
-  mdiHeatWave
+  mdiHeatWave,
+  mdiBatteryAlert,
+  mdiWifiStrengthOffOutline
 } from "@mdi/js";
 
-import {
-  HassEntity
-} from "home-assistant-js-websocket";
 import {
   CARD_VERSION
 } from './const';
@@ -44,19 +39,10 @@ import {
   localize
 } from './localize/localize';
 import {
-  actionHandler,
-  ActionHandlerEvent,
   ClimateEntity,
-  computeRTL,
-  computeStateDisplay,
   fireEvent,
   formatNumber,
-  handleAction,
-  hasAction,
   HomeAssistant,
-  HvacMode,
-  isActive,
-  isAvailable,
   LovelaceCard,
   LovelaceCardEditor,
 } from "./ha";
@@ -170,6 +156,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   private _display_bottom: number = 0;
   private _display_top: number = 0;
   private modes: any = [];
+  private lowBattery: any = {};
+  private error: any = [];
 
   @state() private _config?: ClimateCardConfig;
 
@@ -194,8 +182,11 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           display: block;
           overflow: hidden;
           box-sizing: border-box;
+          position: relative;
       }
-
+      .summer {
+        --mode-color: var(--label-badge-yellow)
+      }
       ha-card {
         height: 100%;
         width: 100%;
@@ -205,6 +196,36 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         padding-left: 1em;
         padding-right: 1em;
         box-sizing: border-box;
+      }
+
+      .content.battery {
+        opacity: 0.5;
+        filter: blur(5px);
+        pointer-events: none;
+      }
+
+      .low_battery, .error {
+        position: absolute;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        place-content: center;
+        width: -webkit-fill-available;
+        height: -webkit-fill-available;
+        left: 0px;
+        top: 0px;
+        background: rgba(200, 200, 200, 0.16);
+        border-radius: var(--ha-card-border-radius,12px);
+        border-width: var(--ha-card-border-width,1px);
+        border-style: solid;
+        border-color: var(--ha-card-border-color,var(--divider-color,#e0e0e0));
+        pointer-events: all;
+        font-size: 22px;
+        text-align: center;
+        line-height: 40px;
+        padding: 1em;
+        --mdc-icon-size: 40px;
+
       }
 
       .unavailable {
@@ -267,11 +288,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       }
 
       .window_open {
-        --mode-color: var(--energy-grid-consumption-color)
-      }
-
-      .summer {
-        --mode-color: var(--label-badge-yellow)
+        --mode-color: #80a7c4
       }
 
       .auto,
@@ -392,7 +409,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         fill: var(--label-badge-yellow);
       }
       .window.active {
-        fill: var(--energy-grid-consumption-color);
+        fill: #80a7c4;
       }
   `;
 
@@ -497,7 +514,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     const that = this;
     const valueHandler: any = this?.shadowRoot?.querySelector(".value-handler");
-    const currentHandler: any = this?.shadowRoot?.querySelector(".current-handler")
+    const currentHandler: any = this?.shadowRoot?.querySelector(".current-handler");
     this?.shadowRoot?.querySelector("#c-minus")?.addEventListener("click", () => {
       clearTimeout(that._timeout);
       if (that._oldValueMin === 0) that._oldValueMin = that.value;
@@ -655,6 +672,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       });
     }
     this._firstRender = false;
+
+    this?.shadowRoot?.querySelector('.low_battery')?.addEventListener('click', () => {
+      this?.shadowRoot?.querySelector('.low_battery')?.remove();
+      this?.shadowRoot?.querySelector('.content')?.classList.remove('battery');
+      this._vibrate(2);
+    });
   }
 
   public willUpdate(changedProps: PropertyValues) {
@@ -708,6 +731,27 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         if (attributes?.call_for_heat !== undefined) {
           this._hasSummer = true;
           this.summer = !attributes.call_for_heat
+        }
+        if (attributes?.batteries !== undefined) {
+          const batteries = Object.entries(JSON.parse(attributes.batteries));
+          const lowBatteries = batteries.filter((entity: any) => entity[1].battery < 10);
+          if (lowBatteries.length > 0) {
+            this.lowBattery = lowBatteries.map((data:any) => {return {"name": data[0], "battery": data[1].battery}})[0];
+          } else {
+            this.lowBattery = null;
+          }
+        } else {
+          this.lowBattery = null;
+        }
+        if (attributes?.errors !== undefined) {
+          const errors = JSON.parse(attributes.errors);
+          if (errors.length > 0) {
+            this.error = errors[0];
+          } else {
+            this.error = [];
+          }
+        } else {
+          this.error = [];
         }
         this._updateDisplay();
       }
@@ -782,6 +826,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       [this.mode]: true,
     })}
     >
+    ${this._config?.disable_menu ? `` : html`
       <ha-icon-button
         class="more-info"
         .label=${this.hass!.localize(
@@ -791,8 +836,24 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         @click=${this._handleMoreInfo}
         tabindex="0"
       ></ha-icon-button>
+      `}
       <div class="name">${this._config?.name}</div>
-      <div class="content ${this.window ? 'window_open': ''} ${this.summer ? 'summer': ''} ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''}">
+      ${this.lowBattery !== null ? html`
+        <div class="low_battery">
+          <ha-icon-button class="alert" .path=${mdiBatteryAlert}>
+          </ha-icon-button>
+          <span>${this.lowBattery.name}</span>
+          <span>${this.lowBattery.battery}%</span>
+        </div>
+      ` : ``}
+      ${this.error.length > 0 ? html`
+        <div class="error">
+          <ha-icon-button class="alert" .path=${mdiWifiStrengthOffOutline}>
+          </ha-icon-button>
+          <span>${this.error}</span>
+        </div>
+      ` : ``}
+      <div class="content ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer': ''} ">
             <svg id="main" viewbox="0 0 125 100">
               <g transform="translate(57.5,37) scale(0.35)">
                 ${(this._hasWindow && !this._config?.disable_window) ? svg`
@@ -887,7 +948,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                 `}
 
               </div>
-      </div>
+            </div>
+          </div>
   </ha-card>
   `;
   };

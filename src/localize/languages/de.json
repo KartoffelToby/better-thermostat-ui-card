@@ -11,6 +11,7 @@
           "disable_eco": "Eco-Anzeige deaktivieren",
           "disable_heat": "Heiz-Anzeige deaktivieren",
           "disable_off": "Aus-Anzeige deaktivieren",
+          "disable_menu": "Menü deaktivieren",
           "eco_temperature": "Eco Temperatur",
           "set_current_as_main": "Zieltemperatur mit aktueller Temperatur tauschen"
         }
