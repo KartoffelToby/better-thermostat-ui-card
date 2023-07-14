@@ -732,7 +732,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           this._hasSummer = true;
           this.summer = !attributes.call_for_heat
         }
-        if (attributes?.batteries !== undefined) {
+        if (attributes?.batteries !== undefined && !this?._config?.disable_battery_warning) {
           const batteries = Object.entries(JSON.parse(attributes.batteries));
           const lowBatteries = batteries.filter((entity: any) => entity[1].battery < 10);
           if (lowBatteries.length > 0) {
@@ -781,6 +781,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           });
         }
     } else {
+      const saved_temp = this?.stateObj?.attributes?.saved_temperature || null;
+      if (saved_temp !== null) {
+        this.hass!.callService("better_thermostat", "restore_saved_target_temperature", {
+            entity_id: this._config!.entity,
+        });
+      }
       this.hass!.callService("climate", "set_hvac_mode", {
         entity_id: this._config!.entity,
         hvac_mode: (e.currentTarget as any).mode,
