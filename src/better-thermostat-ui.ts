@@ -180,7 +180,6 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   public static styles: CSSResultGroup = css `
       :host {
           display: block;
-          overflow: hidden;
           box-sizing: border-box;
           position: relative;
       }
