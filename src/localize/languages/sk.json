@@ -11,6 +11,8 @@
         "disable_eco": "Zakázať eco",
         "disable_heat": "Zakázať kúrenie",
         "disable_off": "Vypnúť",
+        "disable_menu": "Zakázať menu",
+        "disable_battery_warning": "Zakázať upozornenie na batériu",
         "eco_temperature": "Eco teplota",
         "set_current_as_main": "Vymeňte cieľ za miesta s aktuálnou teplotou"
       }
