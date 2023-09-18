@@ -40,7 +40,9 @@ const plugins = [
         babelHelpers: "bundled",
     }),
     terser({
-        compress: {},
+        compress: {
+            defaults: true
+        },
         warnings: true,
         output: {
           comments: function (node, comment) {

@@ -24,19 +24,19 @@ export const computeStateDisplay = (
 
     // Entities with a `unit_of_measurement` or `state_class` are numeric values and should use `formatNumber`
     if (isNumericState(stateObj)) {
-        if (stateObj.attributes.device_class === "monetary") {
+        if (stateObj?.attributes?.device_class === "monetary") {
             try {
                 return formatNumber(compareState, locale, {
                     style: "currency",
-                    currency: stateObj.attributes.unit_of_measurement,
+                    currency: stateObj?.attributes?.unit_of_measurement,
                 });
             } catch (_err) {
                 // fallback to default
             }
         }
         return `${formatNumber(compareState, locale)}${
-            stateObj.attributes.unit_of_measurement
-                ? " " + stateObj.attributes.unit_of_measurement
+            stateObj?.attributes?.unit_of_measurement
+                ? " " + stateObj?.attributes?.unit_of_measurement
                 : ""
         }`;
     }
@@ -76,27 +76,27 @@ export const computeStateDisplay = (
         } else {
             // If not trying to display an explicit state, create `Date` object from `stateObj`'s attributes then format.
             let date: Date;
-            if (stateObj.attributes.has_date && stateObj.attributes.has_time) {
+            if (stateObj?.attributes?.has_date && stateObj?.attributes?.has_time) {
                 date = new Date(
-                    stateObj.attributes.year,
-                    stateObj.attributes.month - 1,
-                    stateObj.attributes.day,
-                    stateObj.attributes.hour,
-                    stateObj.attributes.minute
+                    stateObj?.attributes?.year,
+                    stateObj?.attributes?.month - 1,
+                    stateObj?.attributes?.day,
+                    stateObj?.attributes?.hour,
+                    stateObj?.attributes?.minute
                 );
                 return formatDateTime(date, locale);
             }
-            if (stateObj.attributes.has_date) {
+            if (stateObj?.attributes?.has_date) {
                 date = new Date(
-                    stateObj.attributes.year,
-                    stateObj.attributes.month - 1,
-                    stateObj.attributes.day
+                    stateObj?.attributes?.year,
+                    stateObj?.attributes?.month - 1,
+                    stateObj?.attributes?.day
                 );
                 return formatDate(date, locale);
             }
-            if (stateObj.attributes.has_time) {
+            if (stateObj?.attributes?.has_time) {
                 date = new Date();
-                date.setHours(stateObj.attributes.hour, stateObj.attributes.minute);
+                date.setHours(stateObj?.attributes?.hour, stateObj?.attributes?.minute);
                 return formatTime(date, locale);
             }
             return stateObj.state;
@@ -104,8 +104,8 @@ export const computeStateDisplay = (
     }
 
     if (domain === "humidifier") {
-        if (compareState === "on" && stateObj.attributes.humidity) {
-            return `${stateObj.attributes.humidity} %`;
+        if (compareState === "on" && stateObj?.attributes?.humidity) {
+            return `${stateObj?.attributes?.humidity} %`;
         }
     }
 
@@ -119,7 +119,7 @@ export const computeStateDisplay = (
         domain === "button" ||
         domain === "input_button" ||
         domain === "scene" ||
-        (domain === "sensor" && stateObj.attributes.device_class === "timestamp")
+        (domain === "sensor" && stateObj?.attributes?.device_class === "timestamp")
     ) {
         try {
             return formatDateTime(new Date(compareState), locale);
@@ -139,20 +139,20 @@ export const computeStateDisplay = (
             ? updateIsInstalling(stateObj as UpdateEntity)
                 ? supportsFeature(stateObj, UPDATE_SUPPORT_PROGRESS)
                     ? localize("ui.card.update.installing_with_progress", {
-                          progress: stateObj.attributes.in_progress,
+                          progress: stateObj?.attributes?.in_progress,
                       })
                     : localize("ui.card.update.installing")
-                : stateObj.attributes.latest_version
-            : stateObj.attributes.skipped_version === stateObj.attributes.latest_version
-            ? stateObj.attributes.latest_version ?? localize("state.default.unavailable")
+                : stateObj?.attributes?.latest_version
+            : stateObj?.attributes?.skipped_version === stateObj?.attributes?.latest_version
+            ? stateObj?.attributes?.latest_version ?? localize("state.default.unavailable")
             : localize("ui.card.update.up_to_date");
     }
 
     return (
         // Return device class translation
-        (stateObj.attributes.device_class &&
+        (stateObj?.attributes?.device_class &&
             localize(
-                `component.${domain}.state.${stateObj.attributes.device_class}.${compareState}`
+                `component.${domain}.state.${stateObj?.attributes?.device_class}.${compareState}`
             )) ||
         // Return default translation
         localize(`component.${domain}.state._.${compareState}`) ||

@@ -3,10 +3,9 @@ import { html, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import memoizeOne from "memoize-one";
 import { assert } from "superstruct";
-import { fireEvent, LocalizeFunc, LovelaceCardEditor, atLeastHaVersion, HomeAssistant, computeDomain } from "./ha";
+import { fireEvent, LovelaceCardEditor, atLeastHaVersion, HomeAssistant } from "./ha";
 import setupCustomlocalize from "./localize/localize";
-import { ClimateCardConfig, climateCardConfigStruct, HVAC_MODES } from "./climate-card-config";
-import { HassEntity } from "home-assistant-js-websocket";
+import { ClimateCardConfig, climateCardConfigStruct } from "./climate-card-config";
 
 const GENERIC_LABELS = [
     "icon_color",
@@ -33,7 +32,7 @@ const loadHaComponents = (version: string) => {
     }
 };
 
-const CLIMATE_LABELS = ["eco_temperature", "disable_window", "disable_summer", "disable_eco", "disable_heat", "disable_off", "disable_menu", "disable_battery_warning", "set_current_as_main"] as string[];
+const CLIMATE_LABELS = ["eco_temperature", "disable_window", "disable_summer", "disable_eco", "disable_heat", "disable_off", "disable_menu", "disable_battery_warning", "set_current_as_main", "disable_buttons"] as string[];
 
 const computeSchema = memoizeOne(
     (): any[] => [
@@ -52,6 +51,7 @@ const computeSchema = memoizeOne(
                 { name: "disable_menu", selector: { boolean: {} } },
                 { name: "disable_battery_warning", selector: { boolean: {} } },
                 { name: "set_current_as_main", selector: { boolean: {} } },
+                { name: "disable_buttons", selector: { boolean: {}}}
             ],
         },
     ]

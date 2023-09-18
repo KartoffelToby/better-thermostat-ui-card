@@ -1,4 +1,4 @@
-[![Version - 1.1.1](https://img.shields.io/badge/Version-1.1.1-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
+[![Version - 2.0.0](https://img.shields.io/badge/Version-2.0.0-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
 [![Discord](https://img.shields.io/discord/925725316540923914.svg?style=for-the-badge)](https://discord.gg/9BUegWTG3K)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
@@ -9,6 +9,12 @@ This project is in an early stage of development. It's a 1:1 adaptation of the d
 As for now the main improvement is the ability to see the extra status from better_thermostat like if a window open is detected, or nightmode is on or summer mode.
 
 ![Better Thermostat UI Card](/assets/1.png)
+![](/assets/2.png)
+![](/assets/3.png)
+![](/assets/4.png)
+![](/assets/5.png)
+![](/assets/6.png)
+![](/assets/7.png)
 
  
 ## Goals
@@ -29,6 +35,7 @@ As for now the main improvement is the ability to see the extra status from bett
 | disable_heat        | boolean  | **optional** | turn off the on/heat button                                                                          |
 | disable_eco         | boolean  | **optional** | turn off the eco button                                                                          |
 | disable_off         | boolean  | **optional** | turn off the off button                                                                         |
+| disable_buttons         | boolean  | **optional** | turn off the plus/minus buttons                                                                        |
 | name                | string/boolean  | **optional** | override the default entity name, us false to 
 
 ## Help wanted!
@@ -38,6 +45,10 @@ It would be awsome if you help me to translate this card to other languages.
 Create a PR, the Translation is done in json files checkout the en translation [here](https://github.com/KartoffelToby/better-thermostat-ui-card/blob/master/src/localize/languages/en.json)
 
 Please add your language to this list as well while you are making your PR. Put it in alphabetical order and according to [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+
+## Translations
+
+[INLANG Editor](https://inlang.com/editor/github.com/KartoffelToby/better-thermostat-ui-card)
 
 What we have so far:
 - en - Reference 

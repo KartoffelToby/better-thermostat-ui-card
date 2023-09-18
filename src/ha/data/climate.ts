@@ -34,6 +34,26 @@ export type ClimateEntity = HassEntityBase & {
     };
 };
 
+export const enum ClimateEntityFeature {
+    TARGET_TEMPERATURE = 1,
+    TARGET_TEMPERATURE_RANGE = 2,
+    TARGET_HUMIDITY = 4,
+    FAN_MODE = 8,
+    PRESET_MODE = 16,
+    SWING_MODE = 32,
+    AUX_HEAT = 64,
+  }
+
+  export const CLIMATE_HVAC_ACTION_TO_MODE: any = {
+    cooling: "cool",
+    drying: "dry",
+    fan: "fan_only",
+    preheating: "heat",
+    heating: "heat",
+    idle: "off",
+    off: "off",
+  };
+
 export const CLIMATE_SUPPORT_TARGET_TEMPERATURE = 1;
 export const CLIMATE_SUPPORT_TARGET_TEMPERATURE_RANGE = 2;
 export const CLIMATE_SUPPORT_TARGET_HUMIDITY = 4;

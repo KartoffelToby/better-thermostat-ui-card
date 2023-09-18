@@ -29,7 +29,9 @@ import {
   mdiThermometer,
   mdiHeatWave,
   mdiBatteryAlert,
-  mdiWifiStrengthOffOutline
+  mdiWifiStrengthOffOutline,
+  mdiMinus,
+  mdiPlus
 } from "@mdi/js";
 
 import {
@@ -46,12 +48,11 @@ import {
   LovelaceCard,
   LovelaceCardEditor,
 } from "./ha";
-import gsap from "gsap";
-import { MotionPathPlugin } from "gsap/MotionPathPlugin";
-import { Draggable } from 'gsap/Draggable';
+
 import { ClimateCardConfig } from './climate-card-config';
-gsap.registerPlugin(MotionPathPlugin);
-gsap.registerPlugin(Draggable);
+import './ha/ha-control-circular-slider';
+import './ha/ha-outlined-icon-button';
+
 const UNAVAILABLE = "unavailable";
 const UNKNOWN = "unknown";
 const modeIcons: {
@@ -143,6 +144,33 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   @property({ type: String }) public status: string = "loading";
   @property({ type: String }) public mode: string = "off";
   @property({ type: Boolean, reflect: true }) public dragging = false;
+  @state()
+  private changingHigh?: number;
+
+  private _highChanged(ev) {
+    this.value = ev.detail.value;
+    console.log(this.value);
+    this._setTemperature();
+  }
+
+  private _highChanging(ev) {
+    if(typeof(ev.detail.value) !== "number") return;
+    this.value = ev.detail.value;
+    this._updateDisplay();
+    this._vibrate(20);
+  }
+
+  private _incValue() {
+    this.value += this.step;
+    this._updateDisplay();
+    this._vibrate(40);
+  }
+
+  private _decValue() {
+    this.value -= this.step;
+    this._updateDisplay();
+    this._vibrate(40);
+  }
 
   private _init: Boolean = true;
   private _firstRender: Boolean = true;
@@ -183,10 +211,9 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           box-sizing: border-box;
           position: relative;
       }
-      .summer {
-        --mode-color: var(--label-badge-yellow)
-      }
+
       ha-card {
+        overflow: hidden;
         height: 100%;
         width: 100%;
         vertical-align: middle;
@@ -197,11 +224,16 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         box-sizing: border-box;
       }
 
-      .content.battery {
+      ha-card#expand {
+        padding-bottom: 20%;
+      }
+
+      .content.battery, bt-ha-control-circular-slider.battery {
         opacity: 0.5;
         filter: blur(5px);
         pointer-events: none;
       }
+      
 
       .low_battery, .error {
         position: absolute;
@@ -253,10 +285,17 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           width: 100%;
           height: 100%;
       }
+      bt-ha-control-circular-slider {
+        --primary-color: var(--mode-color);
+      }
+
       .content {
         margin: -0.5em auto;
-        position: relative;
+        position: absolute;
         width: 100%;
+        top: 15%;
+        left: 0;
+        z-index: 0
         box-sizing: border-box;
       }
       .name {
@@ -285,6 +324,13 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       text {
         fill: var(--primary-text-color);
       }
+      .eco {
+        --mode-color: var(--energy-non-fossil-color);
+      }
+
+      .summer {
+        --mode-color: var(--label-badge-yellow)
+      }
 
       .window_open {
         --mode-color: #80a7c4
@@ -309,9 +355,6 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       .fan_only {
         --mode-color: var(--state-climate-fan_only-color);
       }
-      .eco {
-        --mode-color: var(--energy-non-fossil-color);
-      }
       .dry {
         --mode-color: var(--state-climate-dry-color);
       }
@@ -323,13 +366,34 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       }
 
       #modes {
-        z-index: 1;
+        z-index: 3;
         position: relative;
         display: flex;
         width: auto;
         justify-content: center;
         margin-top: 1em;
         margin-bottom: 1em;
+      }
+
+      #bt-control-buttons {
+        z-index: 3;
+        position: relative;
+        display: flex;
+        width: auto;
+        justify-content: center;
+        margin-top: 1em;
+        margin-bottom: 1em;
+      }
+
+      #bt-control-buttons .button {
+        z-index: 3;
+        position: relative;
+        display: flex;
+        width: auto;
+        justify-content: center;
+        margin-top: -1.5em;
+        margin-bottom: 1em;
+        padding: 1em;
       }
 
       #modes > * {
@@ -410,99 +474,10 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       .window.active {
         fill: #80a7c4;
       }
+      ha-icon-button[title="eco"] {
+        --mode-color: var(--energy-non-fossil-color) !important;
+      }
   `;
-
-  private _percent2bar(percent: number): number {
-    return 176 - (176 / 100 * percent);
-  }
-
-  private _value2percent(value: number): number {
-    return ((value - this.min) / (this.max - this.min)) * 100;
-  }
-
-  private _percent2value(percent: number): number {
-    return (percent / 100) * (this.max - this.min) + this.min;
-  }
-
-  private _updateValue(value: number) {
-    const _newValue = Math.round(value / this.step) * this.step;
-    if(this.value === _newValue) return;
-    this.value = _newValue
-    this._updateDisplay();
-    this._vibrate(2);
-  }
-
-  private _updateDragger(value:boolean) {
-    this.dragging = value;
-  }
-
-
-  private _liveSnapPont(that: this,point: gsap.Point2D) {
-    const DEG = 180 / Math.PI;
-    const path:any = that?.shadowRoot?.querySelector("#shadowpath");
-    const pathLength = path?.getTotalLength() || 0;
-    function pointModifier(point: gsap.Point2D) {
-      const p = closestPoint(path, pathLength, point);
-      that._updateValue(that._percent2value(p.percent));
-      return p.point;
-    }
-    
-    function closestPoint(pathNode: { getPointAtLength: (arg0: number) => any; }, pathLength: any, point: { x: any; y: any; }) {
-      
-      let precision = 8,
-          best,
-          bestLength: any,
-          bestDistance = Infinity;
-    
-      // linear scan for coarse approximation
-      for (var scan, scanLength = 0, scanDistance; scanLength <= pathLength; scanLength += precision) {
-        if ((scanDistance = distance2(scan = pathNode.getPointAtLength(scanLength))) < bestDistance) {
-          best = scan, bestLength = scanLength, bestDistance = scanDistance;
-        }
-      }  
-      
-      // binary search for precise estimate
-      precision /= 2;
-      while (precision > 0.5) {
-        let before,
-            after,
-            beforeLength,
-            afterLength,
-            beforeDistance,
-            afterDistance;
-        if ((beforeLength = bestLength - precision) >= 0 && (beforeDistance = distance2(before = pathNode.getPointAtLength(beforeLength))) < bestDistance) {
-          best = before, bestLength = beforeLength, bestDistance = beforeDistance;
-        } else if ((afterLength = bestLength + precision) <= pathLength && (afterDistance = distance2(after = pathNode.getPointAtLength(afterLength))) < bestDistance) {
-          best = after, bestLength = afterLength, bestDistance = afterDistance;
-        } else {
-          precision /= 2;
-        }
-      }
-    
-      let len2 = bestLength + (bestLength === pathLength ? -0.1 : 0.1);
-      let rotation = getRotation(best, pathNode.getPointAtLength(len2));
-      let percent = Math.round(bestLength / pathLength  * 100);
-        
-      return {
-        point: best,
-        rotation: rotation * DEG,
-        percent: percent,
-      };
-    
-      function distance2(p: { x: number; y: number; }) {
-        let dx = p.x - point.x,
-            dy = p.y - point.y;
-        return dx * dx + dy * dy;
-      }
-    }
-    
-    function getRotation(p1: { x: number; y: number; }, p2: { x: number; y: number; }) {
-      let dx = p2.x - p1.x;
-      let dy = p2.y - p1.y;
-      return Math.atan2(dy, dx);
-    }
-    return pointModifier(point);
-  }
 
   private _vibrate(delay:number) {
     try {
@@ -511,104 +486,6 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    const that = this;
-    const valueHandler: any = this?.shadowRoot?.querySelector(".value-handler");
-    const currentHandler: any = this?.shadowRoot?.querySelector(".current-handler");
-    this?.shadowRoot?.querySelector("#c-minus")?.addEventListener("click", () => {
-      clearTimeout(that._timeout);
-      if (that._oldValueMin === 0) that._oldValueMin = that.value;
-      that._ignore = true;
-      let _temp = that.value;
-      _temp = _temp - that.step;
-      if (_temp < that.min) _temp = that.min;
-      that.value = _temp;
-      that._updateDisplay();
-      that._timeout = setTimeout((that) => {
-        that._ignore = false;
-        that._setTemperature();
-        that.requestUpdate("value", that._oldValueMin);
-        that._oldValueMin = 0;
-      }, 600,that);
-    });
-    this?.shadowRoot?.querySelector("#c-plus")?.addEventListener("click", () => {
-      clearTimeout(that._timeout);
-      if (that._oldValueMax === 0) that._oldValueMax = that.value;
-      that._ignore = true;
-      let _temp = that.value;
-      _temp = _temp + that.step;
-      if (_temp > that.max) _temp = that.max;
-      that.value = _temp;
-      that._updateDisplay();
-      that._timeout = setTimeout((that) => {
-        that._ignore = false;
-        that._setTemperature();
-        that.requestUpdate("value", that._oldValueMax);
-        that._oldValueMax = 0;
-      }, 600, that);
-    });
-    Draggable.create(valueHandler, {
-      type: "x,y",
-      edgeResistance: 1,
-      liveSnap: {
-        points: (point) => this._liveSnapPont(that,point)
-      },
-      onRelease: () => {
-          that._updateDragger(false);
-          valueHandler.blur();
-          valueHandler.classList.remove("active");
-          let event = new CustomEvent("value-changed", {
-            detail: {
-              value: this.value,
-            },
-            bubbles: true,
-            composed: true,
-          });
-          this.dispatchEvent(event);
-          this._setTemperature();
-      },
-      onPress: () => {
-        that._vibrate(30);
-        valueHandler.classList.add("active");
-        valueHandler.focus();
-      },
-      onDragStart: function () {
-        that._updateDragger(true);
-      }
-    });
-    gsap.to(valueHandler, {
-      duration: 0, 
-      repeat: 0,
-      repeatDelay: 0,
-      yoyo: false,
-      ease: "power1.inOut",
-      // @ts-ignore
-      motionPath:{
-        path: this?.shadowRoot?.querySelector('#shadowpath'),
-        autoRotate: false,
-        fromCurrent: true,
-        useRadians: true,
-        curviness: 2,
-        start: (this._value2percent(this.value) / 100) || 0,
-        end: (this._value2percent(this.value) / 100) || 0
-      }
-    });
-    gsap.to(currentHandler, {
-      duration: 0, 
-      repeat: 0,
-      repeatDelay: 0,
-      yoyo: false,
-      ease: "power1.inOut",
-      // @ts-ignore
-      motionPath:{
-        path: this?.shadowRoot?.querySelector("#shadowpath"),
-        autoRotate: false,
-        fromCurrent: true,
-        useRadians: true,
-        curviness: 2,
-        start: (this._value2percent(this.current) / 100) || 0,
-        end: (this._value2percent(this.current) / 100) || 0
-      }
-    });
     this._init = false;
   }
 
@@ -628,48 +505,6 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   protected updated(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     super.updated(changedProperties);
-    if(this._ignore || this._init || this.dragging) return;
-    const valueHandler: any = this?.shadowRoot?.querySelector(".value-handler");
-    const currentHandler: any = this?.shadowRoot?.querySelector(".current-handler")
-    if (changedProperties.has("value")) {
-      gsap.to(valueHandler, {
-        duration: (this._firstRender) ? 0 : 5, 
-        repeat: 0,
-        repeatDelay: 0,
-        yoyo: false,
-        ease: "power1.inOut",
-        // @ts-ignore
-        motionPath:{
-          path: this?.shadowRoot?.querySelector('#shadowpath'),
-          autoRotate: false,
-          fromCurrent: true,
-          useRadians: true,
-          curviness: 2,
-          immediateRender: true,
-          start: (this._value2percent(changedProperties.get("value")) / 100) || 0,
-          end: (this._value2percent(this.value) / 100) || 0
-        }
-      });
-    }
-    if (changedProperties.has("current")) {
-      gsap.to(currentHandler, {
-        duration: (this._firstRender) ? 0 : 25,
-        repeat: 0,
-        repeatDelay: 0,
-        yoyo: false,
-        ease: "power1.inOut",
-        // @ts-ignore
-        motionPath:{
-          path: this?.shadowRoot?.querySelector("#shadowpath"),
-          autoRotate: false,
-          fromCurrent: true,
-          useRadians: true,
-          curviness: 2,
-          start: (this._value2percent(changedProperties.get("current")) / 100) || 0,
-          end: (this._value2percent(this.current) / 100) || 0
-        }
-      });
-    }
     this._firstRender = false;
 
     this?.shadowRoot?.querySelector('.low_battery')?.addEventListener('click', () => {
@@ -827,7 +662,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   public render: () => TemplateResult = (): TemplateResult => {
     return html `
-    <ha-card class=${classMap({
+    <ha-card id="${this?._config?.disable_buttons ? '' : 'expand'}" class=${classMap({
       [this.mode]: true,
     })}
     >
@@ -858,6 +693,18 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           <span>${this.error}</span>
         </div>
       ` : ``}
+      <bt-ha-control-circular-slider
+      class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${this.summer ? 'summer': ''} "
+      .inactive=${this.window}
+      .mode="start"
+      @value-changed=${this._highChanged}
+      @value-changing=${this._highChanging}
+      .value=${this.value}
+      .current=${this.current}
+      step=${this.step}
+      min=${this.min}
+      max=${this.max}
+    ></bt-ha-control-circular-slider>
       <div class="content ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer': ''} ">
             <svg id="main" viewbox="0 0 125 100">
               <g transform="translate(57.5,37) scale(0.35)">
@@ -868,11 +715,10 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                   <path class="summer ${this.summer ? 'active': ''}" fill="none" transform="${(this._hasWindow && !this._config?.disable_window) ? 'translate(31.25,0)' :''}" id="summer" d=${mdiSunThermometer} />
                 `: ``}
               </g>
-              <path id="shadowpath" d="M 30 90 A 40 40 0 1 1 95 90" fill='none' />
-              <path shape-rendering="optimizeQuality" id="bar" fill='none' style="stroke-dashoffset: ${this._percent2bar(this._value2percent(this.value))};"  class="${this.dragging ? 'drag': ''}" d="M 30 90 A 40 40 0 1 1 95 90" />
-              <circle id="value" class="value-handler" cx="0" cy="0" r="5"/>
-              <circle id="current" class="current-handler" cx="0" cy="0" r="3"/>
-              <text class="main-value" x="62.5" y="60%" dominant-baseline="middle" text-anchor="middle" style="font-size:17px;">
+
+
+
+              <text class="main-value" x="62.5" y="60%" dominant-baseline="middle" text-anchor="middle" style="font-size:15px;">
                 ${svg`${formatNumber(
                   this._display_top,
                   this.hass.locale,
@@ -885,14 +731,14 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                 </tspan>
               </text>
               ${(this?.stateObj?.state === UNAVAILABLE || this?.stateObj?.state === UNKNOWN) ? svg`
-              <text x="62.5" y="63%" dominant-baseline="middle" text-anchor="middle" style="font-size:8px;">${this.hass!.localize(
+              <text x="62.5" y="63%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">${this.hass!.localize(
                 "state.default.unavailable"
               )}</text>
               ` : ''}
               <line x1="35" y1="72" x2="90" y2="72" stroke="#e7e7e8" stroke-width="0.5" />
               <g class="current-info" transform="translate(62.5,80)">
                 ${(this.humidity === 0) ? svg`
-                    <text x="-5%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:8px;">
+                    <text x="-5%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
                     ${svg`${formatNumber(
                       this.current,
                       this.hass.locale,
@@ -906,7 +752,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                   </text>
                   <path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />
                 `: svg `
-                  <text x="-12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:8px;">
+                  <text x="-12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
                     ${svg`${formatNumber(
                       this._display_bottom,
                       this.hass.locale,
@@ -918,7 +764,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                       `}
                     </tspan>
                   </text>
-                  <text x="12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:8px;">
+                  <text x="12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
                     ${svg`${formatNumber(
                       this.humidity,
                       this.hass.locale,
@@ -953,6 +799,24 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                 `}
 
               </div>
+              ${this?._config?.disable_buttons ? html`` : html`
+              <div id="bt-control-buttons">
+                  <div class="button">
+                    <bt-ha-outlined-icon-button
+                        @click=${this._decValue}
+                    >
+                      <ha-svg-icon .path=${mdiMinus}></ha-svg-icon>
+                    </bt-ha-outlined-icon-button>
+                  </div>
+                  <div class="button">
+                    <bt-ha-outlined-icon-button 
+                      @click=${this._incValue}
+                    >
+                    <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
+                  </bt-ha-outlined-icon-button>
+                  </div>
+              </div>
+              `}
             </div>
           </div>
   </ha-card>
