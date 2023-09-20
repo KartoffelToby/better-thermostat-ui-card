@@ -564,7 +564,11 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       ha-icon-button[title="eco"] {
         --mode-color: var(--energy-non-fossil-color) !important;
       }
-
+      @container bt-card (max-width: 280px) {
+        .content {
+          top: calc(50% - 10px);
+        }
+      }
       @container bt-card (max-width: 255px) {
         #modes {
           margin-top: -2em;
