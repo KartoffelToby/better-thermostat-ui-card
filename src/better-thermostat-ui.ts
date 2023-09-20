@@ -223,6 +223,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         padding-top: 1.5em;
         box-sizing: border-box;
         position: relative;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
       }
 
       bt-ha-outlined-icon-button {
@@ -496,16 +502,18 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         --mode-color: var(--energy-non-fossil-color) !important;
       }
 
+      @container bt-card (max-width: 280px) {
+        .content {
+          top: calc(50% - 10px);
+        }
+      }
+
       @container bt-card (max-width: 255px) {
         #modes {
           margin-top: -2em;
         }
         ha-card {
           padding-top: 2em;
-        }
-        .content {
-          width: calc(90% - 40px);
-          top: calc(50% - 20px);
         }
       }
   `;
@@ -708,7 +716,9 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         tabindex="0"
       ></ha-icon-button>
       `}
-      <div class="name">${this._config?.name}</div>
+      ${this?._config?.name?.length || 0 > 0 ? html`
+        <div class="name">${this._config?.name}</div>
+        ` : html`<div class="name">&nbsp;</div>`}
       ${this.lowBattery !== null ? html`
         <div class="low_battery">
           <ha-icon-button class="alert" .path=${mdiBatteryAlert}>
