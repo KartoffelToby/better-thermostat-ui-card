@@ -41,7 +41,9 @@ import {
   localize
 } from './localize/localize';
 import {
+  clamp,
   ClimateEntity,
+  debounce,
   fireEvent,
   formatNumber,
   HomeAssistant,
@@ -70,6 +72,7 @@ const modeIcons: {
   temperature:  mdiThermometer,
   humidity: mdiWaterPercent
 };
+type Target = "value" | "low" | "high";
 
 interface RegisterCardParams {
   type: string;
@@ -132,7 +135,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   @property({
       attribute: false
   }) public hass! : HomeAssistant;
-  @property({ type: Number }) public value: number = 0;
+  @property({ type: Number }) public value: Partial<Record<Target, number>> = {};
+  @state() private _selectTargetTemperature: Target = "low";
   @property({ type: Number }) public current: number = 0;
   @property({ type: Number }) public humidity: number = 0;
   @property({ type: Number }) public min = 0;
@@ -146,26 +150,81 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   @state()
   private changingHigh?: number;
 
+  private target: any = "value";
+
   private _highChanged(ev) {
-    this.value = ev.detail.value;
-    this._setTemperature();
+    const value = (ev.detail as any).value;
+    if (isNaN(value)) return;
+    const target = ev.type.replace("-changed", "");
+    this.value = {
+      ...this.value,
+      [target]: value,
+    };
+    this._selectTargetTemperature = target as Target;
+    this._callService(target);
   }
 
   private _highChanging(ev) {
-    if(typeof(ev.detail.value) !== "number") return;
-    this.value = ev.detail.value;
+    const value = (ev.detail as any).value;
+    if (isNaN(value)) return;
+    const target = ev.type.replace("-changing", "");
+    this.value = {
+      ...this.value,
+      [target]: value,
+    };
+    this._selectTargetTemperature = target as Target;
     this._updateDisplay();
     this._vibrate(20);
   }
 
-  private _incValue() {
-    this.value += this.step;
-    this._updateDisplay();
-    this._vibrate(40);
+  private _debouncedCallService = debounce(
+    (target: Target) => this._callService(target),
+    1000
+  );
+
+  private _callService(type: string) {
+    if (type === "high" || type === "low") {
+      this.hass.callService("climate", "set_temperature", {
+        entity_id: this.stateObj!.entity_id,
+        target_temp_low: this.value.low,
+        target_temp_high: this.value.high,
+      });
+      return;
+    }
+    this.hass.callService("climate", "set_temperature", {
+      entity_id: this.stateObj!.entity_id,
+      temperature: this.value.value,
+    });
   }
 
-  private _decValue() {
-    this.value -= this.step;
+  private _handleButton(ev) {
+    const target = ev.currentTarget.target as Target;
+    const step = ev.currentTarget.step as number;
+
+    const defaultValue = target === "high" ? this.max : this.min;
+
+    let temp = this.value[target] ?? defaultValue;
+    temp += step;
+    temp = clamp(temp, this.min, this.max);
+    if (target === "high" && this.value.low != null) {
+      temp = clamp(temp, this.value.low, this.max);
+    }
+    if (target === "low" && this.value.high != null) {
+      temp = clamp(temp, this.min, this.value.high);
+    }
+
+    this.value = {
+      ...this.value,
+      [target]: temp,
+    };
+    this._updateDisplay();
+    this._vibrate(40);
+    this._debouncedCallService(target);
+  }
+
+  private _handleSelectTemp(ev) {
+    const target = ev.currentTarget.target as Target;
+    this._selectTargetTemperature = target;
     this._updateDisplay();
     this._vibrate(40);
   }
@@ -319,6 +378,10 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         max-width: 155px;
       }
 
+      #expand .content {
+        top: calc(50% - 40px);
+      }
+
       #main {
         transform: scale(2.3);
       }
@@ -367,7 +430,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         --mode-color: var(--state-climate-auto-color);
       }
       .cool {
-        --mode-color: var(--state-climate-cool-color);
+        --mode-color: var(--label-badge-red);
       }
       .heat {
         --mode-color: var(--label-badge-red);
@@ -502,12 +565,6 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         --mode-color: var(--energy-non-fossil-color) !important;
       }
 
-      @container bt-card (max-width: 280px) {
-        .content {
-          top: calc(50% - 10px);
-        }
-      }
-
       @container bt-card (max-width: 255px) {
         #modes {
           margin-top: -2em;
@@ -579,9 +636,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           this.modes = Object.values(attributes.hvac_modes);
         }
   
-        if (attributes.temperature) {
-          this.value = attributes.temperature;
-        }
+        this.value = {
+          value: attributes?.temperature || 0,
+          low: attributes?.target_temp_low || null,
+          high: attributes?.target_temp_high || null,
+        };
+        
         if (attributes.target_temp_step) {
           this.step = attributes.target_temp_step;
         }
@@ -632,11 +692,11 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   private _updateDisplay() {
     if(this?._config?.set_current_as_main) {
-      this._display_bottom = this.value;
+      this._display_bottom = this.value[this.target];
       this._display_top = this.current;
     } else {
       this._display_bottom = this.current;
-      this._display_top = this.value;
+      this._display_top = this.value[this.target];
     }
   }
 
@@ -734,18 +794,41 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           <span>${this.error}</span>
         </div>
       ` : ``}
-      <bt-ha-control-circular-slider
-      class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${this.summer ? 'summer': ''} "
-      .inactive=${this.window}
-      .mode="start"
-      @value-changed=${this._highChanged}
-      @value-changing=${this._highChanging}
-      .value=${this.value}
-      .current=${this.current}
-      step=${this.step}
-      min=${this.min}
-      max=${this.max}
-    >
+
+      ${
+        (this.value.low != null &&
+        this.value.high != null &&
+        this.stateObj.state !== UNAVAILABLE) ? html`
+        <bt-ha-control-circular-slider
+          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${this.summer ? 'summer': ''} "
+          .inactive=${this.window}
+          dual
+          .low=${this.value.low}
+          .high=${this.value.high}
+          .min=${this.min}
+          .max=${this.max}
+          .step=${this.step}
+          .current=${this.current}
+          @low-changed=${this._highChanged}
+          @low-changing=${this._highChanging}
+          @high-changed=${this._highChanged}
+          @high-changing=${this._highChanging}
+        >
+        ` : html`
+        <bt-ha-control-circular-slider
+          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${this.summer ? 'summer': ''} "
+          .inactive=${this.window}
+          .mode="start"
+          @value-changed=${this._highChanged}
+          @value-changing=${this._highChanging}
+          .value=${this.value.value}
+          .current=${this.current}
+          step=${this.step}
+          min=${this.min}
+          max=${this.max}
+        >
+        `
+      }
       <div class="content ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer': ''} ">
             <svg id="main" viewbox="0 0 125 100">
               <g transform="translate(57.5,37) scale(0.35)">
@@ -846,14 +929,18 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
             <div id="bt-control-buttons">
                 <div class="button">
                   <bt-ha-outlined-icon-button
-                      @click=${this._decValue}
+                    .target=${this.target}
+                    .step=${-this.step}
+                    @click=${this._handleButton}
                   >
                     <ha-svg-icon .path=${mdiMinus}></ha-svg-icon>
                   </bt-ha-outlined-icon-button>
                 </div>
                 <div class="button">
                   <bt-ha-outlined-icon-button 
-                    @click=${this._incValue}
+                    .target=${this.target}
+                    .step=${this.step}
+                    @click=${this._handleButton}
                   >
                   <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
                 </bt-ha-outlined-icon-button>

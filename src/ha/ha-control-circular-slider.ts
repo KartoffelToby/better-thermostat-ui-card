@@ -736,7 +736,7 @@ import {
         }
   
         .high {
-          stroke: var(--control-circular-slider-high-color);
+          stroke: var(--state-climate-cool-color);
         }
       `;
     }
