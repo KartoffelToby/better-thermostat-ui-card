@@ -581,6 +581,7 @@ import {
             </g>
           </g>
         </svg>
+        <slot></slot>
       `;
     }
   
@@ -598,13 +599,16 @@ import {
             --control-circular-slider-color
           );
         }
+        #wrapper {
+          position: relative;
+        }
         svg {
           width: 320px;
           display: block;
         }
         #slider {
           width: 100%;
-          max-width: 253px;
+          max-width: 233px;
           outline: none;
           margin: 0 auto;
           margin-top: 1em;

@@ -7,7 +7,6 @@ import { terser } from "rollup-plugin-terser";
 import serve from "rollup-plugin-serve";
 import ignore from "./rollup-ignore-plugin.js";
 import cssImports from 'rollup-plugin-import-css';
-import minifyHTML from 'rollup-plugin-minify-html-literals';
 const IGNORED_FILES = [
 
 ];

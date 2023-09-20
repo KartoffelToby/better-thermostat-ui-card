@@ -51,7 +51,6 @@ import {
 
 import { ClimateCardConfig } from './climate-card-config';
 import './ha/ha-control-circular-slider';
-import './ha/ha-outlined-icon-button';
 
 const UNAVAILABLE = "unavailable";
 const UNKNOWN = "unknown";
@@ -149,7 +148,6 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   private _highChanged(ev) {
     this.value = ev.detail.value;
-    console.log(this.value);
     this._setTemperature();
   }
 
@@ -210,6 +208,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           display: block;
           box-sizing: border-box;
           position: relative;
+          container: bt-card / inline-size;
       }
 
       ha-card {
@@ -221,11 +220,16 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         justify-items: center;
         padding-left: 1em;
         padding-right: 1em;
+        padding-top: 1.5em;
         box-sizing: border-box;
+        position: relative;
       }
 
-      ha-card#expand {
-        padding-bottom: 20%;
+      bt-ha-outlined-icon-button {
+        border: 1px solid var(--secondary-text-color);
+        border-radius: 100%;
+        padding: 0.5em;
+        cursor: pointer;
       }
 
       .content.battery, bt-ha-control-circular-slider.battery {
@@ -290,30 +294,46 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       }
 
       .content {
-        margin: -0.5em auto;
         position: absolute;
-        width: 100%;
-        top: 15%;
-        left: 0;
-        z-index: 0
+        width: calc(70% - 40px);
+        height: calc(70% - 100px);
         box-sizing: border-box;
+        border-radius: 100%;
+        left: 50%;
+        top: calc(50% - 20px);
+        text-align: center;
+        overflow-wrap: break-word;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        place-content: center;
+        flex-flow: wrap;
+        z-index: 0;
+        transform: translate(-50%,-50%);
+        max-width: 155px;
       }
+
+      #main {
+        transform: scale(2.3);
+      }
+
       .name {
         display: block;
         width: 100%;
         text-align: center;
         font-size: 20px;
-        padding-top: 1em;
+        word-break: keep-all;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
       svg {
         height: auto;
         margin: auto;
         display: block;
         width: 100%;
-        
-        transform: scale(1.5);
         -webkit-backface-visibility: hidden;
-        max-width: 255px;
+        max-width: 233px;
       }
       
       path {
@@ -371,7 +391,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         display: flex;
         width: auto;
         justify-content: center;
-        margin-top: 1em;
+        margin-top: -3em;
         margin-bottom: 1em;
       }
 
@@ -381,8 +401,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         display: flex;
         width: auto;
         justify-content: center;
-        margin-top: 1em;
-        margin-bottom: 1em;
+        padding-bottom: 0.2em;
       }
 
       #bt-control-buttons .button {
@@ -391,9 +410,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         display: flex;
         width: auto;
         justify-content: center;
-        margin-top: -1.5em;
-        margin-bottom: 1em;
         padding: 1em;
+        padding-top: 0.2em;
       }
 
       #modes > * {
@@ -476,6 +494,19 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       }
       ha-icon-button[title="eco"] {
         --mode-color: var(--energy-non-fossil-color) !important;
+      }
+
+      @container bt-card (max-width: 255px) {
+        #modes {
+          margin-top: -2em;
+        }
+        ha-card {
+          padding-top: 2em;
+        }
+        .content {
+          width: calc(90% - 40px);
+          top: calc(50% - 20px);
+        }
       }
   `;
 
@@ -704,7 +735,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       step=${this.step}
       min=${this.min}
       max=${this.max}
-    ></bt-ha-control-circular-slider>
+    >
       <div class="content ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer': ''} ">
             <svg id="main" viewbox="0 0 125 100">
               <g transform="translate(57.5,37) scale(0.35)">
@@ -758,7 +789,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                       this.hass.locale,
                       { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                     )}`}
-                    <tspan dx="-1" dy="-2" style="font-size: 3px;">
+                    <tspan dx="-0.3" dy="-2" style="font-size: 3px;">
                       ${svg`
                         ${this.hass.config.unit_system.temperature}
                       `}
@@ -770,7 +801,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                       this.hass.locale,
                       { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                     )}`}
-                    <tspan dx="1" dy="-2" style="font-size: 3px;">
+                    <tspan dx="-0.3" dy="-2" style="font-size: 3px;">
                     %
                     </tspan>
                   </text>
@@ -779,45 +810,46 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
               </g>
                 </svg>
-                <div id="modes">
-                ${this?._hasSummer ? svg`
-                  ${this?._config?.disable_heat ? html `` : this._renderIcon("heat", this.mode)}
-                  ${this?._config?.disable_eco ? html `` :
-                    this?.stateObj?.attributes?.saved_temperature &&
-                    this?.stateObj?.attributes?.saved_temperature !== "none" &&
-                    this?.stateObj?.state !== UNAVAILABLE
-                      ? this._renderIcon("eco","eco"): this._renderIcon("eco", "none")}
-                  ${this?._config?.disable_off ? html `` : this._renderIcon("off", this.mode)}
-                `:
-                svg`
-                  ${this.modes.map((mode) => {
-                    if(this._config?.disable_heat && mode === "heat") return html ``;
-                    if(this._config?.disable_eco && mode === "eco") return html ``;
-                    if(this._config?.disable_off && mode === "off") return html ``;
-                    return this._renderIcon(mode, this.mode);
-                  })}
-                `}
-
-              </div>
-              ${this?._config?.disable_buttons ? html`` : html`
-              <div id="bt-control-buttons">
-                  <div class="button">
-                    <bt-ha-outlined-icon-button
-                        @click=${this._decValue}
-                    >
-                      <ha-svg-icon .path=${mdiMinus}></ha-svg-icon>
-                    </bt-ha-outlined-icon-button>
-                  </div>
-                  <div class="button">
-                    <bt-ha-outlined-icon-button 
-                      @click=${this._incValue}
-                    >
-                    <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
-                  </bt-ha-outlined-icon-button>
-                  </div>
-              </div>
-              `}
             </div>
+            </bt-ha-control-circular-slider>
+            <div id="modes">
+              ${this?._hasSummer ? svg`
+                ${this?._config?.disable_heat ? html `` : this._renderIcon("heat", this.mode)}
+                ${this?._config?.disable_eco ? html `` :
+                  this?.stateObj?.attributes?.saved_temperature &&
+                  this?.stateObj?.attributes?.saved_temperature !== "none" &&
+                  this?.stateObj?.state !== UNAVAILABLE
+                    ? this._renderIcon("eco","eco"): this._renderIcon("eco", "none")}
+                ${this?._config?.disable_off ? html `` : this._renderIcon("off", this.mode)}
+              `:
+              svg`
+                ${this.modes.map((mode) => {
+                  if(this._config?.disable_heat && mode === "heat") return html ``;
+                  if(this._config?.disable_eco && mode === "eco") return html ``;
+                  if(this._config?.disable_off && mode === "off") return html ``;
+                  return this._renderIcon(mode, this.mode);
+                })}
+              `}
+
+            </div>
+            ${this?._config?.disable_buttons ? html`` : html`
+            <div id="bt-control-buttons">
+                <div class="button">
+                  <bt-ha-outlined-icon-button
+                      @click=${this._decValue}
+                  >
+                    <ha-svg-icon .path=${mdiMinus}></ha-svg-icon>
+                  </bt-ha-outlined-icon-button>
+                </div>
+                <div class="button">
+                  <bt-ha-outlined-icon-button 
+                    @click=${this._incValue}
+                  >
+                  <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
+                </bt-ha-outlined-icon-button>
+                </div>
+            </div>
+            `}
           </div>
   </ha-card>
   `;
