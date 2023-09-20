@@ -13,6 +13,7 @@
         "disable_off": "Vypnúť",
         "disable_menu": "Zakázať menu",
         "disable_battery_warning": "Zakázať upozornenie na batériu",
+        "disable_buttons": "Zakázať plus/mínus tlačidlá",
         "eco_temperature": "Eco teplota",
         "set_current_as_main": "Vymeňte cieľ za miesta s aktuálnou teplotou"
       }
