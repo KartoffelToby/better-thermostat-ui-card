@@ -31,7 +31,10 @@ import {
   mdiBatteryAlert,
   mdiWifiStrengthOffOutline,
   mdiMinus,
-  mdiPlus
+  mdiPlus,
+  mdiAirConditioner,
+  mdiWeatherWindy,
+  mdiSunSnowflakeVariant
 } from "@mdi/js";
 
 import {
@@ -70,7 +73,8 @@ const modeIcons: {
   eco: mdiLeaf, 
   summer: mdiSunThermometer,
   temperature:  mdiThermometer,
-  humidity: mdiWaterPercent
+  humidity: mdiWaterPercent,
+  ok: mdiAirConditioner
 };
 type Target = "value" | "low" | "high";
 
@@ -432,7 +436,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       .cool {
         --mode-color: var(--label-badge-red);
       }
-      .heat {
+      .heat, .heat_cool {
         --mode-color: var(--label-badge-red);
       }
       .manual {
@@ -523,6 +527,11 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       .status.active {
         fill: var(--error-color);
         filter: drop-shadow(0px 0px 6px var(--error-color));
+      }
+
+      .status.cooler.active {
+        fill: #03A9F4;
+        filter: drop-shadow(0px 0px 6px #03A9F4);
       }
 
       #bar {
@@ -696,11 +705,11 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   private _updateDisplay() {
     if(this?._config?.set_current_as_main) {
-      this._display_bottom = this.value[this.target];
+      this._display_bottom = this._getCurrentSetpoint();
       this._display_top = this.current;
     } else {
       this._display_bottom = this.current;
-      this._display_top = this.value[this.target];
+      this._display_top = this._getCurrentSetpoint();
     }
   }
 
@@ -736,6 +745,34 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
           entity_id: this._config!.entity,
           temperature: this.value,
       });
+  }
+
+
+  private _getCurrentSetpoint(): number {
+    if(this?.value?.high !== null && this?.value?.low !== null) {
+      if ((this?.value?.low || 0) >= this.current) return this?.value?.low || 0;
+      else if ((this?.value?.high || 0) <= this.current) return this?.value?.high || 0;
+      else return this?.value?.low || 0;
+    }
+    return this?.value?.value || 0;
+  }
+
+  private _renderHVACAction(full = false): TemplateResult {
+    if (full) {
+      if ((this?.value?.low || 0) >= this.current) return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
+      else if ((this?.value?.high || 0) <= this.current) return svg`<path class="status cooler ${(this.stateObj.attributes.hvac_action === 'cooling' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiWeatherWindy}" />`;
+      return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiSunSnowflakeVariant}" />`;
+    } else {
+      if ((this?.value?.low || 0) >= this.current) return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
+      else if ((this?.value?.high || 0) <= this.current) return svg`<path class="status cooler ${(this.stateObj.attributes.hvac_action === 'cooling' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiWeatherWindy}" />`;
+      return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiSunSnowflakeVariant}" />`;
+    }
+  }
+
+  private _renderHVACIcon(currentMode: string): TemplateResult {
+    if ((this?.value?.low || 0) >= this.current) return this._renderIcon("heat", currentMode);
+    else if ((this?.value?.high || 0) <= this.current) return this._renderIcon("cool", currentMode);
+    return this._renderIcon("ok", currentMode);
   }
 
   private _renderIcon(mode: string, currentMode: string): TemplateResult {
@@ -878,7 +915,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                       `}
                     </tspan>
                   </text>
-                  <path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />
+                  ${this._renderHVACAction()}
                 `: svg `
                   <text x="-12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
                     ${svg`${formatNumber(
@@ -902,7 +939,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                     %
                     </tspan>
                   </text>
-                  <path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d=${mdiHeatWave} />
+                  ${this._renderHVACAction(true)}
                 `}
 
               </g>
@@ -910,8 +947,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
             </div>
             </bt-ha-control-circular-slider>
             <div id="modes">
+              ${
+                console.log(this.modes)
+              }
               ${this?._hasSummer ? svg`
-                ${this?._config?.disable_heat ? html `` : this._renderIcon("heat", this.mode)}
+                ${(this?._config?.disable_heat || !this.modes.includes('heat')) ? html `` : this._renderIcon("heat", this.mode)}
+                ${(this?._config?.disable_heat || !this.modes.includes('heat_cool')) ? html `` : this._renderHVACIcon(this.mode)}
                 ${this?._config?.disable_eco ? html `` :
                   this?.stateObj?.attributes?.saved_temperature &&
                   this?.stateObj?.attributes?.saved_temperature !== "none" &&
@@ -921,7 +962,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
               `:
               svg`
                 ${this.modes.map((mode) => {
-                  if(this._config?.disable_heat && mode === "heat") return html ``;
+                  if(this._config?.disable_heat && (mode === "heat" || mode === "heat_cool")) return html ``;
                   if(this._config?.disable_eco && mode === "eco") return html ``;
                   if(this._config?.disable_off && mode === "off") return html ``;
                   return this._renderIcon(mode, this.mode);
