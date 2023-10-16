@@ -3,8 +3,24 @@
       "version": "verze",
       "current": "aktuální"
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Zakázat okno",
+        "disable_summer": "Zakázat léto",
+        "disable_eco": "Zakázat eco",
+        "disable_heat": "Zakázat topení",
+        "disable_off": "Zakázat vypnuto",
+        "disable_menu": "Zakázat menu",
+        "disable_battery_warning": "Zakázat upozornění baterie",
+        "disable_buttons": "Zakázat tlačítka plus/minus",
+        "eco_temperature": "Eco teplota",
+        "set_current_as_main": "Prohodit místa cílovoé a aktáalní teploty"
+      }
+    }
+  },
   "extra_states": {
-    "window_open": "Otevřené okno",
+    "window_open": "okno otevřeno",
     "night_mode": "Noční režim",
     "eco": "Eco",
     "summer": "Léto"
