@@ -759,13 +759,19 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   private _renderHVACAction(full = false): TemplateResult {
     if (full) {
+      if (this?.value?.low === null && this?.value?.high === null) {
+        return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
+      }
       if ((this?.value?.low || 0) >= this.current) return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
       else if ((this?.value?.high || 0) <= this.current) return svg`<path class="status cooler ${(this.stateObj.attributes.hvac_action === 'cooling' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiWeatherWindy}" />`;
-      return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiSunSnowflakeVariant}" />`;
+      else return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
     } else {
+      if (this?.value?.low === null && this?.value?.high === null) {
+        return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
+      }
       if ((this?.value?.low || 0) >= this.current) return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
       else if ((this?.value?.high || 0) <= this.current) return svg`<path class="status cooler ${(this.stateObj.attributes.hvac_action === 'cooling' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiWeatherWindy}" />`;
-      return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiSunSnowflakeVariant}" />`;
+      else return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
     }
   }
 
@@ -905,7 +911,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                 ${(this.humidity === 0) ? svg`
                     <text x="-5%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
                     ${svg`${formatNumber(
-                      this.current,
+                      this._display_bottom,
                       this.hass.locale,
                       { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                     )}`}
@@ -947,9 +953,6 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
             </div>
             </bt-ha-control-circular-slider>
             <div id="modes">
-              ${
-                console.log(this.modes)
-              }
               ${this?._hasSummer ? svg`
                 ${(this?._config?.disable_heat || !this.modes.includes('heat')) ? html `` : this._renderIcon("heat", this.mode)}
                 ${(this?._config?.disable_heat || !this.modes.includes('heat_cool')) ? html `` : this._renderHVACIcon(this.mode)}
@@ -997,12 +1000,3 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   `;
   };
 }
-
-/*
-              <!--<g transform="translate(62.5,80)">  
-                <circle id="c-minus" cx="-20" cy="0" r="5" fill="#e7e7e8" />
-                <path  class="control" transform="translate(-24,-4) scale(0.35)" d=${mdiMinus} />
-                <circle id="c-plus" cx="20" cy="0" r="5" fill="#e7e7e8" />
-                <path  class="control" transform="translate(16,-4) scale(0.35)" d=${mdiPlus} />
-              </g>-->
-*/

@@ -1,10 +1,10 @@
-[![Version - 2.1.2](https://img.shields.io/badge/Version-2.1.2-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
+[![Version - 2.2.0](https://img.shields.io/badge/Version-2.2.0-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
 [![Discord](https://img.shields.io/discord/925725316540923914.svg?style=for-the-badge)](https://discord.gg/9BUegWTG3K)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
 # UI Card for Better Thermostat
 
-This project is in an early stage of development. It's a 1:1 adaptation of the default HA Thermostat Card, but with some improvements for the custom [better_thermostat](https://github.com/KartoffelToby/better_thermostat) integration. (you need at least 1.0.0)
+This is a advanced climate card for HA, but with some improvements for the custom [better_thermostat](https://github.com/KartoffelToby/better_thermostat) integration. (you need at least 1.3.0)
 
 As for now the main improvement is the ability to see the extra status from better_thermostat like if a window open is detected, or nightmode is on or summer mode.
 
@@ -15,6 +15,7 @@ As for now the main improvement is the ability to see the extra status from bett
 ![](/assets/5.png)
 ![](/assets/6.png)
 ![](/assets/7.png)
+![](/assets/8.png)
 
  
 ## Goals
