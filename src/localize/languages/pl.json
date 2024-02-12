@@ -1,12 +1,28 @@
 {
   "common": {
-      "version": "wersja",
-      "current": "aktualna"
+      "version": "Wersja",
+      "current": "Aktualna"
+  },
+   "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Wyłącz okno",
+        "disable_summer": "Wyłacz lato",
+        "disable_eco": "Wyłącz tryb eko",
+        "disable_heat": "Wyłącz grzanie",
+        "disable_off": "Wyłącz wyłącznik",
+        "disable_menu": "Wyłącz menu",
+        "disable_battery_warning": "Wyłącz ostrzeżenie o baterii",
+        "disable_buttons": "Wyłącz przyciski plus/minus",
+        "eco_temperature": "Temperatura eko",
+        "set_current_as_main": "Zamień miejscami temperature docelową z aktualną"
+      }
+    }
   },
   "extra_states": {
-    "window_open": "otwarte okno",
-    "night_mode": "tryb nocny",
-    "eco": "tryb ekonomiczny",
-    "summer": "lato"
+    "window_open": "Otwarte okno",
+    "night_mode": "Tryb nocny",
+    "eco": "Tryb ekonomiczny",
+    "summer": "Lato"
   }
 }
