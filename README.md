@@ -49,7 +49,9 @@ Please add your language to this list as well while you are making your PR. Put 
 
 ## Translations
 
-[INLANG Editor](https://inlang.com/editor/github.com/KartoffelToby/better-thermostat-ui-card)
+[INLANG Editor](https://fink.inlang.com/github.com/KartoffelToby/better-thermostat-ui-card)
+
+[![inlang status badge](https://badge.inlang.com/?url=github.com/KartoffelToby/better-thermostat-ui-card)](https://fink.inlang.com/github.com/KartoffelToby/better-thermostat-ui-card?ref=badge)
 
 What we have so far:
 - en - Reference 
