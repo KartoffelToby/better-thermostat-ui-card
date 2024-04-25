@@ -1,7 +1,7 @@
 {
   "common": {
-      "version": "verze",
-      "current": "aktuální"
+    "version": "verze",
+    "current": "aktuální"
   },
   "editor": {
     "card": {

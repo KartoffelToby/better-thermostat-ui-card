@@ -1,25 +1,25 @@
 {
-    "common": {
-        "version": "versione",
-        "current": "Corrente"
-      },
-      "editor": {
-        "card": {
-          "climate": {
-            "disable_window": "Disabilita indicatore Finestra",
-            "disable_summer": "Disabilita indicatore Estate",
-            "disable_eco": "Disabilita tasto eco",
-            "disable_heat": "Disabilita tasto heat",
-            "disable_off": "Disabililita tasto off",
-            "eco_temperature": "Temperatura target",
-            "set_current_as_main": "Imposta la temperatura attuale come target"
-          }
-        }
-     },
-    "extra_states": {
-      "window_open": "Finestra aperta",
-      "night_mode": "Modalità notturna",
-      "eco": "Eco",
-      "summer": "Estate"
+  "common": {
+    "version": "versione",
+    "current": "Corrente"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Disabilita indicatore Finestra",
+        "disable_summer": "Disabilita indicatore Estate",
+        "disable_eco": "Disabilita tasto eco",
+        "disable_heat": "Disabilita tasto heat",
+        "disable_off": "Disabililita tasto off",
+        "eco_temperature": "Temperatura target",
+        "set_current_as_main": "Imposta la temperatura attuale come target"
+      }
     }
+  },
+  "extra_states": {
+    "window_open": "Finestra aperta",
+    "night_mode": "Modalità notturna",
+    "eco": "Eco",
+    "summer": "Estate"
   }
+}

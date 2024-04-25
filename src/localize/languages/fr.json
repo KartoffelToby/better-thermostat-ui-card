@@ -1,25 +1,28 @@
 {
   "common": {
-      "version": "version",
-      "current": "Actuelle"
+    "version": "version",
+    "current": "Actuelle"
   },
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Desactiver fenêtre",
-        "disable_summer": "Desactiver été",
-        "disable_eco": "Desactiver mode eco",
-        "disable_heat": "Desactiver mode chauffe",
-        "disable_off": "Desactiver arret",
-        "eco_temperature": "Temperature Eco",
-        "set_current_as_main": "Echanger temperature cible avec temperature locale"
+        "disable_window": "Désactiver fenêtre",
+        "disable_summer": "Désactiver été",
+        "disable_eco": "Désactiver mode Éco",
+        "disable_heat": "Désactiver mode chauffe",
+        "disable_off": "Désactiver arrêt",
+        "disable_menu": "Désactiver le menu",
+        "disable_battery_warning": "Désactiver l'avertissement de batterie",
+        "disable_buttons": "Désactiver les boutons plus/moins",
+        "eco_temperature": "Température Éco",
+        "set_current_as_main": "Échanger température cible avec température locale"
       }
     }
   },
   "extra_states": {
     "window_open": "Fenêtre ouverte",
     "night_mode": "Mode nuit",
-    "eco": "Eco",
+    "eco": "Éco",
     "summer": "Été"
   }
 }

@@ -1,9 +1,9 @@
 {
   "common": {
-      "version": "Wersja",
-      "current": "Aktualna"
+    "version": "Wersja",
+    "current": "Aktualna"
   },
-   "editor": {
+  "editor": {
     "card": {
       "climate": {
         "disable_window": "Wyłącz okno",

@@ -1,28 +1,28 @@
 {
-    "common": {
-        "version": "Version",
-        "current": "Aktuell"
-    },
-    "editor": {
-      "card": {
-        "climate": {
-          "disable_window": "Fenster-offen-Anzeige deaktivieren",
-          "disable_summer": "Sommer-Anzeige deaktivieren",
-          "disable_eco": "Eco-Anzeige deaktivieren",
-          "disable_heat": "Heiz-Anzeige deaktivieren",
-          "disable_off": "Aus-Anzeige deaktivieren",
-          "disable_menu": "Menü deaktivieren",
-          "disable_battery_warning": "Batterie-Warnung deaktivieren",
-          "disable_buttons": "Plus/Minus Buttons deaktivieren",
-          "eco_temperature": "Eco Temperatur",
-          "set_current_as_main": "Zieltemperatur mit aktueller Temperatur tauschen"
-        }
+  "common": {
+    "version": "Version",
+    "current": "Aktuell"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Fenster-offen-Anzeige deaktivieren",
+        "disable_summer": "Sommer-Anzeige deaktivieren",
+        "disable_eco": "Eco-Anzeige deaktivieren",
+        "disable_heat": "Heiz-Anzeige deaktivieren",
+        "disable_off": "Aus-Anzeige deaktivieren",
+        "disable_menu": "Menü deaktivieren",
+        "disable_battery_warning": "Batterie-Warnung deaktivieren",
+        "disable_buttons": "Plus/Minus Buttons deaktivieren",
+        "eco_temperature": "Eco Temperatur",
+        "set_current_as_main": "Zieltemperatur mit aktueller Temperatur tauschen"
       }
-    },
-    "extra_states": {
-      "window_open": "Fenster offen",
-      "night_mode": "Nachtmodus",
-      "eco": "Eco",
-      "summer": "Sommer"
     }
+  },
+  "extra_states": {
+    "window_open": "Fenster offen",
+    "night_mode": "Nachtmodus",
+    "eco": "Eco",
+    "summer": "Sommer"
   }
+}

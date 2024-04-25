@@ -1,7 +1,7 @@
 {
   "common": {
-      "version": "версия",
-      "currrent": "текущий"
+    "version": "версия",
+    "currrent": "текущий"
   },
   "extra_states": {
     "window_open": "Отворен прозорец",

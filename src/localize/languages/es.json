@@ -1,7 +1,7 @@
 {
   "common": {
-      "version": "version",
-      "current": "Actual"
+    "version": "version",
+    "current": "Actual"
   },
   "extra_states": {
     "window_open": "Ventana abierta",
