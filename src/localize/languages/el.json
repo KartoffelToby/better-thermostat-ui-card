@@ -1,7 +1,7 @@
 {
   "common": {
-      "version": "έκδοση",
-      "current": "τρέχουσα"
+    "version": "έκδοση",
+    "current": "τρέχουσα"
   },
   "extra_states": {
     "window_open": "Παράθυρο ανοικτό",

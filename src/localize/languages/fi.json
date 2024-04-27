@@ -1,7 +1,7 @@
 {
   "common": {
-      "version": "version",
-      "current": "Nykyinen"
+    "version": "version",
+    "current": "Nykyinen"
   },
   "extra_states": {
     "window_open": "Ikkuna auki",

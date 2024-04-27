@@ -1,7 +1,7 @@
 {
   "common": {
-      "version": "versió",
-      "current": "Actual"
+    "version": "versió",
+    "current": "Actual"
   },
   "extra_states": {
     "window_open": "Finestra oberta",
