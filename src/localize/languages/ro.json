@@ -1,7 +1,7 @@
 {
   "common": {
-      "version": "versiune",
-      "current": "curent"
+    "version": "versiune",
+    "current": "curent"
   },
   "extra_states": {
     "window_open": "Fereastră deschisă",

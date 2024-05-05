@@ -1,7 +1,8 @@
 {
   "common": {
-      "version": "version",
-      "current": "current"
+    "version": "version",
+    "current": "current",
+    "currrent": "current"
   },
   "editor": {
     "card": {
