@@ -1,12 +1,28 @@
 {
-    "common": {
-        "version": "версія",
-        "current": "поточний"
-    },
-    "extra_states": {
-        "window_open": "Вікно відчинено",
-        "night_mode": "Нічний режим",
-        "eco": "Економія",
-        "summer": "Літо"
+  "common": {
+    "version": "версія",
+    "current": "поточний"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Прибрати вікно",
+        "disable_summer": "Прибрати літо",
+        "disable_eco": "Прибрати еко",
+        "disable_heat": "Прибрати обігрів",
+        "disable_off": "Прибрати відключення",
+        "disable_menu": "Прибрати меню",
+        "disable_battery_warning": "Прибрати попередження про акумулятор",
+        "disable_buttons": "Прибрати кнопки плюс/мінус",
+        "eco_temperature": "Еко температура",
+        "set_current_as_main": "Поміняйте місцями цільову з поточною температурою"
+      }
     }
+  },
+  "extra_states": {
+    "window_open": "Вікно відчинено",
+    "night_mode": "Нічний режим",
+    "eco": "Економія",
+    "summer": "Літо"
+  }
 }
