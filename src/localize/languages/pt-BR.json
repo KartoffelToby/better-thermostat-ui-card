@@ -1,0 +1,28 @@
+{
+  "common": {
+      "version": "versão",
+      "current": "atual"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Desabilitar janela",
+        "disable_summer": "Desabilitar versão",
+        "disable_eco": "Desabilitar eco",
+        "disable_heat": "Desabilitar aquecimento",
+        "disable_off": "Desabilitar desliga",
+        "disable_menu": "Desabilitar menu",
+        "disable_battery_warning": "Desabilitar aviso de bateria",
+        "disable_buttons": "Desabilitar botões mais/menos",
+        "eco_temperature": "Temperatura eco",
+        "set_current_as_main": "Trocar pela temperatura atual do local"
+      }
+    }
+  },
+  "extra_states": {
+    "window_open": "Janela aberta",
+    "night_mode": "Modo noturno",
+    "eco": "Eco",
+    "summer": "Verão"
+  }
+}
