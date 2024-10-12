@@ -1,7 +1,7 @@
 {
   "common": {
-      "version": "版本",
-      "current": "当前"
+    "version": "版本",
+    "current": "当前"
   },
   "extra_states": {
     "window_open": "窗户打开",
