@@ -1,7 +1,23 @@
 {
   "common": {
-      "version": "version",
-      "current": "Actual"
+    "version": "versión",
+    "current": "Actual"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Deshabilitar ventana",
+        "disable_summer": "Deshabilitar verano",
+        "disable_eco": "Deshabilitar eco",
+        "disable_heat": "Deshabilitar calor",
+        "disable_off": "Deshabilitar apagado",
+        "disable_menu": "Deshabilitar menú",
+        "disable_battery_warning": "Deshabilitar alerta de batería",
+        "disable_buttons": "Deshabilitar botones más/menos",
+        "eco_temperature": "Temperatura Eco",
+        "set_current_as_main": "Fijar temperatura objetivo a temperatura actual"
+      }
+    }
   },
   "extra_states": {
     "window_open": "Ventana abierta",
