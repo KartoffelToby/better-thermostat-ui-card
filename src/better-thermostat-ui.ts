@@ -73,7 +73,7 @@ const modeIcons: {
   eco: mdiLeaf, 
   summer: mdiSunThermometer,
   temperature:  mdiThermometer,
-  humidity: mdiWaterPercent,
+  current_humidity: mdiWaterPercent,
   ok: mdiAirConditioner
 };
 type Target = "value" | "low" | "high";
@@ -142,7 +142,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   @property({ type: Number }) public value: Partial<Record<Target, number>> = {};
   @state() private _selectTargetTemperature: Target = "low";
   @property({ type: Number }) public current: number = 0;
-  @property({ type: Number }) public humidity: number = 0;
+  @property({ type: Number }) public current_humidity: number = 0;
   @property({ type: Number }) public min = 0;
   @property({ type: Number }) public max = 35;
   @property({ type: Number }) public step = 1;
@@ -603,7 +603,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       if(changedProps.get("_config") !== undefined) {
         this._hasSummer = false;
         this._hasWindow = false;
-        this.humidity = 0;
+        this.current_humidity = 0;
       }
     }
     if (changedProps.get("hass") !== undefined) {
@@ -667,8 +667,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         if (attributes.current_temperature) {
           this.current = attributes.current_temperature;
         }
-        if (attributes?.humidity !== undefined) {
-          this.humidity = parseFloat(attributes.humidity);
+        if (attributes?.current_humidity !== undefined) {
+          this.current_humidity = parseFloat(attributes.current_humidity);
         }
         if (attributes?.window_open !== undefined) {
           this._hasWindow = true;
@@ -908,7 +908,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
               ` : ''}
               <line x1="35" y1="72" x2="90" y2="72" stroke="#e7e7e8" stroke-width="0.5" />
               <g class="current-info" transform="translate(62.5,80)">
-                ${(this.humidity === 0) ? svg`
+                ${(this.current_humidity === 0) ? svg`
                     <text x="-5%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
                     ${svg`${formatNumber(
                       this._display_bottom,
@@ -937,7 +937,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
                   </text>
                   <text x="12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
                     ${svg`${formatNumber(
-                      this.humidity,
+                      this.current_humidity,
                       this.hass.locale,
                       { minimumFractionDigits: 1, maximumFractionDigits: 1 }
                     )}`}
