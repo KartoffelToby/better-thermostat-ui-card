@@ -23,6 +23,7 @@ import * as bg from './languages/bg.json';
 import * as fi from './languages/fi.json';
 import * as ro from './languages/ro.json';
 import * as ca from './languages/ca.json';
+import * as lv from './languages/lv.json';
 import { HomeAssistant } from '../ha';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,6 +53,7 @@ const languages: any = {
   fi: fi,
   ro: ro,
   ca: ca,
+  lv: lv,
 };
 const DEFAULT_LANG = "en";
 

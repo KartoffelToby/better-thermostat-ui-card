@@ -8,14 +8,14 @@
       "climate": {
         "disable_window": "Отключить окно",
         "disable_summer": "Отключить лето",
-        "disable_eco": "Отключить eco",
+        "disable_eco": "Отключить режим eco",
         "disable_heat": "Отключить обогрев",
-        "disable_off": "Отключить \"Выкл.\"",
+        "disable_off": "Отключить",
         "disable_menu": "Отключить меню",
-        "disable_battery_warning": "Отключить предупреждение о батарее",
+        "disable_battery_warning": "Отключить предупреждение о разряде батареи",
         "disable_buttons": "Отключить кнопку плюс/минус",
         "eco_temperature": "Eco температура",
-        "set_current_as_main": "Поменяйть местами цель и текущую температуру"
+        "set_current_as_main": "Поменять местами требуемую и текущую температуру"
       }
     }
   },
