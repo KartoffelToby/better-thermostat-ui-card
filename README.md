@@ -67,6 +67,7 @@ What we have so far:
 - fr
 - hu
 - it
+- lv
 - nl
 - no
 - pl

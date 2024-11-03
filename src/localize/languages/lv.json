@@ -1,0 +1,28 @@
+{
+  "common": {
+      "version": "versijas",
+      "current": "pašreizējais"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Atspējot logu indikatoru",
+        "disable_summer": "Atspējot vasaras režīmu",
+        "disable_eco": "Atspējot ekonomisko režīmu",
+        "disable_heat": "Atspējot sildīšanas režīmu",
+        "disable_off": "Atspējot izslēgšanu",
+        "disable_menu": "Atspējot izvēlni",
+        "disable_battery_warning": "Atspējot baterijas brīdinājumu",
+        "disable_buttons": "Atspējot plus/mīnus pogas",
+        "eco_temperature": "Eko režīma temperatūra",
+        "set_current_as_main": "Apmainīt pašreizējo un mērķa temperatūru vietām"
+      }
+    }
+  },
+  "extra_states": {
+    "window_open": "Atvērts logs",
+    "night_mode": "Nakts režīms",
+    "eco": "Eko režīms",
+    "summer": "Vasaras režīms"
+  }
+}
