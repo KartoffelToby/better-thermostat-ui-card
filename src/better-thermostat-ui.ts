@@ -762,21 +762,19 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   private _renderHVACAction(full = false): TemplateResult {
-    if (full) {
-      if (this?.value?.low === null && this?.value?.high === null) {
-        return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
-      }
-      if ((this?.value?.low || 0) >= this.current) return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
-      else if ((this?.value?.high || 0) <= this.current) return svg`<path class="status cooler ${(this.stateObj.attributes.hvac_action === 'cooling' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiWeatherWindy}" />`;
-      else return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
-    } else {
-      if (this?.value?.low === null && this?.value?.high === null) {
-        return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
-      }
-      if ((this?.value?.low || 0) >= this.current) return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
-      else if ((this?.value?.high || 0) <= this.current) return svg`<path class="status cooler ${(this.stateObj.attributes.hvac_action === 'cooling' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiWeatherWindy}" />`;
-      else return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
+    const isHeating = this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off';
+    const isCooling = this.stateObj.attributes.hvac_action === 'cooling' && this.mode !== 'off';
+    const showCoolingIcon = this?.value?.high !== undefined && this?.value?.high !== null && this?.value?.high <= this.current;
+    const transform = full ? "translate(-3,-3.5) scale(0.25)" : "translate(5,-4) scale(0.25)";
+    const fill = "#9d9d9d";
+
+    if (showCoolingIcon) {
+      const label = isCooling ? localize({ hass: this.hass, string: `extra_states.cooling` }) : localize({ hass: this.hass, string: `extra_states.cooling_off` });
+      return svg`<path class="status cooler ${isCooling ? 'active' : ''}" transform="${transform}" fill="${fill}" d="${mdiWeatherWindy}" title="Cooling"><title>${label}</title></path>`;
     }
+
+    const label = isHeating ? localize({ hass: this.hass, string: `extra_states.heating` }) : localize({ hass: this.hass, string: `extra_states.heating_off` });
+    return svg`<path class="status ${isHeating ? 'active' : ''}" transform="${transform}" fill="${fill}" d="${mdiHeatWave}" title="Heating"><title>${label}</title></path>`;
   }
 
   private _renderHVACIcon(currentMode: string): TemplateResult {
@@ -811,7 +809,123 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   public render: () => TemplateResult = (): TemplateResult => {
-    return html `
+    const windowLabel = this.window ? localize({ hass: this.hass, string: `extra_states.window_open` }) : localize({ hass: this.hass, string: `extra_states.window_closed` });
+    const upperContentIcons = svg`
+      <g transform="translate(57.5,37) scale(0.35)">
+      ${(this._hasWindow && !this._config?.disable_window) ? svg`
+        <path title="${windowLabel}" class="window ${this.window ? 'active' : ''}" fill="none" transform="${(this._hasSummer && !this._config?.disable_summer) ? 'translate(-31.25,0)' : ''}" id="window" d=${mdiWindowOpenVariant}><title>${windowLabel}</title></path>
+      `: ``}
+      ${(this._hasSummer && !this._config?.disable_summer) ? svg`
+        <path class="summer ${this.summer ? 'active' : ''}" fill="none" transform="${(this._hasWindow && !this._config?.disable_window) ? 'translate(31.25,0)' : ''}" id="summer" d=${mdiSunThermometer}><title>${localize({ hass: this.hass, string: `extra_states.summer` })}</title></path>
+      `: ``}
+     </g>`;
+
+    const mainTempLabel = this?._config?.set_current_as_main ? localize({ hass: this.hass, string: `common.current_temperature` }) : localize({ hass: this.hass, string: `common.target_temperature` });
+    const mainValue = svg`
+      <text class="main-value" x="62.5" y="60%" dominant-baseline="middle" text-anchor="middle" style="font-size:15px;">
+        <title>${mainTempLabel}</title>
+        ${formatNumber(
+      this._display_top,
+      this.hass.locale,
+      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+    )}
+        <tspan dx="-2" dy="-5.5" style="font-size: 5px;">
+          ${this.hass.config.unit_system.temperature}
+        </tspan>
+      </text>`;
+
+    const unavailableMessage = svg`${this?.stateObj?.state === UNAVAILABLE || this?.stateObj?.state === UNKNOWN ? svg`
+      <text x="62.5" y="63%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
+        ${this.hass!.localize("state.default.unavailable")}
+      </text>` : ''}`;
+
+    const seperator = svg`<line x1="35" y1="72" x2="90" y2="72" stroke="#e7e7e8" stroke-width="0.5" />`;
+
+    const lowerTempLabel = this?._config?.set_current_as_main ? localize({ hass: this.hass, string: `common.target_temperature` }) : localize({ hass: this.hass, string: `common.current_temperature` });
+    const lowerContent = svg`
+    <g class="current-info" transform="translate(62.5,80)">
+      ${(this.current_humidity === 0) ? svg`
+        <text x="-5%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
+          <title>${lowerTempLabel}</title>
+        ${svg`${formatNumber(
+      this._display_bottom,
+      this.hass.locale,
+      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+    )}`}
+          <tspan dx="-1" dy="-2" style="font-size: 3px;">
+            ${svg`${this.hass.config.unit_system.temperature}`}
+          </tspan>
+        </text>
+        ${this._renderHVACAction()}
+      `: svg`
+        <text x="-12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
+          <title>${lowerTempLabel}</title>  
+        ${svg`${formatNumber(
+      this._display_bottom,
+      this.hass.locale,
+      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+    )}`}
+        <tspan dx="-0.3" dy="-2" style="font-size: 3px;">
+          ${svg`${this.hass.config.unit_system.temperature}`}
+        </tspan>
+      </text>
+      <text x="12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
+          <title>${localize({ hass: this.hass, string: `common.current_humidity` })}</title>  
+        ${svg`${formatNumber(
+      this.current_humidity,
+      this.hass.locale,
+      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+    )}`}
+        <tspan dx="-0.3" dy="-2" style="font-size: 3px;">%</tspan>
+      </text>
+      ${this._renderHVACAction(true)}
+      `}
+    </g>`;
+
+    const modes = html`<div id="modes">
+          ${this?._hasSummer ? svg`
+            ${(this?._config?.disable_heat || !this.modes.includes('heat')) ? html`` : this._renderIcon("heat", this.mode)}
+            ${(this?._config?.disable_heat || !this.modes.includes('heat_cool')) ? html`` : this._renderHVACIcon(this.mode)}
+            ${this?._config?.disable_eco ? html`` :
+          this?.stateObj?.attributes?.saved_temperature &&
+            this?.stateObj?.attributes?.saved_temperature !== "none" &&
+            this?.stateObj?.state !== UNAVAILABLE
+            ? this._renderIcon("eco", "eco") : this._renderIcon("eco", "none")}
+            ${this?._config?.disable_off ? html`` : this._renderIcon("off", this.mode)}
+          `:
+        svg`
+            ${this.modes.map((mode) => {
+          if (this._config?.disable_heat && (mode === "heat" || mode === "heat_cool")) return html``;
+          if (this._config?.disable_eco && mode === "eco") return html``;
+          if (this._config?.disable_off && mode === "off") return html``;
+          return this._renderIcon(mode, this.mode);
+        })}`}
+        </div>`;
+
+    const buttons = this?._config?.disable_buttons ? html`` : html`
+      <div id="bt-control-buttons">
+          <div class="button">
+            <bt-ha-outlined-icon-button
+              .target=${this.target}
+              .step=${-this.step}
+              @click=${this._handleButton}
+            >
+              <ha-svg-icon .path=${mdiMinus}></ha-svg-icon>
+            </bt-ha-outlined-icon-button>
+          </div>
+          <div class="button">
+            <bt-ha-outlined-icon-button 
+              .target=${this.target}
+              .step=${this.step}
+              @click=${this._handleButton}
+            >
+            <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
+          </bt-ha-outlined-icon-button>
+          </div>
+      </div>
+    </div>`;
+
+    return html`
     <ha-card id="${this?._config?.disable_buttons ? '' : 'expand'}" class=${classMap({
       [this.mode]: true,
     })}
@@ -820,8 +934,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       <ha-icon-button
         class="more-info"
         .label=${this.hass!.localize(
-          "ui.panel.lovelace.cards.show_more_info"
-        )}
+      "ui.panel.lovelace.cards.show_more_info"
+    )}
         .path=${mdiDotsVertical}
         @click=${this._handleMoreInfo}
         tabindex="0"
@@ -846,12 +960,11 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         </div>
       ` : ``}
 
-      ${
-        (this.value.low != null &&
+      ${(this.value.low != null &&
         this.value.high != null &&
         this.stateObj.state !== UNAVAILABLE) ? html`
         <bt-ha-control-circular-slider
-          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${this.summer ? 'summer': ''} "
+          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
           .inactive=${this.window}
           dual
           .low=${this.value.low}
@@ -867,7 +980,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         >
         ` : html`
         <bt-ha-control-circular-slider
-          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${this.summer ? 'summer': ''} "
+          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
           .inactive=${this.window}
           .mode="start"
           @value-changed=${this._highChanged}
@@ -880,126 +993,18 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         >
         `
       }
-      <div class="content ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer': ''} ">
-            <svg id="main" viewbox="0 0 125 100">
-              <g transform="translate(57.5,37) scale(0.35)">
-                ${(this._hasWindow && !this._config?.disable_window) ? svg`
-                  <path title="${localize({ hass: this.hass, string: `extra_states.window_open` })}" class="window ${this.window ? 'active': ''}" fill="none" transform="${(this._hasSummer && !this._config?.disable_summer) ? 'translate(-31.25,0)' :''}" id="window" d=${mdiWindowOpenVariant} />
-                `: ``}
-                ${(this._hasSummer && !this._config?.disable_summer) ? svg`
-                  <path class="summer ${this.summer ? 'active': ''}" fill="none" transform="${(this._hasWindow && !this._config?.disable_window) ? 'translate(31.25,0)' :''}" id="summer" d=${mdiSunThermometer} />
-                `: ``}
-              </g>
-
-
-
-              <text class="main-value" x="62.5" y="60%" dominant-baseline="middle" text-anchor="middle" style="font-size:15px;">
-                ${svg`${formatNumber(
-                  this._display_top,
-                  this.hass.locale,
-                  { minimumFractionDigits: 1, maximumFractionDigits: 1 }
-                )}`}
-                <tspan dx="-2" dy="-5.5" style="font-size: 5px;">
-                  ${svg`
-                    ${this.hass.config.unit_system.temperature}
-                  `}
-                </tspan>
-              </text>
-              ${(this?.stateObj?.state === UNAVAILABLE || this?.stateObj?.state === UNKNOWN) ? svg`
-              <text x="62.5" y="63%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">${this.hass!.localize(
-                "state.default.unavailable"
-              )}</text>
-              ` : ''}
-              <line x1="35" y1="72" x2="90" y2="72" stroke="#e7e7e8" stroke-width="0.5" />
-              <g class="current-info" transform="translate(62.5,80)">
-                ${(this.current_humidity === 0) ? svg`
-                    <text x="-5%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
-                    ${svg`${formatNumber(
-                      this._display_bottom,
-                      this.hass.locale,
-                      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
-                    )}`}
-                    <tspan dx="-1" dy="-2" style="font-size: 3px;">
-                      ${svg`
-                        ${this.hass.config.unit_system.temperature}
-                      `}
-                    </tspan>
-                  </text>
-                  ${this._renderHVACAction()}
-                `: svg `
-                  <text x="-12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
-                    ${svg`${formatNumber(
-                      this._display_bottom,
-                      this.hass.locale,
-                      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
-                    )}`}
-                    <tspan dx="-0.3" dy="-2" style="font-size: 3px;">
-                      ${svg`
-                        ${this.hass.config.unit_system.temperature}
-                      `}
-                    </tspan>
-                  </text>
-                  <text x="12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
-                    ${svg`${formatNumber(
-                      this.current_humidity,
-                      this.hass.locale,
-                      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
-                    )}`}
-                    <tspan dx="-0.3" dy="-2" style="font-size: 3px;">
-                    %
-                    </tspan>
-                  </text>
-                  ${this._renderHVACAction(true)}
-                `}
-
-              </g>
-                </svg>
-            </div>
-            </bt-ha-control-circular-slider>
-            <div id="modes">
-              ${this?._hasSummer ? svg`
-                ${(this?._config?.disable_heat || !this.modes.includes('heat')) ? html `` : this._renderIcon("heat", this.mode)}
-                ${(this?._config?.disable_heat || !this.modes.includes('heat_cool')) ? html `` : this._renderHVACIcon(this.mode)}
-                ${this?._config?.disable_eco ? html `` :
-                  this?.stateObj?.attributes?.saved_temperature &&
-                  this?.stateObj?.attributes?.saved_temperature !== "none" &&
-                  this?.stateObj?.state !== UNAVAILABLE
-                    ? this._renderIcon("eco","eco"): this._renderIcon("eco", "none")}
-                ${this?._config?.disable_off ? html `` : this._renderIcon("off", this.mode)}
-              `:
-              svg`
-                ${this.modes.map((mode) => {
-                  if(this._config?.disable_heat && (mode === "heat" || mode === "heat_cool")) return html ``;
-                  if(this._config?.disable_eco && mode === "eco") return html ``;
-                  if(this._config?.disable_off && mode === "off") return html ``;
-                  return this._renderIcon(mode, this.mode);
-                })}
-              `}
-
-            </div>
-            ${this?._config?.disable_buttons ? html`` : html`
-            <div id="bt-control-buttons">
-                <div class="button">
-                  <bt-ha-outlined-icon-button
-                    .target=${this.target}
-                    .step=${-this.step}
-                    @click=${this._handleButton}
-                  >
-                    <ha-svg-icon .path=${mdiMinus}></ha-svg-icon>
-                  </bt-ha-outlined-icon-button>
-                </div>
-                <div class="button">
-                  <bt-ha-outlined-icon-button 
-                    .target=${this.target}
-                    .step=${this.step}
-                    @click=${this._handleButton}
-                  >
-                  <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
-                </bt-ha-outlined-icon-button>
-                </div>
-            </div>
-            `}
-          </div>
+        <div class="content ${this.lowBattery !== null || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer' : ''} ">
+          <svg id="main" viewbox="0 0 125 100">
+            ${upperContentIcons}
+            ${mainValue}
+            ${unavailableMessage}
+            ${seperator}
+            ${lowerContent}
+          </svg>
+        </div>
+      </bt-ha-control-circular-slider>
+      ${modes}
+      ${buttons}
   </ha-card>
   `;
   };
