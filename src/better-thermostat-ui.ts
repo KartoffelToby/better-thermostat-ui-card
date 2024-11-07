@@ -377,9 +377,13 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         align-items: center;
         place-content: center;
         flex-flow: wrap;
-        z-index: 0;
+        z-index: 3; /* TODO: refactor z-index - bumping this up is messy but has less potential for side effects */
         transform: translate(-50%,-50%);
         max-width: 155px;
+      }
+
+      .content > svg * {
+        pointer-events: auto; /* reenable pointer events on all children */
       }
 
       #expand .content {
