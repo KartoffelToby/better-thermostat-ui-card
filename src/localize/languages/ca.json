@@ -1,12 +1,36 @@
 {
   "common": {
-    "version": "versió",
-    "current": "Actual"
+    "version": "Versió",
+    "current": "Actual",
+    "current_humidity": "Humitat actual",
+    "current_temperature": "Temperatura actual",
+    "target_temperature": "Temperatura objectiu"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Desactivar indicador de finestra oberta",
+        "disable_summer": "Desactivar indicador d'estiu",
+        "disable_eco": "Desactivar indicador eco",
+        "disable_heat": "Desactivar indicador de calefacció",
+        "disable_off": "Desactivar indicador d'apagat",
+        "disable_menu": "Desactivar menú",
+        "disable_battery_warning": "Desactivar advertència de bateria",
+        "disable_buttons": "Desactivar botons de més/menys",
+        "eco_temperature": "Temperatura eco",
+        "set_current_as_main": "Intercanviar la temperatura objectiu amb la temperatura actual"
+      }
+    }
   },
   "extra_states": {
     "window_open": "Finestra oberta",
+    "window_closed": "Finestra tancada",
     "night_mode": "Mode nocturn",
     "eco": "Eco",
-    "summer": "Estiu"
+    "summer": "Estiu",
+    "cooling": "Refredament",
+    "heating": "Escalfament",
+    "cooling_off": "Refredament apagat",
+    "heating_off": "Escalfament apagat"
   }
 }

@@ -1,7 +1,10 @@
 {
   "common": {
     "version": "Verzió",
-    "current": "Aktuális"
+    "current": "Aktuális",
+    "current_humidity": "Jelenlegi páratartalom",
+    "current_temperature": "Jelenlegi hőmérséklet",
+    "target_temperature": "Célhőmérséklet"
   },
   "editor": {
     "card": {
@@ -11,6 +14,9 @@
         "disable_eco": "Eco kikapcsolás",
         "disable_heat": "Fűtés kikacsolás",
         "disable_off": "Kikapcsolás inaktiválás",
+        "disable_menu": "Menü letiltása",
+        "disable_battery_warning": "Akkumulátor figyelmeztetés letiltása",
+        "disable_buttons": "Plusz/mínusz gombok letiltása",
         "eco_temperature": "Eco hőmérséklet",
         "set_current_as_main": "Aktuális hőmérséklet használata"
       }
@@ -18,8 +24,13 @@
   },
   "extra_states": {
     "window_open": "Ablak nyitva",
+    "window_closed": "Ablak zárva",
     "night_mode": "Éjszakai mód",
     "eco": "Eco",
-    "summer": "Nyár"
+    "summer": "Nyár",
+    "cooling": "Hűtés",
+    "heating": "Fűtés",
+    "cooling_off": "Hűtés kikapcsolva",
+    "heating_off": "Fűtés kikapcsolva"
   }
 }

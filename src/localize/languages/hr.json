@@ -1,7 +1,10 @@
 {
   "common": {
     "version": "verzija",
-    "current": "trenutno"
+    "current": "trenutno",
+    "current_humidity": "Trenutna vlažnost",
+    "current_temperature": "Trenutna temperatura",
+    "target_temperature": "Ciljana temperatura"
   },
   "editor": {
     "card": {
@@ -21,8 +24,13 @@
   },
   "extra_states": {
     "window_open": "Prozor otvoren",
+    "window_closed": "Prozor zatvoren",
     "night_mode": "Noćni način",
     "eco": "Eco",
-    "summer": "Ljeto"
+    "summer": "Ljeto",
+    "cooling": "Hlađenje",
+    "heating": "Grijanje",
+    "cooling_off": "Hlađenje isključeno",
+    "heating_off": "Grijanje isključeno"
   }
 }

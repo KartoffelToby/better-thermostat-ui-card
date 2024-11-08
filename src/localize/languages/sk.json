@@ -1,7 +1,10 @@
 {
   "common": {
     "version": "verzia",
-    "current": "aktuálny"
+    "current": "aktuálny",
+    "current_humidity": "Aktuálna vlhkosť",
+    "current_temperature": "Aktuálna teplota",
+    "target_temperature": "Cieľová teplota"
   },
   "editor": {
     "card": {
@@ -21,8 +24,13 @@
   },
   "extra_states": {
     "window_open": "Okno otvorené",
+    "window_closed": "Okno zatvorené",
     "night_mode": "Nočný mód",
     "eco": "Eco",
-    "summer": "Leto"
+    "summer": "Leto",
+    "cooling": "Chladenie",
+    "heating": "Kúrenie",
+    "cooling_off": "Chladenie vypnuté",
+    "heating_off": "Kúrenie vypnuté"
   }
 }

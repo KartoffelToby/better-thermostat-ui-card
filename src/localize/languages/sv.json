@@ -1,12 +1,36 @@
 {
   "common": {
     "version": "version",
-    "current": "Nuvarande"
+    "current": "Nuvarande",
+    "current_humidity": "Nuvarande luftfuktighet",
+    "current_temperature": "Nuvarande temperatur",
+    "target_temperature": "Måltemperatur"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Inaktivera fönster-öppen visning",
+        "disable_summer": "Inaktivera sommar visning",
+        "disable_eco": "Inaktivera eco visning",
+        "disable_heat": "Inaktivera värme visning",
+        "disable_off": "Inaktivera av visning",
+        "disable_menu": "Inaktivera meny",
+        "disable_battery_warning": "Inaktivera batterivarning",
+        "disable_buttons": "Inaktivera plus/minus knappar",
+        "eco_temperature": "Eco temperatur",
+        "set_current_as_main": "Byt måltemperatur med nuvarande temperatur"
+      }
+    }
   },
   "extra_states": {
     "window_open": "Fönster öppet",
+    "window_closed": "Fönster stängt",
     "night_mode": "Nattläge",
     "eco": "Eco",
-    "summer": "Sommar"
+    "summer": "Sommar",
+    "cooling": "Kylning",
+    "heating": "Uppvärmning",
+    "cooling_off": "Kylning av",
+    "heating_off": "Uppvärmning av"
   }
 }

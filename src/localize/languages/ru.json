@@ -1,7 +1,10 @@
 {
   "common": {
     "version": "версия",
-    "current": "текущий"
+    "current": "текущий",
+    "current_humidity": "Текущая влажность",
+    "current_temperature": "Текущая температура",
+    "target_temperature": "Целевая температура"
   },
   "editor": {
     "card": {
@@ -21,8 +24,13 @@
   },
   "extra_states": {
     "window_open": "Окно открыто",
+    "window_closed": "Окно закрыто",
     "night_mode": "Ночной режим",
-    "eco": "Eco",
-    "summer": "Лето"
+    "eco": "Эко",
+    "summer": "Лето",
+    "cooling": "Охлаждение",
+    "heating": "Отопление",
+    "cooling_off": "Охлаждение выключено",
+    "heating_off": "Отопление выключено"
   }
 }
