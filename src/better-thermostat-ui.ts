@@ -70,9 +70,9 @@ const modeIcons: {
   fan_only: mdiFan,
   dry: mdiWaterPercent,
   window_open: mdiWindowOpenVariant,
-  eco: mdiLeaf, 
+  eco: mdiLeaf,
   summer: mdiSunThermometer,
-  temperature:  mdiThermometer,
+  temperature: mdiThermometer,
   current_humidity: mdiWaterPercent,
   ok: mdiAirConditioner
 };
@@ -85,12 +85,12 @@ interface RegisterCardParams {
 }
 export function registerCustomCard(params: RegisterCardParams) {
   const windowWithCards = window as unknown as Window & {
-      customCards: unknown[];
+    customCards: unknown[];
   };
   windowWithCards.customCards = windowWithCards.customCards || [];
   windowWithCards.customCards.push({
-      ...params,
-      preview: true,
+    ...params,
+    preview: true,
   });
 }
 
@@ -127,18 +127,18 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   public static async getStubConfig(hass: HomeAssistant): Promise<any> {
-      const entities = Object.keys(hass.states);
-      const climates = entities.filter((e) => ["climate"].includes(e.split(".")[0]));
-      const bt_climate:any = climates.filter((e) => hass.states[e].attributes?.call_for_heat);
-      return {
-          type: "custom:better-thermostat-ui-card",
-          entity: bt_climate[0] || climates[0]
-      };
+    const entities = Object.keys(hass.states);
+    const climates = entities.filter((e) => ["climate"].includes(e.split(".")[0]));
+    const bt_climate: any = climates.filter((e) => hass.states[e].attributes?.call_for_heat);
+    return {
+      type: "custom:better-thermostat-ui-card",
+      entity: bt_climate[0] || climates[0]
+    };
   }
 
   @property({
-      attribute: false
-  }) public hass! : HomeAssistant;
+    attribute: false
+  }) public hass!: HomeAssistant;
   @property({ type: Number }) public value: Partial<Record<Target, number>> = {};
   @state() private _selectTargetTemperature: Target = "low";
   @property({ type: Number }) public current: number = 0;
@@ -252,13 +252,13 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   setConfig(config: ClimateCardConfig): void {
     this._config = {
-        tap_action: {
-            action: "toggle",
-        },
-        hold_action: {
-            action: "more-info",
-        },
-        ...config,
+      tap_action: {
+        action: "toggle",
+      },
+      hold_action: {
+        action: "more-info",
+      },
+      ...config,
     };
   }
 
@@ -266,7 +266,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
     return 1;
   }
 
-  public static styles: CSSResultGroup = css `
+  public static styles: CSSResultGroup = css`
       :host {
           display: block;
           box-sizing: border-box;
@@ -592,10 +592,10 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       }
   `;
 
-  private _vibrate(delay:number) {
+  private _vibrate(delay: number) {
     try {
       navigator.vibrate(delay);
-    } catch(e){}
+    } catch (e) { }
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -604,7 +604,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (changedProps.has("_config") !== undefined) {
-      if(changedProps.get("_config") !== undefined) {
+      if (changedProps.get("_config") !== undefined) {
         this._hasSummer = false;
         this._hasWindow = false;
         this.current_humidity = 0;
@@ -628,87 +628,88 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   public willUpdate(changedProps: PropertyValues) {
-      if (!this.hass || !this._config || (!changedProps.has("hass") && !changedProps.has("_config"))) {
-          return;
+    if (!this.hass || !this._config || (!changedProps.has("hass") && !changedProps.has("_config"))) {
+      return;
+    }
+
+    const entity_id: any = this._config.entity;
+
+    const stateObj = this.hass.states[entity_id] as ClimateEntity;
+    if (!stateObj) {
+      return;
+    }
+    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+
+    if (!oldHass || oldHass.states[entity_id] !== stateObj) {
+      if (!this._config || !this.hass || !this._config.entity) return;
+
+      this.stateObj = stateObj;
+      const attributes = this.stateObj.attributes;
+      const stateMode = this.stateObj.state;
+
+      this.mode = stateMode || "off";
+
+      if (attributes.hvac_modes) {
+        this.modes = Object.values(attributes.hvac_modes);
       }
 
-      const entity_id:any = this._config.entity;
+      this.value = {
+        value: attributes?.temperature || 0,
+        low: attributes?.target_temp_low || null,
+        high: attributes?.target_temp_high || null,
+      };
 
-      const stateObj = this.hass.states[entity_id] as ClimateEntity;
-      if (!stateObj) {
-          return;
+      if (attributes.target_temp_step) {
+        this.step = attributes.target_temp_step;
       }
-      const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-
-      if (!oldHass || oldHass.states[entity_id] !== stateObj) {
-        if (!this._config || !this.hass || !this._config.entity) return;
-  
-        this.stateObj = stateObj;
-        const attributes = this.stateObj.attributes;
-        const stateMode = this.stateObj.state;
-  
-        this.mode = stateMode || "off";
-
-        if (attributes.hvac_modes) {
-          this.modes = Object.values(attributes.hvac_modes);
-        }
-  
-        this.value = {
-          value: attributes?.temperature || 0,
-          low: attributes?.target_temp_low || null,
-          high: attributes?.target_temp_high || null,
-        };
-        
-        if (attributes.target_temp_step) {
-          this.step = attributes.target_temp_step;
-        }
-        if (attributes.min_temp) {
-          this.min = attributes.min_temp;
-        }
-        if (attributes.max_temp) {
-          this.max = attributes.max_temp;
-        }
-        if (attributes.current_temperature) {
-          this.current = attributes.current_temperature;
-        }
-        if (attributes?.current_humidity !== undefined) {
-          this.current_humidity = parseFloat(attributes.current_humidity);
-        }
-        if (attributes?.window_open !== undefined) {
-          this._hasWindow = true;
-          this.window = attributes.window_open;
-        }
-        if (attributes?.call_for_heat !== undefined) {
-          this._hasSummer = true;
-          this.summer = !attributes.call_for_heat
-        }
-        if (attributes?.batteries !== undefined && !this?._config?.disable_battery_warning) {
-          const batteries = Object.entries(JSON.parse(attributes.batteries));
-          const lowBatteries = batteries.filter((entity: any) => entity[1].battery < 10);
-          if (lowBatteries.length > 0) {
-            this.lowBattery = lowBatteries.map((data:any) => {return {"name": data[0], "battery": data[1].battery}})[0];
-          } else {
-            this.lowBattery = null;
-          }
+      if (attributes.min_temp) {
+        this.min = attributes.min_temp;
+      }
+      if (attributes.max_temp) {
+        this.max = attributes.max_temp;
+      }
+      if (attributes.current_temperature) {
+        this.current = attributes.current_temperature;
+      }
+      const humidity = attributes.current_humidity ?? attributes?.humidity;
+      if (humidity !== undefined) {
+        this.current_humidity = parseFloat(humidity);
+      }
+      if (attributes?.window_open !== undefined) {
+        this._hasWindow = true;
+        this.window = attributes.window_open;
+      }
+      if (attributes?.call_for_heat !== undefined) {
+        this._hasSummer = true;
+        this.summer = !attributes.call_for_heat
+      }
+      if (attributes?.batteries !== undefined && !this?._config?.disable_battery_warning) {
+        const batteries = Object.entries(JSON.parse(attributes.batteries));
+        const lowBatteries = batteries.filter((entity: any) => entity[1].battery < 10);
+        if (lowBatteries.length > 0) {
+          this.lowBattery = lowBatteries.map((data: any) => { return { "name": data[0], "battery": data[1].battery } })[0];
         } else {
           this.lowBattery = null;
         }
-        if (attributes?.errors !== undefined) {
-          const errors = JSON.parse(attributes.errors);
-          if (errors.length > 0) {
-            this.error = errors[0];
-          } else {
-            this.error = [];
-          }
+      } else {
+        this.lowBattery = null;
+      }
+      if (attributes?.errors !== undefined) {
+        const errors = JSON.parse(attributes.errors);
+        if (errors.length > 0) {
+          this.error = errors[0];
         } else {
           this.error = [];
         }
-        this._updateDisplay();
+      } else {
+        this.error = [];
       }
+      this._updateDisplay();
+    }
   }
 
   private _updateDisplay() {
-    if(this?._config?.set_current_as_main) {
+    if (this?._config?.set_current_as_main) {
       this._display_bottom = this._getCurrentSetpoint();
       this._display_top = this.current;
     } else {
@@ -719,22 +720,22 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   private _handleAction(e: MouseEvent): void {
     if ((e.currentTarget as any).mode === "eco") {
-        const saved_temp = this?.stateObj?.attributes?.saved_temperature || null;
-        if (saved_temp === null) {
-          this.hass!.callService("better_thermostat", "set_temp_target_temperature", {
-              entity_id: this._config!.entity,
-              temperature: this._config?.eco_temperature || 18,
-          });
-        } else {
-          this.hass!.callService("better_thermostat", "restore_saved_target_temperature", {
-              entity_id: this._config!.entity,
-          });
-        }
+      const saved_temp = this?.stateObj?.attributes?.saved_temperature || null;
+      if (saved_temp === null) {
+        this.hass!.callService("better_thermostat", "set_temp_target_temperature", {
+          entity_id: this._config!.entity,
+          temperature: this._config?.eco_temperature || 18,
+        });
+      } else {
+        this.hass!.callService("better_thermostat", "restore_saved_target_temperature", {
+          entity_id: this._config!.entity,
+        });
+      }
     } else {
       const saved_temp = this?.stateObj?.attributes?.saved_temperature || null;
       if (saved_temp !== null) {
         this.hass!.callService("better_thermostat", "restore_saved_target_temperature", {
-            entity_id: this._config!.entity,
+          entity_id: this._config!.entity,
         });
       }
       this.hass!.callService("climate", "set_hvac_mode", {
@@ -745,15 +746,15 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   private _setTemperature(): void {
-      this.hass!.callService("climate", "set_temperature", {
-          entity_id: this._config!.entity,
-          temperature: this.value,
-      });
+    this.hass!.callService("climate", "set_temperature", {
+      entity_id: this._config!.entity,
+      temperature: this.value,
+    });
   }
 
 
   private _getCurrentSetpoint(): number {
-    if(this?.value?.high !== null && this?.value?.low !== null) {
+    if (this?.value?.high !== null && this?.value?.low !== null) {
       if ((this?.value?.low || 0) >= this.current) return this?.value?.low || 0;
       else if ((this?.value?.high || 0) <= this.current) return this?.value?.high || 0;
       else return this?.value?.low || 0;
@@ -785,10 +786,10 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   private _renderIcon(mode: string, currentMode: string): TemplateResult {
     if (!modeIcons[mode]) {
-        return html ``;
+      return html``;
     }
     const localizeMode = this.hass!.localize(`component.climate.state._.${mode}`) || localize({ hass: this.hass, string: `extra_states.${mode}` });
-    return html `
+    return html`
       <ha-icon-button
         title="${currentMode === mode ? mode : ''}"
         class=${classMap({ "selected-icon": currentMode === mode })}
@@ -804,7 +805,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   private _handleMoreInfo() {
     fireEvent(this, "hass-more-info", {
-        entityId: this._config!.entity,
+      entityId: this._config!.entity,
     });
   }
 
