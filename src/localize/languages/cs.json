@@ -15,12 +15,12 @@
         "disable_battery_warning": "Zakázat upozornění baterie",
         "disable_buttons": "Zakázat tlačítka plus/minus",
         "eco_temperature": "Eco teplota",
-        "set_current_as_main": "Prohodit místa cílovoé a aktáalní teploty"
+        "set_current_as_main": "Prohodit místa cílové a aktuální teploty"
       }
     }
   },
   "extra_states": {
-    "window_open": "okno otevřeno",
+    "window_open": "Okno otevřeno",
     "night_mode": "Noční režim",
     "eco": "Eco",
     "summer": "Léto"
