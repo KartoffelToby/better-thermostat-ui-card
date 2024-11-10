@@ -656,8 +656,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
       this.value = {
         value: attributes?.temperature || 0,
-        low: attributes?.target_temp_low || undefined,
-        high: attributes?.target_temp_high || undefined,
+        low: attributes?.target_temp_low as any || null,
+        high: attributes?.target_temp_high as any || null,
       };
 
       if (attributes.target_temp_step) {
