@@ -44,6 +44,7 @@ import {
   localize
 } from './localize/localize';
 import {
+  BatteryState,
   clamp,
   ClimateEntity,
   debounce,
@@ -241,7 +242,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   private _timeout: any;
   private _oldValueMin: number = 0;
   private _oldValueMax: number = 0;
-  private stateObj: any | undefined;
+  private stateObj: ClimateEntity | undefined;
   private _display_bottom: number = 0;
   private _display_top: number = 0;
   private modes: any = [];
@@ -655,8 +656,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
       this.value = {
         value: attributes?.temperature || 0,
-        low: attributes?.target_temp_low || null,
-        high: attributes?.target_temp_high || null,
+        low: attributes?.target_temp_low || undefined,
+        high: attributes?.target_temp_high || undefined,
       };
 
       if (attributes.target_temp_step) {
@@ -673,7 +674,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       }
       const humidity = attributes.current_humidity ?? attributes?.humidity;
       if (humidity !== undefined) {
-        this.current_humidity = parseFloat(humidity);
+        this.current_humidity = parseFloat(humidity.toString());
       }
       if (attributes?.window_open !== undefined) {
         this._hasWindow = true;
@@ -684,7 +685,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         this.summer = !attributes.call_for_heat
       }
       if (attributes?.batteries !== undefined && !this?._config?.disable_battery_warning) {
-        const batteries = Object.entries(JSON.parse(attributes.batteries));
+        const batteries = Object.entries(JSON.parse(attributes.batteries) as Record<string, BatteryState>);
         const lowBatteries = batteries.filter((entity: any) => entity[1].battery < 10);
         if (lowBatteries.length > 0) {
           this.lowBattery = lowBatteries.map((data: any) => { return { "name": data[0], "battery": data[1].battery } })[0];
@@ -763,8 +764,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   private _renderHVACAction(full = false): TemplateResult {
-    const isHeating = this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off';
-    const isCooling = this.stateObj.attributes.hvac_action === 'cooling' && this.mode !== 'off';
+    const isHeating = this.stateObj?.attributes.hvac_action === 'heating' && this.mode !== 'off';
+    const isCooling = this.stateObj?.attributes.hvac_action === 'cooling' && this.mode !== 'off';
     const showCoolingIcon = this?.value?.high !== undefined && this?.value?.high !== null && this?.value?.high <= this.current;
     const transform = full ? "translate(-3,-3.5) scale(0.25)" : "translate(5,-4) scale(0.25)";
     const fill = "#9d9d9d";
@@ -963,7 +964,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
       ${(this.value.low != null &&
         this.value.high != null &&
-        this.stateObj.state !== UNAVAILABLE) ? html`
+        this.stateObj?.state !== UNAVAILABLE) ? html`
         <bt-ha-control-circular-slider
           class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
           .inactive=${this.window}

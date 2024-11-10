@@ -6,6 +6,11 @@ export const CLIMATE_PRESET_NONE = "none";
 
 export type HvacAction = "off" | "heating" | "cooling" | "drying" | "idle";
 
+export interface BatteryState {
+  battery:    string;
+  battery_id: string;
+}
+
 export type ClimateEntity = HassEntityBase & {
     attributes: HassEntityAttributeBase & {
         hvac_mode: HvacMode;
@@ -31,6 +36,11 @@ export type ClimateEntity = HassEntityBase & {
         swing_mode?: string;
         swing_modes?: string[];
         aux_heat?: "on" | "off";
+        window_open?: boolean;
+        call_for_heat?: boolean;
+        saved_temperature?: never; // the value is never used, there are just checks for its existence
+        errors: string; // JSON containing string[];
+        batteries: string; // JSON containing Record<string, BatteryState>;
     };
 };
 
