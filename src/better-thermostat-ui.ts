@@ -246,7 +246,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   private _display_bottom: number = 0;
   private _display_top: number = 0;
   private modes: any = [];
-  private lowBattery: any = {};
+  private lowBattery: { name: string; battery: number } | undefined;
   private error: any = [];
 
   @state() private _config?: ClimateCardConfig;
@@ -686,14 +686,11 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       }
       if (attributes?.batteries !== undefined && !this?._config?.disable_battery_warning) {
         const batteries = Object.entries(JSON.parse(attributes.batteries) as Record<string, BatteryState>);
-        const lowBatteries = batteries.filter((entity: any) => entity[1].battery < 10);
-        if (lowBatteries.length > 0) {
-          this.lowBattery = lowBatteries.map((data: any) => { return { "name": data[0], "battery": data[1].battery } })[0];
-        } else {
-          this.lowBattery = null;
-        }
+        const parsedBatteries = batteries.map((data) => ({ "name": data[0], "battery": data[1].battery === "on" ? 5 : data[1].battery === "off" ? 100 : parseFloat(data[1].battery) }));
+        const lowBatteries = parsedBatteries.filter((entity) => entity.battery < 10);
+        this.lowBattery = lowBatteries[0];
       } else {
-        this.lowBattery = null;
+        this.lowBattery = undefined;
       }
       if (attributes?.errors !== undefined) {
         const errors = JSON.parse(attributes.errors);
@@ -946,12 +943,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       ${this?._config?.name?.length || 0 > 0 ? html`
         <div class="name">${this._config?.name}</div>
         ` : html`<div class="name">&nbsp;</div>`}
-      ${this.lowBattery !== null ? html`
+      ${this.lowBattery ? html`
         <div class="low_battery">
           <ha-icon-button class="alert" .path=${mdiBatteryAlert}>
           </ha-icon-button>
-          <span>${this.lowBattery.name}</span>
-          <span>${this.lowBattery.battery}%</span>
+          <span>${this.lowBattery!.name}</span>
+          <span>${this.lowBattery!.battery}%</span>
         </div>
       ` : ``}
       ${this.error.length > 0 ? html`
@@ -966,7 +963,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         this.value.high != null &&
         this.stateObj?.state !== UNAVAILABLE) ? html`
         <bt-ha-control-circular-slider
-          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
+          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
           .inactive=${this.window}
           dual
           .low=${this.value.low}
@@ -982,7 +979,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         >
         ` : html`
         <bt-ha-control-circular-slider
-          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
+          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
           .inactive=${this.window}
           .mode="start"
           @value-changed=${this._highChanged}
@@ -995,7 +992,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         >
         `
       }
-        <div class="content ${this.lowBattery !== null || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer' : ''} ">
+        <div class="content ${this.lowBattery || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer' : ''} ">
           <svg id="main" viewbox="0 0 125 100">
             ${upperContentIcons}
             ${mainValue}
