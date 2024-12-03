@@ -1,44 +1,45 @@
 {
-    "sourceLanguageTag": "en",
-    "languageTags": [
-        "bg",
-        "ca",
-        "cn",
-        "cs",
-        "da",
-        "de",
-        "el",
-        "en",
-        "es",
-        "fi",
-        "fr",
-        "hu",
-        "it",
-        "lv",
-        "nl",
-        "no",
-        "pl",
-        "pt",
-        "ro",
-        "ru",
-        "sk",
-        "sl",
-        "sv",
-        "tr",
-        "uk"
-    ],
-    "modules": [
-        "https://cdn.jsdelivr.net/npm/@inlang/plugin-i18next@4/dist/index.js",
-        "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-empty-pattern@1/dist/index.js",
-        "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-identical-pattern@1/dist/index.js",
-        "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-without-source@1/dist/index.js",
-        "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-missing-translation@1/dist/index.js"
-    ],
-    "plugin.inlang.i18next": {
-        "pathPattern": "./src/localize/languages/{languageTag}.json",
-        "variableReferencePattern": [
-            "{",
-            "}"
-        ]
-    }
+  "sourceLanguageTag": "en",
+  "languageTags": [
+    "en",
+    "bg",
+    "ca",
+    "cn",
+    "cs",
+    "da",
+    "de",
+    "el",
+    "es",
+    "fi",
+    "fr",
+    "hu",
+    "it",
+    "lt",
+    "lv",
+    "nl",
+    "no",
+    "pl",
+    "pt",
+    "ro",
+    "ru",
+    "sk",
+    "sl",
+    "sv",
+    "tr",
+    "uk"
+  ],
+  "modules": [
+    "https://cdn.jsdelivr.net/npm/@inlang/plugin-i18next@4/dist/index.js",
+    "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-empty-pattern@1/dist/index.js",
+    "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-identical-pattern@1/dist/index.js",
+    "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-without-source@1/dist/index.js",
+    "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-missing-translation@1/dist/index.js"
+  ],
+  "plugin.inlang.i18next": {
+    "pathPattern": "./src/localize/languages/{languageTag}.json",
+    "variableReferencePattern": [
+      "{",
+      "}"
+    ]
+  }
 }
