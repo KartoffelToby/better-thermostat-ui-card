@@ -330,7 +330,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         line-height: 40px;
         padding: 1em;
         --mdc-icon-size: 40px;
-
+        backdrop-filter: blur(5px);
+        z-index: 4;
       }
 
       .unavailable {
@@ -623,7 +624,6 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
     this?.shadowRoot?.querySelector('.low_battery')?.addEventListener('click', () => {
       this?.shadowRoot?.querySelector('.low_battery')?.remove();
-      this?.shadowRoot?.querySelector('.content')?.classList.remove('battery');
       this._vibrate(2);
     });
   }
@@ -943,27 +943,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       ${this?._config?.name?.length || 0 > 0 ? html`
         <div class="name">${this._config?.name}</div>
         ` : html`<div class="name">&nbsp;</div>`}
-      ${this.lowBattery ? html`
-        <div class="low_battery">
-          <ha-icon-button class="alert" .path=${mdiBatteryAlert}>
-          </ha-icon-button>
-          <span>${this.lowBattery!.name}</span>
-          <span>${this.lowBattery!.battery}%</span>
-        </div>
-      ` : ``}
-      ${this.error.length > 0 ? html`
-        <div class="error">
-          <ha-icon-button class="alert" .path=${mdiWifiStrengthOffOutline}>
-          </ha-icon-button>
-          <span>${this.error}</span>
-        </div>
-      ` : ``}
 
       ${(this.value.low != null &&
         this.value.high != null &&
         this.stateObj?.state !== UNAVAILABLE) ? html`
         <bt-ha-control-circular-slider
-          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
+          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
           .inactive=${this.window}
           dual
           .low=${this.value.low}
@@ -979,7 +964,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         >
         ` : html`
         <bt-ha-control-circular-slider
-          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
+          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
           .inactive=${this.window}
           .mode="start"
           @value-changed=${this._highChanged}
@@ -992,7 +977,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         >
         `
       }
-        <div class="content ${this.lowBattery || this.error.length > 0 ? 'battery' : ''} ${this.window ? 'window_open' : ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer' : ''} ">
+        <div class="content ${this.window ? 'window_open' : ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer' : ''} ">
           <svg id="main" viewbox="0 0 125 100">
             ${upperContentIcons}
             ${mainValue}
@@ -1001,6 +986,22 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
             ${lowerContent}
           </svg>
         </div>
+
+      ${this.lowBattery ? html`
+        <div class="low_battery">
+          <ha-icon-button class="alert" .path=${mdiBatteryAlert}>
+          </ha-icon-button>
+          <span>${this.lowBattery!.name}</span>
+          <span>${this.lowBattery!.battery}%</span>
+        </div>
+      ` : ``}
+      ${this.error.length > 0 ? html`
+        <div class="error">
+          <ha-icon-button class="alert" .path=${mdiWifiStrengthOffOutline}>
+          </ha-icon-button>
+          <span>${this.error}</span>
+        </div>
+      ` : ``}
       </bt-ha-control-circular-slider>
       ${modes}
       ${buttons}
