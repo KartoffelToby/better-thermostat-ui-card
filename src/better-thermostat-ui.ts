@@ -685,9 +685,10 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         this.summer = !attributes.call_for_heat
       }
       if (attributes?.batteries !== undefined && !this?._config?.disable_battery_warning) {
+        const showLowBatteryWarningWhenPercentageLowerThan = 5; // this is really preference based - an option would be neat 
         const batteries = Object.entries(JSON.parse(attributes.batteries) as Record<string, BatteryState>);
-        const parsedBatteries = batteries.map((data) => ({ "name": data[0], "battery": data[1].battery === "on" ? 5 : data[1].battery === "off" ? 100 : parseFloat(data[1].battery) }));
-        const lowBatteries = parsedBatteries.filter((entity) => entity.battery < 10);
+        const parsedBatteries = batteries.map((data) => ({ "name": data[0], "battery": data[1].battery === "on" ? showLowBatteryWarningWhenPercentageLowerThan - 1 : data[1].battery === "off" ? 100 : parseFloat(data[1].battery) }));
+        const lowBatteries = parsedBatteries.filter((entity) => entity.battery < showLowBatteryWarningWhenPercentageLowerThan);
         this.lowBattery = lowBatteries[0];
       } else {
         this.lowBattery = undefined;
