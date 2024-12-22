@@ -1,0 +1,28 @@
+{
+  "common": {
+    "version": "버전",
+    "current": "현재"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "창문 열림 상태 표시 하지 않기",
+        "disable_summer": "여름철 표시 하지 않기",
+        "disable_eco": "절전 버튼 표시 하지 않기",
+        "disable_heat": "난방 버튼 표시 하지 않기",
+        "disable_off": "전원 버튼 표시 하지 않기",
+        "disable_menu": "메뉴 표시 하지 않기",
+        "disable_battery_warning": "배터리 경고 표시 하지 않기",
+        "disable_buttons": "온도 조절 버튼 표시 하지 않기",
+        "eco_temperature": "절전 모드 온도",
+        "set_current_as_main": "현재 온도를 기본 목표 온도로 설정"
+      }
+    }
+  },
+  "extra_states": {
+    "window_open": "창문이 열림",
+    "night_mode": "취침 모드",
+    "eco": "절전",
+    "summer": "여름"
+  }
+}
