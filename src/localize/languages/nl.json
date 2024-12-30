@@ -3,6 +3,22 @@
     "version": "versie",
     "current": "huidig"
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Raam open indicator verbergen",
+        "disable_summer": "Zomer indicator verbergen",
+        "disable_eco": "Eco knop verbergen",
+        "disable_heat": "Verwarmen knop verbergen",
+        "disable_off": "Uit-knop verbergen",
+        "disable_menu": "Menu verbergen",
+        "disable_battery_warning": "Batterij waarschuwing verbergen",
+        "disable_buttons": "Plus/min knoppen verbergen",
+        "eco_temperature": "Eco temperatuur",
+        "set_current_as_main": "Toon huidige temperatuur i.p.v. doeltemperatuur"
+      }
+    }
+  },
   "extra_states": {
     "window_open": "Raam open",
     "night_mode": "Nacht modus",
