@@ -1,7 +1,7 @@
 {
   "common": {
-      "version": "versijas",
-      "current": "pašreizējais"
+    "version": "versijas",
+    "current": "pašreizējais"
   },
   "editor": {
     "card": {
