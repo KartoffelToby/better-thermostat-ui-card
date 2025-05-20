@@ -3,6 +3,13 @@
     "version": "版本",
     "current": "当前"
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_eco": "关闭节能模式"
+      }
+    }
+  },
   "extra_states": {
     "window_open": "窗户打开",
     "night_mode": "夜间模式",
