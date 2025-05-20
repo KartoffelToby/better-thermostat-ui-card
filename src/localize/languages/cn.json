@@ -6,7 +6,13 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_eco": "关闭节能模式"
+        "disable_eco": "停用节能模式按钮",
+        "disable_off": "停用开关按钮",
+        "disable_menu": "停用菜单按钮",
+        "disable_battery_warning": "停用电量警告",
+        "disable_buttons": "停用温度加减按钮",
+        "eco_temperature": "节能模式温度",
+        "set_current_as_main": "交换目标温度与当前温度位置"
       }
     }
   },
