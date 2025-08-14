@@ -23,6 +23,10 @@
     "window_open": "Window open",
     "night_mode": "Night mode",
     "eco": "Eco",
-    "summer": "Summer"
+    "summer": "Summer",
+    "cooling": "Cooling",
+    "heating": "Heating",
+    "cooling_off": "Cooling off",
+    "heating_off": "Heating off"
   }
 }
