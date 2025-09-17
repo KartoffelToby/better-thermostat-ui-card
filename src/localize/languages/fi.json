@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Ikkuna auki",
-    "window_closed": "Ikkuna kiinni",
     "night_mode": "Yötila",
     "eco": "Eco",
     "summer": "Kesä",
     "cooling": "Jäähdytys",
     "heating": "Lämmitys",
     "cooling_off": "Jäähdytys pois päältä",
-    "heating_off": "Lämmitys pois päältä"
+    "heating_off": "Lämmitys pois päältä",
+    "window_closed": "Ikkuna kiinni"
   }
 }

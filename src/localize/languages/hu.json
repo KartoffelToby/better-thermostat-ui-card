@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Ablak nyitva",
-    "window_closed": "Ablak zárva",
     "night_mode": "Éjszakai mód",
     "eco": "Eco",
     "summer": "Nyár",
     "cooling": "Hűtés",
     "heating": "Fűtés",
     "cooling_off": "Hűtés kikapcsolva",
-    "heating_off": "Fűtés kikapcsolva"
+    "heating_off": "Fűtés kikapcsolva",
+    "window_closed": "Ablak zárva"
   }
 }

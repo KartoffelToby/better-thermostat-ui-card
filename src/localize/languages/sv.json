@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Fönster öppet",
-    "window_closed": "Fönster stängt",
     "night_mode": "Nattläge",
     "eco": "Eco",
     "summer": "Sommar",
     "cooling": "Kylning",
     "heating": "Uppvärmning",
     "cooling_off": "Kylning av",
-    "heating_off": "Uppvärmning av"
+    "heating_off": "Uppvärmning av",
+    "window_closed": "Fönster stängt"
   }
 }

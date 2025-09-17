@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Vindue åbent",
-    "window_closed": "Vindue lukket",
     "night_mode": "Nattetilstand",
     "eco": "Eco",
     "summer": "Sommer",
     "cooling": "Køling",
     "heating": "Opvarmning",
     "cooling_off": "Køling slukket",
-    "heating_off": "Opvarmning slukket"
+    "heating_off": "Opvarmning slukket",
+    "window_closed": "Vindue lukket"
   }
 }

@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Venster open",
-    "window_closed": "Venster gesloten",
     "night_mode": "Nachtmodus",
     "eco": "Eco",
     "summer": "Zomer",
     "cooling": "Koeling",
     "heating": "Verwarming",
     "cooling_off": "Koeling uit",
-    "heating_off": "Verwarming uit"
+    "heating_off": "Verwarming uit",
+    "window_closed": "Venster gesloten"
   }
 }

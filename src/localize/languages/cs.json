@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Okno otevřeno",
-    "window_closed": "Okno zavřeno",
     "night_mode": "Noční režim",
     "eco": "Eco",
     "summer": "Léto",
     "cooling": "Chlazení",
     "heating": "Topení",
     "cooling_off": "Chlazení vypnuto",
-    "heating_off": "Topení vypnuto"
+    "heating_off": "Topení vypnuto",
+    "window_closed": "Okno zavřeno"
   }
 }

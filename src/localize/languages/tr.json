@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Pencere açık",
-    "window_closed": "Pencere kapalı",
     "night_mode": "Gece modu",
     "eco": "Eco",
     "summer": "Yaz",
     "cooling": "Soğutma",
     "heating": "Isıtma",
     "cooling_off": "Soğutma kapalı",
-    "heating_off": "Isıtma kapalı"
+    "heating_off": "Isıtma kapalı",
+    "window_closed": "Pencere kapalı"
   }
 }
