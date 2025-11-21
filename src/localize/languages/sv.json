@@ -18,7 +18,10 @@
         "disable_battery_warning": "Inaktivera batterivarning",
         "disable_buttons": "Inaktivera plus/minus knappar",
         "eco_temperature": "Eco temperatur",
-        "set_current_as_main": "Byt måltemperatur med nuvarande temperatur"
+        "set_current_as_main": "Byt måltemperatur med nuvarande temperatur",
+        "show_current_as_primary": "Visa aktuell temperatur som primär",
+        "show_secondary": "Visa sekundär information",
+        "prevent_interaction_on_scroll": "Förhindra interaktion vid rullning"
       }
     }
   },

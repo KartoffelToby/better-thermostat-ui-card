@@ -18,7 +18,10 @@
         "disable_battery_warning": "禁用电池警告",
         "disable_buttons": "禁用加/减按钮",
         "eco_temperature": "节能温度",
-        "set_current_as_main": "将目标温度与当前温度交换"
+        "set_current_as_main": "将目标温度与当前温度交换",
+        "show_current_as_primary": "显示当前温度为主",
+        "show_secondary": "显示次要信息",
+        "prevent_interaction_on_scroll": "滚动时防止交互"
       }
     }
   },

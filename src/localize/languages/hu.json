@@ -18,7 +18,10 @@
         "disable_battery_warning": "Akkumulátor figyelmeztetés letiltása",
         "disable_buttons": "Plusz/mínusz gombok letiltása",
         "eco_temperature": "Eco hőmérséklet",
-        "set_current_as_main": "Aktuális hőmérséklet használata"
+        "set_current_as_main": "Aktuális hőmérséklet használata",
+        "show_current_as_primary": "Jelenlegi hőmérséklet megjelenítése elsődlegesként",
+        "show_secondary": "Másodlagos információk megjelenítése",
+        "prevent_interaction_on_scroll": "Interakció megakadályozása görgetéskor"
       }
     }
   },

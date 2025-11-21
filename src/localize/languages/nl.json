@@ -18,7 +18,10 @@
         "disable_battery_warning": "Batterijwaarschuwing uitschakelen",
         "disable_buttons": "Plus/min-knoppen uitschakelen",
         "eco_temperature": "Eco temperatuur",
-        "set_current_as_main": "Doeltemperatuur verwisselen met huidige temperatuur"
+        "set_current_as_main": "Doeltemperatuur verwisselen met huidige temperatuur",
+        "show_current_as_primary": "Toon huidige temperatuur als primair",
+        "show_secondary": "Toon secundaire informatie",
+        "prevent_interaction_on_scroll": "Voorkom interactie tijdens scrollen"
       }
     }
   },

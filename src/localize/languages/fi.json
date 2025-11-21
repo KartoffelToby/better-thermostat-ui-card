@@ -18,7 +18,10 @@
         "disable_battery_warning": "Poista akun varoitus käytöstä",
         "disable_buttons": "Poista plus/miinus -painikkeet käytöstä",
         "eco_temperature": "Eco lämpötila",
-        "set_current_as_main": "Vaihda tavoitelämpötila nykyiseen lämpötilaan"
+        "set_current_as_main": "Vaihda tavoitelämpötila nykyiseen lämpötilaan",
+        "show_current_as_primary": "Näytä nykyinen lämpötila ensisijaisena",
+        "show_secondary": "Näytä toissijaiset tiedot",
+        "prevent_interaction_on_scroll": "Estä vuorovaikutus vieritettäessä"
       }
     }
   },

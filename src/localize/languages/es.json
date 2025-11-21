@@ -18,7 +18,10 @@
         "disable_battery_warning": "Deshabilitar alerta de batería",
         "disable_buttons": "Deshabilitar botones más/menos",
         "eco_temperature": "Temperatura Eco",
-        "set_current_as_main": "Fijar temperatura objetivo a temperatura actual"
+        "set_current_as_main": "Fijar temperatura objetivo a temperatura actual",
+        "show_current_as_primary": "Mostrar temperatura actual como principal",
+        "show_secondary": "Mostrar información secundaria",
+        "prevent_interaction_on_scroll": "Evitar interacción al desplazarse"
       }
     }
   },

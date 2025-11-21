@@ -24,7 +24,7 @@ import * as fi from './languages/fi.json';
 import * as ro from './languages/ro.json';
 import * as ca from './languages/ca.json';
 import * as lv from './languages/lv.json';
-import { HomeAssistant } from '../ha';
+import { HomeAssistant } from '../../ha-frontend/src/types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const languages: any = {
