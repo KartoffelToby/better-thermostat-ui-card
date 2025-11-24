@@ -38,6 +38,22 @@
       }
     }
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Venster uitschakelen",
+        "disable_summer": "Zomer modus uitschakelen",
+        "disable_eco": "Eco-Modus uitzetten",
+        "disable_heat": "Verwarming uitzetten",
+        "disable_off": "Uitschakelen",
+        "disable_menu": "Menu uitschakelen",
+        "disable_battery_warning": "Batterij waarschuwing uitzetten",
+        "disable_buttons": "Plus/min knoppen uitzetten",
+        "eco_temperature": "Eco temperatuur",
+        "set_current_as_main": "Doel verwisselen met huidige temperatuurplaatsen"
+      }
+    }
+  },
   "extra_states": {
     "window_open": "Venster open",
     "night_mode": "Nachtmodus",
