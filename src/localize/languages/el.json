@@ -1,7 +1,7 @@
 {
   "common": {
     "version": "Έκδοση",
-    "current": "Tρέχουσα"
+    "current": "Tρέχουσα",
     "current_humidity": "Τρέχουσα υγρασία",
     "current_temperature": "Τρέχουσα θερμοκρασία",
     "target_temperature": "Στόχος θερμοκρασίας"
@@ -20,7 +20,7 @@
         "show_current_as_primary": "Εμφάνιση τρέχουσας θερμοκρασίας ως κύρια",
         "show_secondary": "Εμφάνιση δευτερευουσών πληροφοριών",
         "prevent_interaction_on_scroll": "Αποτροπή αλληλεπίδρασης κατά την κύλιση",
-        "disable_humidity": "Turn off the humidity display"
+        "disable_humidity": "Απενεργοποίηση εμφάνισης υγρασίας",
         "disable_buttons": "Απενεργοποίηση κουμπιών Plus/Minus",
         "eco_temperature": "Θερμοκρασία Eco",
         "set_current_as_main": "Αντικατάσταση της επιθυμητής θερμοκρασίας με την τρέχουσα θερμοκρασία"
