@@ -42,15 +42,15 @@ export class ClimateHvacModesControl extends LitElement {
 
   private toggleEco(e: CustomEvent) {
     e.stopPropagation();
-    const isEco = this.entity.attributes.preset_mode === "eco";
-    this.hass.callService("climate", "set_preset_mode", {
+    const isEco = (this.entity.attributes as any).eco_mode === true;
+    this.hass.callService("better_thermostat", "set_eco_mode", {
       entity_id: this.entity!.entity_id,
-      preset_mode: isEco ? "none" : "eco",
+      enable: !isEco,
     });
   }
 
   private renderEcoButton() {
-    const isEco = this.entity.attributes.preset_mode === "eco";
+    const isEco = (this.entity.attributes as any).eco_mode === true;
     const iconStyle = {};
     const color = "165, 214, 167";
     if (isEco) {
@@ -77,7 +77,7 @@ export class ClimateHvacModesControl extends LitElement {
       .sort(compareClimateHvacModes);
 
     const presetModes = this.entity.attributes.preset_modes || [];
-    const hasEco = (presetModes.includes("eco") || presetModes.length > 0) && !this.disableEco;
+    const hasEco = (presetModes.includes("eco") || presetModes.length > 0 || (this.entity.attributes as any).eco_mode !== undefined) && !this.disableEco;
 
     return html`
       <mushroom-button-group .fill=${this.fill} ?rtl=${rtl}>

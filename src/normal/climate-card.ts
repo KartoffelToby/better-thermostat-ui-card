@@ -98,7 +98,6 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       const width = entries[0]?.contentRect.width;
       const height = entries[0]?.contentRect.height;
       const smaller = Math.min(width, height);
-      console.log("smaller", smaller);
       return smaller < 185
         ? "xs"
         : smaller < 250
@@ -222,7 +221,6 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
     const window = stateObj.attributes.window_open;
 
-    console.log("window", stateObj.attributes);
 
     const renderTarget = (temperature: number, big = false, hideUnit = false) => {
       const digits = this._step.toString().split(".")?.[1]?.length ?? 0;
@@ -323,7 +321,6 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       const containerSizeClass = this._sizeController.value
         ? ` ${this._sizeController.value}`
         : "";
-        console.log("class",containerSizeClass)
       let actionColor: string | undefined;
       if (action && action !== "idle" && action !== "off" && active) {
         actionColor = stateColorCss(
@@ -331,12 +328,15 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           CLIMATE_HVAC_ACTION_TO_MODE[action]
         );
       }
-
       let stateColor = stateColorCss(this._stateObj);
       if(window) {
         actionColor = "var(--info-color)";
         stateColor = "var(--info-color)";
+      } else if ((this._stateObj.attributes as any).eco_mode === true) {
+        stateColor = "rgb(165, 214, 167)";
+        actionColor = "rgb(165, 214, 167)";
       }
+
       const lowColor = stateColorCss(this._stateObj, active ? "heat" : "off");
       const highColor = stateColorCss(this._stateObj, active ? "cool" : "off");
       const controlMaxWidth = this._resizeController.value

@@ -231,6 +231,7 @@ export class BetterThermostatUISmallCard
   protected renderIcon(stateObj: ClimateEntity, icon?: string): TemplateResult {
     const available = isAvailable(stateObj);
     const window = stateObj.attributes.window_open;
+    const eco = (stateObj.attributes as any).eco_mode === true;
     const color = getHvacModeColor(stateObj.state as HvacMode);
     const iconStyle = {};
     iconStyle["--icon-color"] = `rgb(${color})`;
@@ -239,6 +240,9 @@ export class BetterThermostatUISmallCard
     if (window) {
       iconStyle["--icon-color"] = `var(--info-color)`;
       iconStyle["--shape-color"] = `rgba(0,0,0, 0.1)`;
+    } else if (eco) {
+      iconStyle["--icon-color"] = `rgb(165, 214, 167)`;
+      iconStyle["--shape-color"] = `rgba(165, 214, 167, 0.2)`;
     }
 
     return html`
@@ -309,18 +313,18 @@ export class BetterThermostatUISmallCard
     e.stopPropagation();
     const stateObj = this._stateObj;
     if (!stateObj) return;
-    const isEco = stateObj.attributes.preset_mode === "eco";
-    this.hass.callService("climate", "set_preset_mode", {
+    const isEco = (stateObj.attributes as any).eco_mode === true;
+    this.hass.callService("better_thermostat", "set_eco_mode", {
       entity_id: stateObj.entity_id,
-      preset_mode: isEco ? "none" : "eco",
+      enable: !isEco,
     });
   }
 
   private renderEcoButton(entity: ClimateEntity) {
     if (this._config?.disable_eco) return nothing;
     const presetModes = entity.attributes.preset_modes || [];
-    const hasEco = presetModes.includes("eco");
-    const isEco = entity.attributes.preset_mode === "eco";
+    const hasEco = presetModes.includes("eco") || (entity.attributes as any).eco_mode !== undefined;
+    const isEco = (entity.attributes as any).eco_mode === true;
     
     if (!hasEco && !isEco) return nothing;
 
