@@ -19,18 +19,18 @@
         "disable_buttons": "Disabilita pulsanti più/meno",
         "eco_temperature": "Temperatura target",
         "set_current_as_main": "Imposta la temperatura attuale come target"
-       }
+      }
     }
   },
   "extra_states": {
     "window_open": "Finestra aperta",
-    "window_closed": "Finestra chiusa",
     "night_mode": "Modalità notturna",
     "eco": "Eco",
     "summer": "Estate",
     "cooling": "Raffreddamento",
     "heating": "Riscaldamento",
     "cooling_off": "Raffreddamento spento",
-    "heating_off": "Riscaldamento spento"
+    "heating_off": "Riscaldamento spento",
+    "window_closed": "Finestra chiusa"
   }
 }

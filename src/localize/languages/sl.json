@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Okno odprto",
-    "window_closed": "Okno zaprto",
     "night_mode": "Nočni način",
     "eco": "Eko",
     "summer": "Poletje",
     "cooling": "Hlajenje",
     "heating": "Ogrevanje",
     "cooling_off": "Hlajenje izklopljeno",
-    "heating_off": "Ogrevanje izklopljeno"
+    "heating_off": "Ogrevanje izklopljeno",
+    "window_closed": "Okno zaprto"
   }
 }

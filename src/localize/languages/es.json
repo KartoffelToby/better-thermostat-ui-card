@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Ventana abierta",
-    "window_closed": "Ventana cerrada",
     "night_mode": "Modo noche",
     "eco": "Eco",
     "summer": "Verano",
     "cooling": "Enfriamiento",
     "heating": "Calefacción",
     "cooling_off": "Enfriamiento apagado",
-    "heating_off": "Calefacción apagada"
+    "heating_off": "Calefacción apagada",
+    "window_closed": "Ventana cerrada"
   }
 }

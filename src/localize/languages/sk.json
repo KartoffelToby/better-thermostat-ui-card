@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Okno otvorené",
-    "window_closed": "Okno zatvorené",
     "night_mode": "Nočný mód",
     "eco": "Eco",
     "summer": "Leto",
     "cooling": "Chladenie",
     "heating": "Kúrenie",
     "cooling_off": "Chladenie vypnuté",
-    "heating_off": "Kúrenie vypnuté"
+    "heating_off": "Kúrenie vypnuté",
+    "window_closed": "Okno zatvorené"
   }
 }

@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Finestra oberta",
-    "window_closed": "Finestra tancada",
     "night_mode": "Mode nocturn",
     "eco": "Eco",
     "summer": "Estiu",
     "cooling": "Refredament",
     "heating": "Escalfament",
     "cooling_off": "Refredament apagat",
-    "heating_off": "Escalfament apagat"
+    "heating_off": "Escalfament apagat",
+    "window_closed": "Finestra tancada"
   }
 }

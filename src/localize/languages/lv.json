@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Logs atvērts",
-    "window_closed": "Logs aizvērts",
     "night_mode": "Nakts režīms",
     "eco": "Eko režīms",
     "summer": "Vasaras režīms",
     "cooling": "Dzesēšana",
     "heating": "Apkure",
     "cooling_off": "Dzesēšana izslēgta",
-    "heating_off": "Apkure izslēgta"
+    "heating_off": "Apkure izslēgta",
+    "window_closed": "Logs aizvērts"
   }
 }

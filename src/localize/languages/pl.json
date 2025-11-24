@@ -24,13 +24,13 @@
   },
   "extra_states": {
     "window_open": "Otwarte okno",
-    "window_closed": "Okno zamknięte",
     "night_mode": "Tryb nocny",
     "eco": "Tryb ekonomiczny",
     "summer": "Lato",
     "cooling": "Chłodzenie",
     "heating": "Ogrzewanie",
     "cooling_off": "Chłodzenie wyłączone",
-    "heating_off": "Ogrzewanie wyłączone"
+    "heating_off": "Ogrzewanie wyłączone",
+    "window_closed": "Okno zamknięte"
   }
 }
