@@ -26,15 +26,28 @@
       }
     }
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_eco": "停用节能模式按钮",
+        "disable_off": "停用开关按钮",
+        "disable_menu": "停用菜单按钮",
+        "disable_battery_warning": "停用电量警告",
+        "disable_buttons": "停用温度加减按钮",
+        "eco_temperature": "节能模式温度",
+        "set_current_as_main": "交换目标温度与当前温度位置"
+      }
+    }
+  },
   "extra_states": {
     "window_open": "窗口打开",
-    "window_closed": "窗口关闭",
     "night_mode": "夜间模式",
     "eco": "节能",
     "summer": "夏季",
     "cooling": "冷却",
     "heating": "加热",
     "cooling_off": "冷却关闭",
-    "heating_off": "加热关闭"
+    "heating_off": "加热关闭",
+    "window_closed": "窗口关闭"
   }
 }

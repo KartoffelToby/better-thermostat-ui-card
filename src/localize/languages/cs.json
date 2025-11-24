@@ -18,23 +18,23 @@
         "disable_battery_warning": "Zakázat upozornění baterie",
         "disable_buttons": "Zakázat tlačítka plus/minus",
         "eco_temperature": "Eco teplota",
-        "set_current_as_main": "Prohodit místa cílovoé a aktáalní teploty",
         "show_current_as_primary": "Zobrazit aktuální teplotu jako hlavní",
         "show_secondary": "Zobrazit sekundární informace",
         "prevent_interaction_on_scroll": "Zabránit interakci při posouvání",
         "disable_humidity": "Turn off the humidity display"
+        "set_current_as_main": "Prohodit místa cílové a aktuální teploty"
       }
     }
   },
   "extra_states": {
     "window_open": "Okno otevřeno",
-    "window_closed": "Okno zavřeno",
     "night_mode": "Noční režim",
     "eco": "Eco",
     "summer": "Léto",
     "cooling": "Chlazení",
     "heating": "Topení",
     "cooling_off": "Chlazení vypnuto",
-    "heating_off": "Topení vypnuto"
+    "heating_off": "Topení vypnuto",
+    "window_closed": "Okno zavřeno"
   }
 }
