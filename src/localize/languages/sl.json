@@ -1,7 +1,26 @@
 {
   "common": {
     "version": "različica",
-    "current": "trenutno"
+    "current": "trenutno",
+    "current_humidity": "Trenutna vlažnost",
+    "current_temperature": "Trenutna temperatura",
+    "target_temperature": "Ciljna temperatura"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Onemogoči prikaz odprtega okna",
+        "disable_summer": "Onemogoči prikaz poletja",
+        "disable_eco": "Onemogoči prikaz eco",
+        "disable_heat": "Onemogoči prikaz ogrevanja",
+        "disable_off": "Onemogoči prikaz izklopa",
+        "disable_menu": "Onemogoči meni",
+        "disable_battery_warning": "Onemogoči opozorilo o bateriji",
+        "disable_buttons": "Onemogoči gumbe plus/minus",
+        "eco_temperature": "Eco temperatura",
+        "set_current_as_main": "Zamenjaj ciljno temperaturo s trenutno temperaturo"
+      }
+    }
   },
   "editor": {
     "card": {
@@ -23,6 +42,11 @@
     "window_open": "Okno odprto",
     "night_mode": "Nočni način",
     "eco": "Eko",
-    "summer": "Poletje"
+    "summer": "Poletje",
+    "cooling": "Hlajenje",
+    "heating": "Ogrevanje",
+    "cooling_off": "Hlajenje izklopljeno",
+    "heating_off": "Ogrevanje izklopljeno",
+    "window_closed": "Okno zaprto"
   }
 }

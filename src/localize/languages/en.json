@@ -6,15 +6,15 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Disable window",
-        "disable_summer": "Disable summer",
-        "disable_eco": "Disable eco",
-        "disable_heat": "Disable heat",
-        "disable_off": "Disable off",
+        "disable_window": "Turn off the window open indicator",
+        "disable_summer": "Turn off the summer indicator",
+        "disable_eco": "Turn off the eco button",
+        "disable_heat": "Turn off the on/heat button",
+        "disable_off": "Turn off the off button",
         "disable_menu": "Disable menu",
-        "disable_battery_warning": "Disable battery warning",
-        "disable_buttons": "Disable plus/minus buttons",
-        "eco_temperature": "Eco temperature",
+        "disable_battery_warning": "Turn off the battery warning",
+        "disable_buttons": "Turn off the plus/minus buttons",
+        "eco_temperature": "Target temp for night/away/eco mode triggerd by ui button",
         "set_current_as_main": "Swap target with current temperature places"
       }
     }
@@ -23,6 +23,10 @@
     "window_open": "Window open",
     "night_mode": "Night mode",
     "eco": "Eco",
-    "summer": "Summer"
+    "summer": "Summer",
+    "cooling": "Cooling",
+    "heating": "Heating",
+    "cooling_off": "Cooling off",
+    "heating_off": "Heating off"
   }
 }

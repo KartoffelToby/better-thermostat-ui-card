@@ -1,12 +1,36 @@
 {
   "common": {
-    "version": "version",
-    "current": "Nykyinen"
+    "version": "Versio",
+    "current": "Nykyinen",
+    "current_humidity": "Nykyinen kosteus",
+    "current_temperature": "Nykyinen lämpötila",
+    "target_temperature": "Tavoitelämpötila"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Poista ikkuna auki -ilmoitus käytöstä",
+        "disable_summer": "Poista kesä -ilmoitus käytöstä",
+        "disable_eco": "Poista Eco -ilmoitus käytöstä",
+        "disable_heat": "Poista lämmitys -ilmoitus käytöstä",
+        "disable_off": "Poista pois päältä -ilmoitus käytöstä",
+        "disable_menu": "Poista valikko käytöstä",
+        "disable_battery_warning": "Poista akun varoitus käytöstä",
+        "disable_buttons": "Poista plus/miinus -painikkeet käytöstä",
+        "eco_temperature": "Eco lämpötila",
+        "set_current_as_main": "Vaihda tavoitelämpötila nykyiseen lämpötilaan"
+      }
+    }
   },
   "extra_states": {
     "window_open": "Ikkuna auki",
     "night_mode": "Yötila",
     "eco": "Eco",
-    "summer": "Kesä"
+    "summer": "Kesä",
+    "cooling": "Jäähdytys",
+    "heating": "Lämmitys",
+    "cooling_off": "Jäähdytys pois päältä",
+    "heating_off": "Lämmitys pois päältä",
+    "window_closed": "Ikkuna kiinni"
   }
 }

@@ -1,12 +1,49 @@
 {
   "common": {
     "version": "版本",
-    "current": "当前"
+    "current": "当前",
+    "current_humidity": "当前湿度",
+    "current_temperature": "当前温度",
+    "target_temperature": "目标温度"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "禁用窗口打开显示",
+        "disable_summer": "禁用夏季显示",
+        "disable_eco": "禁用节能显示",
+        "disable_heat": "禁用加热显示",
+        "disable_off": "禁用关闭显示",
+        "disable_menu": "禁用菜单",
+        "disable_battery_warning": "禁用电池警告",
+        "disable_buttons": "禁用加/减按钮",
+        "eco_temperature": "节能温度",
+        "set_current_as_main": "将目标温度与当前温度交换"
+      }
+    }
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_eco": "停用节能模式按钮",
+        "disable_off": "停用开关按钮",
+        "disable_menu": "停用菜单按钮",
+        "disable_battery_warning": "停用电量警告",
+        "disable_buttons": "停用温度加减按钮",
+        "eco_temperature": "节能模式温度",
+        "set_current_as_main": "交换目标温度与当前温度位置"
+      }
+    }
   },
   "extra_states": {
-    "window_open": "窗户打开",
+    "window_open": "窗口打开",
     "night_mode": "夜间模式",
     "eco": "节能",
-    "summer": "夏季"
+    "summer": "夏季",
+    "cooling": "冷却",
+    "heating": "加热",
+    "cooling_off": "冷却关闭",
+    "heating_off": "加热关闭",
+    "window_closed": "窗口关闭"
   }
 }
