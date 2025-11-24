@@ -20,6 +20,7 @@ const serveOptions = {
     allowCrossOrigin: true,
     headers: {
         "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Private-Network": "true",
     },
 };
 
@@ -44,14 +45,14 @@ const plugins = [
         },
         warnings: true,
         output: {
-          comments: function (node, comment) {
-            var text = comment.value;
-            var type = comment.type;
-            if (type == "comment2") {
-              // multiline comment
-              return /@preserve|@license|@cc_on/i.test(text);
-            }
-          },
+            comments: function (node, comment) {
+                var text = comment.value;
+                var type = comment.type;
+                if (type == "comment2") {
+                    // multiline comment
+                    return /@preserve|@license|@cc_on/i.test(text);
+                }
+            },
         },
     }),
     ...(dev ? [serve(serveOptions)] : []),

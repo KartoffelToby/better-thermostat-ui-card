@@ -1,7 +1,10 @@
 {
   "common": {
-    "version": "versão",
-    "current": "actual"
+    "version": "Versão",
+    "current": "Atual",
+    "current_humidity": "Humidade atual",
+    "current_temperature": "Temperatura atual",
+    "target_temperature": "Temperatura alvo"
   },
   "editor": {
     "card": {
@@ -11,15 +14,23 @@
         "disable_eco": "Desactivar Eco",
         "disable_heat": "Desactivar Aquecimento",
         "disable_off": "Desactivar Off",
+        "disable_menu": "Desativar menu",
+        "disable_battery_warning": "Desativar aviso de bateria",
+        "disable_buttons": "Desativar botões de mais/menos",
         "eco_temperature": "Modo Eco",
         "set_current_as_main": "Mudar para a temperatura local actual"
       }
     }
   },
   "extra_states": {
-    "window_open": "Janela Aberta",
-    "night_mode": "Modo Noturno",
+    "window_open": "Janela aberta",
+    "night_mode": "Modo noturno",
     "eco": "Eco",
-    "summer": "Verão"
+    "summer": "Verão",
+    "cooling": "Refrigeração",
+    "heating": "Aquecimento",
+    "cooling_off": "Refrigeração desligada",
+    "heating_off": "Aquecimento desligado",
+    "window_closed": "Janela fechada"
   }
 }
