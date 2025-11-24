@@ -1,12 +1,52 @@
 {
   "common": {
     "version": "versie",
-    "current": "huidig"
+    "current": "huidig",
+    "current_humidity": "Huidige luchtvochtigheid",
+    "current_temperature": "Huidige temperatuur",
+    "target_temperature": "Doeltemperatuur"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Venster-open-weergave uitschakelen",
+        "disable_summer": "Zomerweergave uitschakelen",
+        "disable_eco": "Eco-weergave uitschakelen",
+        "disable_heat": "Verwarmingsweergave uitschakelen",
+        "disable_off": "Uit-weergave uitschakelen",
+        "disable_menu": "Menu uitschakelen",
+        "disable_battery_warning": "Batterijwaarschuwing uitschakelen",
+        "disable_buttons": "Plus/min-knoppen uitschakelen",
+        "eco_temperature": "Eco temperatuur",
+        "set_current_as_main": "Doeltemperatuur verwisselen met huidige temperatuur"
+      }
+    }
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Raam verbergen",
+        "disable_summer": "Zomer verbergen",
+        "disable_eco": "Eco verbergen",
+        "disable_heat": "Verwarmen verbergen",
+        "disable_off": "Uit verbergen",
+        "disable_menu": "Menu verbergen",
+        "disable_battery_warning": "Batterij waarschuwing verbergen",
+        "disable_buttons": "Plus/min knoppen verbergen",
+        "eco_temperature": "Eco temperatuur",
+        "set_current_as_main": "Wissel doel- en huidige temperatuur"
+      }
+    }
   },
   "extra_states": {
-    "window_open": "Raam open",
-    "night_mode": "Nacht modus",
+    "window_open": "Venster open",
+    "window_closed": "Venster gesloten",
+    "night_mode": "Nachtmodus",
     "eco": "Eco",
-    "summer": "Zomer"
+    "summer": "Zomer",
+    "cooling": "Koeling",
+    "heating": "Verwarming",
+    "cooling_off": "Koeling uit",
+    "heating_off": "Verwarming uit"
   }
 }
