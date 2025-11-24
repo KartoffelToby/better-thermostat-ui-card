@@ -1,7 +1,10 @@
 {
   "common": {
     "version": "Wersja",
-    "current": "Aktualna"
+    "current": "Aktualna",
+    "current_humidity": "Aktualna wilgotność",
+    "current_temperature": "Aktualna temperatura",
+    "target_temperature": "Temperatura docelowa"
   },
   "editor": {
     "card": {
@@ -21,8 +24,13 @@
   },
   "extra_states": {
     "window_open": "Otwarte okno",
+    "window_closed": "Okno zamknięte",
     "night_mode": "Tryb nocny",
     "eco": "Tryb ekonomiczny",
-    "summer": "Lato"
+    "summer": "Lato",
+    "cooling": "Chłodzenie",
+    "heating": "Ogrzewanie",
+    "cooling_off": "Chłodzenie wyłączone",
+    "heating_off": "Ogrzewanie wyłączone"
   }
 }

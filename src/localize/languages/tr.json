@@ -1,12 +1,36 @@
 {
   "common": {
     "version": "versiyon",
-    "current": "şimdiki"
+    "current": "şimdiki",
+    "current_humidity": "Mevcut Nem",
+    "current_temperature": "Mevcut Sıcaklık",
+    "target_temperature": "Hedef Sıcaklık"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Pencereyi devre dışı bırak",
+        "disable_summer": "Yazı devre dışı bırak",
+        "disable_eco": "Eco'yu devre dışı bırak",
+        "disable_heat": "Isıtmayı devre dışı bırak",
+        "disable_off": "Kapatmayı devre dışı bırak",
+        "disable_menu": "Menüyü devre dışı bırak",
+        "disable_battery_warning": "Pil uyarısını devre dışı bırak",
+        "disable_buttons": "Artı/eksi düğmelerini devre dışı bırak",
+        "eco_temperature": "Eco sıcaklık",
+        "set_current_as_main": "Hedef ve mevcut sıcaklık yerlerini değiştir"
+      }
+    }
   },
   "extra_states": {
     "window_open": "Pencere açık",
+    "window_closed": "Pencere kapalı",
     "night_mode": "Gece modu",
     "eco": "Eco",
-    "summer": "Yaz"
+    "summer": "Yaz",
+    "cooling": "Soğutma",
+    "heating": "Isıtma",
+    "cooling_off": "Soğutma kapalı",
+    "heating_off": "Isıtma kapalı"
   }
 }
