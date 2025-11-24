@@ -48,5 +48,8 @@
     "rollup-plugin-serve": "^2.0.2",
     "rollup-plugin-terser": "7.0.2",
     "typescript": "^5.2.2"
+  },
+  "volta": {
+    "node": "18.20.4"
   }
 }
