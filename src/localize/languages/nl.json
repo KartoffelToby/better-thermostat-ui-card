@@ -6,16 +6,16 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Raam open indicator verbergen",
-        "disable_summer": "Zomer indicator verbergen",
-        "disable_eco": "Eco knop verbergen",
-        "disable_heat": "Verwarmen knop verbergen",
-        "disable_off": "Uit-knop verbergen",
+        "disable_window": "Raam verbergen",
+        "disable_summer": "Zomer verbergen",
+        "disable_eco": "Eco verbergen",
+        "disable_heat": "Verwarmen verbergen",
+        "disable_off": "Uit verbergen",
         "disable_menu": "Menu verbergen",
         "disable_battery_warning": "Batterij waarschuwing verbergen",
         "disable_buttons": "Plus/min knoppen verbergen",
         "eco_temperature": "Eco temperatuur",
-        "set_current_as_main": "Toon huidige temperatuur i.p.v. doeltemperatuur"
+        "set_current_as_main": "Wissel doel- en huidige temperatuur"
       }
     }
   },
