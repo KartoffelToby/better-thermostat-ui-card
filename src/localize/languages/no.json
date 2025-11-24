@@ -1,12 +1,36 @@
 {
   "common": {
     "version": "versjon",
-    "current": "nåværende"
+    "current": "nåværende",
+    "current_humidity": "Nåværende luftfuktighet",
+    "current_temperature": "Nåværende temperatur",
+    "target_temperature": "Måltemperatur"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Deaktiver vindu-åpen visning",
+        "disable_summer": "Deaktiver sommer visning",
+        "disable_eco": "Deaktiver eco visning",
+        "disable_heat": "Deaktiver varme visning",
+        "disable_off": "Deaktiver av visning",
+        "disable_menu": "Deaktiver meny",
+        "disable_battery_warning": "Deaktiver batterivarsel",
+        "disable_buttons": "Deaktiver pluss/minus knapper",
+        "eco_temperature": "Eco temperatur",
+        "set_current_as_main": "Bytt måltemperatur med nåværende temperatur"
+      }
+    }
   },
   "extra_states": {
     "window_open": "Vindu åpent",
     "night_mode": "Nattmodus",
     "eco": "Eco",
-    "summer": "Sommer"
+    "summer": "Sommer",
+    "cooling": "Kjøling",
+    "heating": "Oppvarming",
+    "cooling_off": "Kjøling av",
+    "heating_off": "Oppvarming av",
+    "window_closed": "Vindu lukket"
   }
 }

@@ -1,12 +1,36 @@
 {
   "common": {
-    "version": "έκδοση",
-    "current": "τρέχουσα"
+    "version": "Έκδοση",
+    "current": "Tρέχουσα"
+    "current_humidity": "Τρέχουσα υγρασία",
+    "current_temperature": "Τρέχουσα θερμοκρασία",
+    "target_temperature": "Στόχος θερμοκρασίας"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Απενεργοποίηση ένδειξης ανοιχτού παραθύρου",
+        "disable_summer": "Απενεργοποίηση καλοκαιρινής ένδειξης",
+        "disable_eco": "Απενεργοποίηση ένδειξης Eco",
+        "disable_heat": "Απενεργοποίηση ένδειξης θέρμανσης",
+        "disable_off": "Απενεργοποίηση ένδειξης απενεργοποίησης",
+        "disable_menu": "Απενεργοποίηση μενού",
+        "disable_battery_warning": "Απενεργοποίηση προειδοποίησης μπαταρίας",
+        "disable_buttons": "Απενεργοποίηση κουμπιών Plus/Minus",
+        "eco_temperature": "Θερμοκρασία Eco",
+        "set_current_as_main": "Αντικατάσταση της επιθυμητής θερμοκρασίας με την τρέχουσα θερμοκρασία"
+      }
+    }
   },
   "extra_states": {
-    "window_open": "Παράθυρο ανοικτό",
+    "window_open": "Παράθυρο ανοιχτό",
     "night_mode": "Λειτουργία νυκτός",
     "eco": "Εξοικονόμηση",
-    "summer": "Καλοκαίρι"
+    "summer": "Καλοκαίρι",
+    "cooling": "Ψύξη",
+    "heating": "Θέρμανση",
+    "cooling_off": "Ψύξη απενεργοποιημένη",
+    "heating_off": "Θέρμανση απενεργοποιημένη",
+    "window_closed": "Παράθυρο κλειστό"
   }
 }

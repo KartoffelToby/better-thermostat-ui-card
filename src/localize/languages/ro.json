@@ -1,12 +1,36 @@
 {
   "common": {
     "version": "versiune",
-    "current": "curent"
+    "current": "curent",
+    "current_humidity": "Umiditate curentă",
+    "current_temperature": "Temperatură curentă",
+    "target_temperature": "Temperatură țintă"
+  },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Dezactivează fereastra",
+        "disable_summer": "Dezactivează vara",
+        "disable_eco": "Dezactivează eco",
+        "disable_heat": "Dezactivează încălzirea",
+        "disable_off": "Dezactivează oprirea",
+        "disable_menu": "Dezactivează meniul",
+        "disable_battery_warning": "Dezactivează avertizarea bateriei",
+        "disable_buttons": "Dezactivează butoanele plus/minus",
+        "eco_temperature": "Temperatura eco",
+        "set_current_as_main": "Schimbă locurile temperaturii țintă cu cea curentă"
+      }
+    }
   },
   "extra_states": {
     "window_open": "Fereastră deschisă",
     "night_mode": "Mod noapte",
     "eco": "Eco",
-    "summer": "Vară"
+    "summer": "Vara",
+    "cooling": "Răcire",
+    "heating": "Încălzire",
+    "cooling_off": "Răcire oprită",
+    "heating_off": "Încălzire oprită",
+    "window_closed": "Fereastră închisă"
   }
 }

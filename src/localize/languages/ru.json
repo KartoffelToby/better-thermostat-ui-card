@@ -1,20 +1,23 @@
 {
   "common": {
     "version": "версия",
-    "current": "текущий"
+    "current": "текущая версия",
+    "current_humidity": "Текущая влажность",
+    "current_temperature": "Текущая температура",
+    "target_temperature": "Целевая температура"
   },
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Отключить окно",
-        "disable_summer": "Отключить лето",
+        "disable_window": "Отключить индикатор окна",
+        "disable_summer": "Отключить летний режим",
         "disable_eco": "Отключить режим eco",
         "disable_heat": "Отключить обогрев",
-        "disable_off": "Отключить",
+        "disable_off": "Отключить индикатор on/off",
         "disable_menu": "Отключить меню",
         "disable_battery_warning": "Отключить предупреждение о разряде батареи",
         "disable_buttons": "Отключить кнопку плюс/минус",
-        "eco_temperature": "Eco температура",
+        "eco_temperature": "Температура режима Eco",
         "set_current_as_main": "Поменять местами требуемую и текущую температуру"
       }
     }
@@ -22,7 +25,12 @@
   "extra_states": {
     "window_open": "Окно открыто",
     "night_mode": "Ночной режим",
-    "eco": "Eco",
-    "summer": "Лето"
+    "eco": "Эко",
+    "summer": "Летний режим",
+    "cooling": "Охлаждение",
+    "heating": "Обогрев",
+    "cooling_off": "Охлаждение выключено",
+    "heating_off": "Обогрев выключен",
+    "window_closed": "Окно закрыто"
   }
 }
