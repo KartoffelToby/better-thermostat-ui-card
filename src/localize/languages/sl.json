@@ -22,6 +22,22 @@
       }
     }
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Onemogoči okno",
+        "disable_summer": "Onemogoči poletje",
+        "disable_eco": "Onemogoči EKO način",
+        "disable_heat": "Onemogoči gretje",
+        "disable_off": "Onemogoči izklop",
+        "disable_menu": "Onemogoči meni",
+        "disable_battery_warning": "Onemogoči opozorilo o bateriji",
+        "disable_buttons": "Onemogoči gumba plus in minus",
+        "eco_temperature": "Eko temperatura",
+        "set_current_as_main": "Zamenjaj ciljno in trenutno temperaturo"
+      }
+    }
+  },
   "extra_states": {
     "window_open": "Okno odprto",
     "night_mode": "Nočni način",
