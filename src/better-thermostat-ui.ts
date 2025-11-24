@@ -44,6 +44,7 @@ import {
   localize
 } from './localize/localize';
 import {
+  BatteryState,
   clamp,
   ClimateEntity,
   debounce,
@@ -70,9 +71,9 @@ const modeIcons: {
   fan_only: mdiFan,
   dry: mdiWaterPercent,
   window_open: mdiWindowOpenVariant,
-  eco: mdiLeaf, 
+  eco: mdiLeaf,
   summer: mdiSunThermometer,
-  temperature:  mdiThermometer,
+  temperature: mdiThermometer,
   current_humidity: mdiWaterPercent,
   ok: mdiAirConditioner
 };
@@ -85,12 +86,12 @@ interface RegisterCardParams {
 }
 export function registerCustomCard(params: RegisterCardParams) {
   const windowWithCards = window as unknown as Window & {
-      customCards: unknown[];
+    customCards: unknown[];
   };
   windowWithCards.customCards = windowWithCards.customCards || [];
   windowWithCards.customCards.push({
-      ...params,
-      preview: true,
+    ...params,
+    preview: true,
   });
 }
 
@@ -127,18 +128,18 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   public static async getStubConfig(hass: HomeAssistant): Promise<any> {
-      const entities = Object.keys(hass.states);
-      const climates = entities.filter((e) => ["climate"].includes(e.split(".")[0]));
-      const bt_climate:any = climates.filter((e) => hass.states[e].attributes?.call_for_heat);
-      return {
-          type: "custom:better-thermostat-ui-card",
-          entity: bt_climate[0] || climates[0]
-      };
+    const entities = Object.keys(hass.states);
+    const climates = entities.filter((e) => ["climate"].includes(e.split(".")[0]));
+    const bt_climate: any = climates.filter((e) => hass.states[e].attributes?.call_for_heat);
+    return {
+      type: "custom:better-thermostat-ui-card",
+      entity: bt_climate[0] || climates[0]
+    };
   }
 
   @property({
-      attribute: false
-  }) public hass! : HomeAssistant;
+    attribute: false
+  }) public hass!: HomeAssistant;
   @property({ type: Number }) public value: Partial<Record<Target, number>> = {};
   @state() private _selectTargetTemperature: Target = "low";
   @property({ type: Number }) public current: number = 0;
@@ -241,24 +242,24 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   private _timeout: any;
   private _oldValueMin: number = 0;
   private _oldValueMax: number = 0;
-  private stateObj: any | undefined;
+  private stateObj: ClimateEntity | undefined;
   private _display_bottom: number = 0;
   private _display_top: number = 0;
   private modes: any = [];
-  private lowBattery: any = {};
+  private lowBattery: { name: string; battery: number } | undefined;
   private error: any = [];
 
   @state() private _config?: ClimateCardConfig;
 
   setConfig(config: ClimateCardConfig): void {
     this._config = {
-        tap_action: {
-            action: "toggle",
-        },
-        hold_action: {
-            action: "more-info",
-        },
-        ...config,
+      tap_action: {
+        action: "toggle",
+      },
+      hold_action: {
+        action: "more-info",
+      },
+      ...config,
     };
   }
 
@@ -266,7 +267,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
     return 1;
   }
 
-  public static styles: CSSResultGroup = css `
+  public static styles: CSSResultGroup = css`
       :host {
           display: block;
           box-sizing: border-box;
@@ -329,7 +330,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         line-height: 40px;
         padding: 1em;
         --mdc-icon-size: 40px;
-
+        backdrop-filter: blur(5px);
+        z-index: 4;
       }
 
       .unavailable {
@@ -377,9 +379,13 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         align-items: center;
         place-content: center;
         flex-flow: wrap;
-        z-index: 0;
+        z-index: 3; /* TODO: refactor z-index - bumping this up is messy but has less potential for side effects */
         transform: translate(-50%,-50%);
         max-width: 155px;
+      }
+
+      .content > svg * {
+        pointer-events: auto; /* reenable pointer events on all children */
       }
 
       #expand .content {
@@ -588,10 +594,10 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       }
   `;
 
-  private _vibrate(delay:number) {
+  private _vibrate(delay: number) {
     try {
       navigator.vibrate(delay);
-    } catch(e){}
+    } catch (e) { }
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -600,7 +606,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (changedProps.has("_config") !== undefined) {
-      if(changedProps.get("_config") !== undefined) {
+      if (changedProps.get("_config") !== undefined) {
         this._hasSummer = false;
         this._hasWindow = false;
         this.current_humidity = 0;
@@ -618,93 +624,91 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
     this?.shadowRoot?.querySelector('.low_battery')?.addEventListener('click', () => {
       this?.shadowRoot?.querySelector('.low_battery')?.remove();
-      this?.shadowRoot?.querySelector('.content')?.classList.remove('battery');
       this._vibrate(2);
     });
   }
 
   public willUpdate(changedProps: PropertyValues) {
-      if (!this.hass || !this._config || (!changedProps.has("hass") && !changedProps.has("_config"))) {
-          return;
+    if (!this.hass || !this._config || (!changedProps.has("hass") && !changedProps.has("_config"))) {
+      return;
+    }
+
+    const entity_id: any = this._config.entity;
+
+    const stateObj = this.hass.states[entity_id] as ClimateEntity;
+    if (!stateObj) {
+      return;
+    }
+    const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
+
+    if (!oldHass || oldHass.states[entity_id] !== stateObj) {
+      if (!this._config || !this.hass || !this._config.entity) return;
+
+      this.stateObj = stateObj;
+      const attributes = this.stateObj.attributes;
+      const stateMode = this.stateObj.state;
+
+      this.mode = stateMode || "off";
+
+      if (attributes.hvac_modes) {
+        this.modes = Object.values(attributes.hvac_modes);
       }
 
-      const entity_id:any = this._config.entity;
+      this.value = {
+        value: attributes?.temperature || 0,
+        low: attributes?.target_temp_low as any || null,
+        high: attributes?.target_temp_high as any || null,
+      };
 
-      const stateObj = this.hass.states[entity_id] as ClimateEntity;
-      if (!stateObj) {
-          return;
+      if (attributes.target_temp_step) {
+        this.step = attributes.target_temp_step;
       }
-      const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
-
-      if (!oldHass || oldHass.states[entity_id] !== stateObj) {
-        if (!this._config || !this.hass || !this._config.entity) return;
-  
-        this.stateObj = stateObj;
-        const attributes = this.stateObj.attributes;
-        const stateMode = this.stateObj.state;
-  
-        this.mode = stateMode || "off";
-
-        if (attributes.hvac_modes) {
-          this.modes = Object.values(attributes.hvac_modes);
-        }
-  
-        this.value = {
-          value: attributes?.temperature || 0,
-          low: attributes?.target_temp_low || null,
-          high: attributes?.target_temp_high || null,
-        };
-        
-        if (attributes.target_temp_step) {
-          this.step = attributes.target_temp_step;
-        }
-        if (attributes.min_temp) {
-          this.min = attributes.min_temp;
-        }
-        if (attributes.max_temp) {
-          this.max = attributes.max_temp;
-        }
-        if (attributes.current_temperature) {
-          this.current = attributes.current_temperature;
-        }
-        if (attributes?.current_humidity !== undefined) {
-          this.current_humidity = parseFloat(attributes.current_humidity);
-        }
-        if (attributes?.window_open !== undefined) {
-          this._hasWindow = true;
-          this.window = attributes.window_open;
-        }
-        if (attributes?.call_for_heat !== undefined) {
-          this._hasSummer = true;
-          this.summer = !attributes.call_for_heat
-        }
-        if (attributes?.batteries !== undefined && !this?._config?.disable_battery_warning) {
-          const batteries = Object.entries(JSON.parse(attributes.batteries));
-          const lowBatteries = batteries.filter((entity: any) => entity[1].battery < 10);
-          if (lowBatteries.length > 0) {
-            this.lowBattery = lowBatteries.map((data:any) => {return {"name": data[0], "battery": data[1].battery}})[0];
-          } else {
-            this.lowBattery = null;
-          }
-        } else {
-          this.lowBattery = null;
-        }
-        if (attributes?.errors !== undefined) {
-          const errors = JSON.parse(attributes.errors);
-          if (errors.length > 0) {
-            this.error = errors[0];
-          } else {
-            this.error = [];
-          }
+      if (attributes.min_temp) {
+        this.min = attributes.min_temp;
+      }
+      if (attributes.max_temp) {
+        this.max = attributes.max_temp;
+      }
+      if (attributes.current_temperature) {
+        this.current = attributes.current_temperature;
+      }
+      const humidity = attributes.current_humidity ?? attributes?.humidity;
+      if (humidity !== undefined) {
+        this.current_humidity = parseFloat(humidity.toString());
+      }
+      if (attributes?.window_open !== undefined) {
+        this._hasWindow = true;
+        this.window = attributes.window_open;
+      }
+      if (attributes?.call_for_heat !== undefined) {
+        this._hasSummer = true;
+        this.summer = !attributes.call_for_heat
+      }
+      if (attributes?.batteries !== undefined && !this?._config?.disable_battery_warning) {
+        const showLowBatteryWarningWhenPercentageLowerThan = 5; // this is really preference based - an option would be neat 
+        const batteries = Object.entries(JSON.parse(attributes.batteries) as Record<string, BatteryState>);
+        const parsedBatteries = batteries.map((data) => ({ "name": data[0], "battery": data[1].battery === "on" ? showLowBatteryWarningWhenPercentageLowerThan - 1 : data[1].battery === "off" ? 100 : parseFloat(data[1].battery) }));
+        const lowBatteries = parsedBatteries.filter((entity) => entity.battery < showLowBatteryWarningWhenPercentageLowerThan);
+        this.lowBattery = lowBatteries[0];
+      } else {
+        this.lowBattery = undefined;
+      }
+      if (attributes?.errors !== undefined) {
+        const errors = JSON.parse(attributes.errors);
+        if (errors.length > 0) {
+          this.error = errors[0];
         } else {
           this.error = [];
         }
-        this._updateDisplay();
+      } else {
+        this.error = [];
       }
+      this._updateDisplay();
+    }
   }
 
   private _updateDisplay() {
-    if(this?._config?.set_current_as_main) {
+    if (this?._config?.set_current_as_main) {
       this._display_bottom = this._getCurrentSetpoint();
       this._display_top = this.current;
     } else {
@@ -715,22 +719,22 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   private _handleAction(e: MouseEvent): void {
     if ((e.currentTarget as any).mode === "eco") {
-        const saved_temp = this?.stateObj?.attributes?.saved_temperature || null;
-        if (saved_temp === null) {
-          this.hass!.callService("better_thermostat", "set_temp_target_temperature", {
-              entity_id: this._config!.entity,
-              temperature: this._config?.eco_temperature || 18,
-          });
-        } else {
-          this.hass!.callService("better_thermostat", "restore_saved_target_temperature", {
-              entity_id: this._config!.entity,
-          });
-        }
+      const saved_temp = this?.stateObj?.attributes?.saved_temperature || null;
+      if (saved_temp === null) {
+        this.hass!.callService("better_thermostat", "set_temp_target_temperature", {
+          entity_id: this._config!.entity,
+          temperature: this._config?.eco_temperature || 18,
+        });
+      } else {
+        this.hass!.callService("better_thermostat", "restore_saved_target_temperature", {
+          entity_id: this._config!.entity,
+        });
+      }
     } else {
       const saved_temp = this?.stateObj?.attributes?.saved_temperature || null;
       if (saved_temp !== null) {
         this.hass!.callService("better_thermostat", "restore_saved_target_temperature", {
-            entity_id: this._config!.entity,
+          entity_id: this._config!.entity,
         });
       }
       this.hass!.callService("climate", "set_hvac_mode", {
@@ -741,15 +745,15 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   private _setTemperature(): void {
-      this.hass!.callService("climate", "set_temperature", {
-          entity_id: this._config!.entity,
-          temperature: this.value,
-      });
+    this.hass!.callService("climate", "set_temperature", {
+      entity_id: this._config!.entity,
+      temperature: this.value,
+    });
   }
 
 
   private _getCurrentSetpoint(): number {
-    if(this?.value?.high !== null && this?.value?.low !== null) {
+    if (this?.value?.high !== null && this?.value?.low !== null) {
       if ((this?.value?.low || 0) >= this.current) return this?.value?.low || 0;
       else if ((this?.value?.high || 0) <= this.current) return this?.value?.high || 0;
       else return this?.value?.low || 0;
@@ -758,21 +762,19 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
   }
 
   private _renderHVACAction(full = false): TemplateResult {
-    if (full) {
-      if (this?.value?.low === null && this?.value?.high === null) {
-        return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
-      }
-      if ((this?.value?.low || 0) >= this.current) return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
-      else if ((this?.value?.high || 0) <= this.current) return svg`<path class="status cooler ${(this.stateObj.attributes.hvac_action === 'cooling' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiWeatherWindy}" />`;
-      else return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(-3,-3.5) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
-    } else {
-      if (this?.value?.low === null && this?.value?.high === null) {
-        return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
-      }
-      if ((this?.value?.low || 0) >= this.current) return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
-      else if ((this?.value?.high || 0) <= this.current) return svg`<path class="status cooler ${(this.stateObj.attributes.hvac_action === 'cooling' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiWeatherWindy}" />`;
-      else return svg`<path class="status ${(this.stateObj.attributes.hvac_action === 'heating' && this.mode !== 'off') ? 'active': ''}"  transform="translate(5,-4) scale(0.25)" fill="#9d9d9d"  d="${mdiHeatWave}" />`;
+    const isHeating = this.stateObj?.attributes.hvac_action === 'heating' && this.mode !== 'off';
+    const isCooling = this.stateObj?.attributes.hvac_action === 'cooling' && this.mode !== 'off';
+    const showCoolingIcon = this?.value?.high !== undefined && this?.value?.high !== null && this?.value?.high <= this.current;
+    const transform = full ? "translate(-3,-3.5) scale(0.25)" : "translate(5,-4) scale(0.25)";
+    const fill = "#9d9d9d";
+
+    if (showCoolingIcon) {
+      const label = isCooling ? localize({ hass: this.hass, string: `extra_states.cooling` }) : localize({ hass: this.hass, string: `extra_states.cooling_off` });
+      return svg`<path class="status cooler ${isCooling ? 'active' : ''}" transform="${transform}" fill="${fill}" d="${mdiWeatherWindy}" title="Cooling"><title>${label}</title></path>`;
     }
+
+    const label = isHeating ? localize({ hass: this.hass, string: `extra_states.heating` }) : localize({ hass: this.hass, string: `extra_states.heating_off` });
+    return svg`<path class="status ${isHeating ? 'active' : ''}" transform="${transform}" fill="${fill}" d="${mdiHeatWave}" title="Heating"><title>${label}</title></path>`;
   }
 
   private _renderHVACIcon(currentMode: string): TemplateResult {
@@ -783,10 +785,10 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   private _renderIcon(mode: string, currentMode: string): TemplateResult {
     if (!modeIcons[mode]) {
-        return html ``;
+      return html``;
     }
     const localizeMode = this.hass!.localize(`component.climate.state._.${mode}`) || localize({ hass: this.hass, string: `extra_states.${mode}` });
-    return html `
+    return html`
       <ha-icon-button
         title="${currentMode === mode ? mode : ''}"
         class=${classMap({ "selected-icon": currentMode === mode })}
@@ -802,12 +804,128 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
 
   private _handleMoreInfo() {
     fireEvent(this, "hass-more-info", {
-        entityId: this._config!.entity,
+      entityId: this._config!.entity,
     });
   }
 
   public render: () => TemplateResult = (): TemplateResult => {
-    return html `
+    const windowLabel = this.window ? localize({ hass: this.hass, string: `extra_states.window_open` }) : localize({ hass: this.hass, string: `extra_states.window_closed` });
+    const upperContentIcons = svg`
+      <g transform="translate(57.5,37) scale(0.35)">
+      ${(this._hasWindow && !this._config?.disable_window) ? svg`
+        <path title="${windowLabel}" class="window ${this.window ? 'active' : ''}" fill="none" transform="${(this._hasSummer && !this._config?.disable_summer) ? 'translate(-31.25,0)' : ''}" id="window" d=${mdiWindowOpenVariant}><title>${windowLabel}</title></path>
+      `: ``}
+      ${(this._hasSummer && !this._config?.disable_summer) ? svg`
+        <path class="summer ${this.summer ? 'active' : ''}" fill="none" transform="${(this._hasWindow && !this._config?.disable_window) ? 'translate(31.25,0)' : ''}" id="summer" d=${mdiSunThermometer}><title>${localize({ hass: this.hass, string: `extra_states.summer` })}</title></path>
+      `: ``}
+     </g>`;
+
+    const mainTempLabel = this?._config?.set_current_as_main ? localize({ hass: this.hass, string: `common.current_temperature` }) : localize({ hass: this.hass, string: `common.target_temperature` });
+    const mainValue = svg`
+      <text class="main-value" x="62.5" y="60%" dominant-baseline="middle" text-anchor="middle" style="font-size:15px;">
+        <title>${mainTempLabel}</title>
+        ${formatNumber(
+      this._display_top,
+      this.hass.locale,
+      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+    )}
+        <tspan dx="-2" dy="-5.5" style="font-size: 5px;">
+          ${this.hass.config.unit_system.temperature}
+        </tspan>
+      </text>`;
+
+    const unavailableMessage = svg`${this?.stateObj?.state === UNAVAILABLE || this?.stateObj?.state === UNKNOWN ? svg`
+      <text x="62.5" y="63%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
+        ${this.hass!.localize("state.default.unavailable")}
+      </text>` : ''}`;
+
+    const seperator = svg`<line x1="35" y1="72" x2="90" y2="72" stroke="#e7e7e8" stroke-width="0.5" />`;
+
+    const lowerTempLabel = this?._config?.set_current_as_main ? localize({ hass: this.hass, string: `common.target_temperature` }) : localize({ hass: this.hass, string: `common.current_temperature` });
+    const lowerContent = svg`
+    <g class="current-info" transform="translate(62.5,80)">
+      ${(this.current_humidity === 0) ? svg`
+        <text x="-5%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
+          <title>${lowerTempLabel}</title>
+        ${svg`${formatNumber(
+      this._display_bottom,
+      this.hass.locale,
+      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+    )}`}
+          <tspan dx="-1" dy="-2" style="font-size: 3px;">
+            ${svg`${this.hass.config.unit_system.temperature}`}
+          </tspan>
+        </text>
+        ${this._renderHVACAction()}
+      `: svg`
+        <text x="-12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
+          <title>${lowerTempLabel}</title>  
+        ${svg`${formatNumber(
+      this._display_bottom,
+      this.hass.locale,
+      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+    )}`}
+        <tspan dx="-0.3" dy="-2" style="font-size: 3px;">
+          ${svg`${this.hass.config.unit_system.temperature}`}
+        </tspan>
+      </text>
+      <text x="12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
+          <title>${localize({ hass: this.hass, string: `common.current_humidity` })}</title>  
+        ${svg`${formatNumber(
+      this.current_humidity,
+      this.hass.locale,
+      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+    )}`}
+        <tspan dx="-0.3" dy="-2" style="font-size: 3px;">%</tspan>
+      </text>
+      ${this._renderHVACAction(true)}
+      `}
+    </g>`;
+
+    const modes = html`<div id="modes">
+          ${this?._hasSummer ? svg`
+            ${(this?._config?.disable_heat || !this.modes.includes('heat')) ? html`` : this._renderIcon("heat", this.mode)}
+            ${(this?._config?.disable_heat || !this.modes.includes('heat_cool')) ? html`` : this._renderHVACIcon(this.mode)}
+            ${this?._config?.disable_eco ? html`` :
+          this?.stateObj?.attributes?.saved_temperature &&
+            this?.stateObj?.attributes?.saved_temperature !== "none" &&
+            this?.stateObj?.state !== UNAVAILABLE
+            ? this._renderIcon("eco", "eco") : this._renderIcon("eco", "none")}
+            ${this?._config?.disable_off ? html`` : this._renderIcon("off", this.mode)}
+          `:
+        svg`
+            ${this.modes.map((mode) => {
+          if (this._config?.disable_heat && (mode === "heat" || mode === "heat_cool")) return html``;
+          if (this._config?.disable_eco && mode === "eco") return html``;
+          if (this._config?.disable_off && mode === "off") return html``;
+          return this._renderIcon(mode, this.mode);
+        })}`}
+        </div>`;
+
+    const buttons = this?._config?.disable_buttons ? html`` : html`
+      <div id="bt-control-buttons">
+          <div class="button">
+            <bt-ha-outlined-icon-button
+              .target=${this.target}
+              .step=${-this.step}
+              @click=${this._handleButton}
+            >
+              <ha-svg-icon .path=${mdiMinus}></ha-svg-icon>
+            </bt-ha-outlined-icon-button>
+          </div>
+          <div class="button">
+            <bt-ha-outlined-icon-button 
+              .target=${this.target}
+              .step=${this.step}
+              @click=${this._handleButton}
+            >
+            <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
+          </bt-ha-outlined-icon-button>
+          </div>
+      </div>
+    </div>`;
+
+    return html`
     <ha-card id="${this?._config?.disable_buttons ? '' : 'expand'}" class=${classMap({
       [this.mode]: true,
     })}
@@ -816,8 +934,8 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       <ha-icon-button
         class="more-info"
         .label=${this.hass!.localize(
-          "ui.panel.lovelace.cards.show_more_info"
-        )}
+      "ui.panel.lovelace.cards.show_more_info"
+    )}
         .path=${mdiDotsVertical}
         @click=${this._handleMoreInfo}
         tabindex="0"
@@ -826,28 +944,12 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
       ${this?._config?.name?.length || 0 > 0 ? html`
         <div class="name">${this._config?.name}</div>
         ` : html`<div class="name">&nbsp;</div>`}
-      ${this.lowBattery !== null ? html`
-        <div class="low_battery">
-          <ha-icon-button class="alert" .path=${mdiBatteryAlert}>
-          </ha-icon-button>
-          <span>${this.lowBattery.name}</span>
-          <span>${this.lowBattery.battery}%</span>
-        </div>
-      ` : ``}
-      ${this.error.length > 0 ? html`
-        <div class="error">
-          <ha-icon-button class="alert" .path=${mdiWifiStrengthOffOutline}>
-          </ha-icon-button>
-          <span>${this.error}</span>
-        </div>
-      ` : ``}
 
-      ${
-        (this.value.low != null &&
+      ${(this.value.low != null &&
         this.value.high != null &&
-        this.stateObj.state !== UNAVAILABLE) ? html`
+        this.stateObj?.state !== UNAVAILABLE) ? html`
         <bt-ha-control-circular-slider
-          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${this.summer ? 'summer': ''} "
+          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
           .inactive=${this.window}
           dual
           .low=${this.value.low}
@@ -863,7 +965,7 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         >
         ` : html`
         <bt-ha-control-circular-slider
-          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${this.summer ? 'summer': ''} "
+          class="${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.window ? 'window_open' : ''}  ${this.summer ? 'summer' : ''} "
           .inactive=${this.window}
           .mode="start"
           @value-changed=${this._highChanged}
@@ -876,126 +978,34 @@ export class BetterThermostatUi extends LitElement implements LovelaceCard {
         >
         `
       }
-      <div class="content ${this.lowBattery !== null || this.error.length > 0 ? 'battery': ''} ${this.window ? 'window_open': ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer': ''} ">
-            <svg id="main" viewbox="0 0 125 100">
-              <g transform="translate(57.5,37) scale(0.35)">
-                ${(this._hasWindow && !this._config?.disable_window) ? svg`
-                  <path title="${localize({ hass: this.hass, string: `extra_states.window_open` })}" class="window ${this.window ? 'active': ''}" fill="none" transform="${(this._hasSummer && !this._config?.disable_summer) ? 'translate(-31.25,0)' :''}" id="window" d=${mdiWindowOpenVariant} />
-                `: ``}
-                ${(this._hasSummer && !this._config?.disable_summer) ? svg`
-                  <path class="summer ${this.summer ? 'active': ''}" fill="none" transform="${(this._hasWindow && !this._config?.disable_window) ? 'translate(31.25,0)' :''}" id="summer" d=${mdiSunThermometer} />
-                `: ``}
-              </g>
+        <div class="content ${this.window ? 'window_open' : ''}  ${(this?.stateObj?.attributes?.saved_temperature && this?.stateObj?.attributes?.saved_temperature !== null) ? 'eco' : ''} ${this.summer ? 'summer' : ''} ">
+          <svg id="main" viewbox="0 0 125 100">
+            ${upperContentIcons}
+            ${mainValue}
+            ${unavailableMessage}
+            ${seperator}
+            ${lowerContent}
+          </svg>
+        </div>
 
-
-
-              <text class="main-value" x="62.5" y="60%" dominant-baseline="middle" text-anchor="middle" style="font-size:15px;">
-                ${svg`${formatNumber(
-                  this._display_top,
-                  this.hass.locale,
-                  { minimumFractionDigits: 1, maximumFractionDigits: 1 }
-                )}`}
-                <tspan dx="-2" dy="-5.5" style="font-size: 5px;">
-                  ${svg`
-                    ${this.hass.config.unit_system.temperature}
-                  `}
-                </tspan>
-              </text>
-              ${(this?.stateObj?.state === UNAVAILABLE || this?.stateObj?.state === UNKNOWN) ? svg`
-              <text x="62.5" y="63%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">${this.hass!.localize(
-                "state.default.unavailable"
-              )}</text>
-              ` : ''}
-              <line x1="35" y1="72" x2="90" y2="72" stroke="#e7e7e8" stroke-width="0.5" />
-              <g class="current-info" transform="translate(62.5,80)">
-                ${(this.current_humidity === 0) ? svg`
-                    <text x="-5%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
-                    ${svg`${formatNumber(
-                      this._display_bottom,
-                      this.hass.locale,
-                      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
-                    )}`}
-                    <tspan dx="-1" dy="-2" style="font-size: 3px;">
-                      ${svg`
-                        ${this.hass.config.unit_system.temperature}
-                      `}
-                    </tspan>
-                  </text>
-                  ${this._renderHVACAction()}
-                `: svg `
-                  <text x="-12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
-                    ${svg`${formatNumber(
-                      this._display_bottom,
-                      this.hass.locale,
-                      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
-                    )}`}
-                    <tspan dx="-0.3" dy="-2" style="font-size: 3px;">
-                      ${svg`
-                        ${this.hass.config.unit_system.temperature}
-                      `}
-                    </tspan>
-                  </text>
-                  <text x="12.25%" y="0%" dominant-baseline="middle" text-anchor="middle" style="font-size:6px;">
-                    ${svg`${formatNumber(
-                      this.current_humidity,
-                      this.hass.locale,
-                      { minimumFractionDigits: 1, maximumFractionDigits: 1 }
-                    )}`}
-                    <tspan dx="-0.3" dy="-2" style="font-size: 3px;">
-                    %
-                    </tspan>
-                  </text>
-                  ${this._renderHVACAction(true)}
-                `}
-
-              </g>
-                </svg>
-            </div>
-            </bt-ha-control-circular-slider>
-            <div id="modes">
-              ${this?._hasSummer ? svg`
-                ${(this?._config?.disable_heat || !this.modes.includes('heat')) ? html `` : this._renderIcon("heat", this.mode)}
-                ${(this?._config?.disable_heat || !this.modes.includes('heat_cool')) ? html `` : this._renderHVACIcon(this.mode)}
-                ${this?._config?.disable_eco ? html `` :
-                  this?.stateObj?.attributes?.saved_temperature &&
-                  this?.stateObj?.attributes?.saved_temperature !== "none" &&
-                  this?.stateObj?.state !== UNAVAILABLE
-                    ? this._renderIcon("eco","eco"): this._renderIcon("eco", "none")}
-                ${this?._config?.disable_off ? html `` : this._renderIcon("off", this.mode)}
-              `:
-              svg`
-                ${this.modes.map((mode) => {
-                  if(this._config?.disable_heat && (mode === "heat" || mode === "heat_cool")) return html ``;
-                  if(this._config?.disable_eco && mode === "eco") return html ``;
-                  if(this._config?.disable_off && mode === "off") return html ``;
-                  return this._renderIcon(mode, this.mode);
-                })}
-              `}
-
-            </div>
-            ${this?._config?.disable_buttons ? html`` : html`
-            <div id="bt-control-buttons">
-                <div class="button">
-                  <bt-ha-outlined-icon-button
-                    .target=${this.target}
-                    .step=${-this.step}
-                    @click=${this._handleButton}
-                  >
-                    <ha-svg-icon .path=${mdiMinus}></ha-svg-icon>
-                  </bt-ha-outlined-icon-button>
-                </div>
-                <div class="button">
-                  <bt-ha-outlined-icon-button 
-                    .target=${this.target}
-                    .step=${this.step}
-                    @click=${this._handleButton}
-                  >
-                  <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
-                </bt-ha-outlined-icon-button>
-                </div>
-            </div>
-            `}
-          </div>
+      ${this.lowBattery ? html`
+        <div class="low_battery">
+          <ha-icon-button class="alert" .path=${mdiBatteryAlert}>
+          </ha-icon-button>
+          <span>${this.lowBattery!.name}</span>
+          <span>${this.lowBattery!.battery}%</span>
+        </div>
+      ` : ``}
+      ${this.error.length > 0 ? html`
+        <div class="error">
+          <ha-icon-button class="alert" .path=${mdiWifiStrengthOffOutline}>
+          </ha-icon-button>
+          <span>${this.error}</span>
+        </div>
+      ` : ``}
+      </bt-ha-control-circular-slider>
+      ${modes}
+      ${buttons}
   </ha-card>
   `;
   };

@@ -1,10 +1,16 @@
 import { HassEntityAttributeBase, HassEntityBase } from "home-assistant-js-websocket";
+import { ZeroToHundredAsString } from "./zeroToHundredAsString";
 
 export type HvacMode = "off" | "heat" | "cool" | "heat_cool" | "auto" | "dry" | "fan_only";
 
 export const CLIMATE_PRESET_NONE = "none";
 
 export type HvacAction = "off" | "heating" | "cooling" | "drying" | "idle";
+
+export interface BatteryState {
+  battery: "on" | "off" | ZeroToHundredAsString; // this either contains the battery percentage or the binary_sensor "battery_low" with the state "on" or "off" 
+  battery_id: string;
+}
 
 export type ClimateEntity = HassEntityBase & {
     attributes: HassEntityAttributeBase & {
@@ -31,6 +37,11 @@ export type ClimateEntity = HassEntityBase & {
         swing_mode?: string;
         swing_modes?: string[];
         aux_heat?: "on" | "off";
+        window_open?: boolean;
+        call_for_heat?: boolean;
+        saved_temperature?: never; // the value is never used, there are just checks for its existence
+        errors: string; // JSON containing string[];
+        batteries: string; // JSON containing Record<string, BatteryState>;
     };
 };
 

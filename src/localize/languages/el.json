@@ -2,6 +2,9 @@
   "common": {
     "version": "Έκδοση",
     "current": "Tρέχουσα"
+    "current_humidity": "Τρέχουσα υγρασία",
+    "current_temperature": "Τρέχουσα θερμοκρασία",
+    "target_temperature": "Στόχος θερμοκρασίας"
   },
   "editor": {
     "card": {
@@ -20,9 +23,14 @@
     }
   },
   "extra_states": {
-    "window_open": "Παράθυρο ανοικτό",
+    "window_open": "Παράθυρο ανοιχτό",
     "night_mode": "Λειτουργία νυκτός",
     "eco": "Εξοικονόμηση",
-    "summer": "Καλοκαίρι"
+    "summer": "Καλοκαίρι",
+    "cooling": "Ψύξη",
+    "heating": "Θέρμανση",
+    "cooling_off": "Ψύξη απενεργοποιημένη",
+    "heating_off": "Θέρμανση απενεργοποιημένη",
+    "window_closed": "Παράθυρο κλειστό"
   }
 }
