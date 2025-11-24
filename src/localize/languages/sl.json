@@ -38,6 +38,22 @@
       }
     }
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Ugasni za okna",
+        "disable_summer": "Ugasni poletje",
+        "disable_eco": "Ugasni eko",
+        "disable_heat": "Ugasni gretje",
+        "disable_off": "Ugasni off gumb",
+        "disable_menu": "Ugasni menu",
+        "disable_battery_warning": "Ugasni obvestila za baterijo",
+        "disable_buttons": "Ugasni plus/minus gumbe",
+        "eco_temperature": "Eko temperatura",
+        "set_current_as_main": "Zamenjaj ciljno temperaturo s trenutno temperaturo prostora"
+      }
+    }
+  },
   "extra_states": {
     "window_open": "Okno odprto",
     "night_mode": "Nočni način",
