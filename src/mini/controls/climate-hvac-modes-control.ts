@@ -52,7 +52,7 @@ export class ClimateHvacModesControl extends LitElement {
   private renderEcoButton() {
     const isEco = this.entity.attributes.preset_mode === "eco";
     const iconStyle = {};
-    const color = "var(--rgb-green)";
+    const color = "165, 214, 167";
     if (isEco) {
       iconStyle["--icon-color"] = `rgb(${color})`;
       iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;

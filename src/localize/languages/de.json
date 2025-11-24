@@ -21,7 +21,8 @@
         "set_current_as_main": "Zieltemperatur mit aktueller Temperatur tauschen",
         "show_current_as_primary": "Aktuelle Temperatur als primär anzeigen",
         "show_secondary": "Sekundäre Informationen anzeigen",
-        "prevent_interaction_on_scroll": "Interaktion beim Scrollen verhindern"
+        "prevent_interaction_on_scroll": "Interaktion beim Scrollen verhindern",
+        "disable_humidity": "Deaktiviere die Anzeige der Luftfeuchtigkeit"
       }
     }
   },

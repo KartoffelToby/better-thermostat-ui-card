@@ -168,6 +168,9 @@ export class BetterThermostatUISmallCard
     const picture = computeEntityPicture(stateObj, appearance.icon_type);
     const window = stateObj.attributes.window_open;
     let stateDisplay = this.hass.formatEntityState(stateObj);
+    if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
+      stateDisplay = this.hass.formatEntityAttributeValue(stateObj, "hvac_action");
+    }
     if (stateObj.attributes.current_temperature !== null) {
       const temperature = this.hass.formatEntityAttributeValue(
         stateObj,
@@ -177,7 +180,14 @@ export class BetterThermostatUISmallCard
         hass: this.hass,
         string: "extra_states.window_open",
       });
-      stateDisplay += ` ⸱ ${window ? ` (${windowOpen}) ` : ""} ${temperature}`;
+      let humidity = "";
+      if (stateObj.attributes.current_humidity && !this._config.disable_humidity) {
+        humidity = ` ⸱ ${this.hass.formatEntityAttributeValue(
+          stateObj,
+          "current_humidity"
+        )}`;
+      }
+      stateDisplay += ` ⸱ ${window ? ` (${windowOpen}) ` : ""} ${temperature}${humidity}`;
     }
     const rtl = computeRTL(this.hass);
 
@@ -315,7 +325,7 @@ export class BetterThermostatUISmallCard
     if (!hasEco && !isEco) return nothing;
 
     const iconStyle = {};
-    const color = "var(--rgb-green)";
+    const color = "165, 214, 167";
     if (isEco) {
       iconStyle["--icon-color"] = `rgb(${color})`;
       iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;

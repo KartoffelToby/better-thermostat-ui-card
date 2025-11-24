@@ -21,7 +21,8 @@
         "set_current_as_main": "Doeltemperatuur verwisselen met huidige temperatuur",
         "show_current_as_primary": "Toon huidige temperatuur als primair",
         "show_secondary": "Toon secundaire informatie",
-        "prevent_interaction_on_scroll": "Voorkom interactie tijdens scrollen"
+        "prevent_interaction_on_scroll": "Voorkom interactie tijdens scrollen",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

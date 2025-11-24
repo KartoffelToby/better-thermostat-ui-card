@@ -21,7 +21,8 @@
         "set_current_as_main": "Ανταλλαγή στόχου θερμοκρασίας με την τρέχουσα θερμοκρασία",
         "show_current_as_primary": "Εμφάνιση τρέχουσας θερμοκρασίας ως κύρια",
         "show_secondary": "Εμφάνιση δευτερευουσών πληροφοριών",
-        "prevent_interaction_on_scroll": "Αποτροπή αλληλεπίδρασης κατά την κύλιση"
+        "prevent_interaction_on_scroll": "Αποτροπή αλληλεπίδρασης κατά την κύλιση",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

@@ -154,6 +154,11 @@ export const ShadowStyles = css`
         --mdc-icon-size: var(--ha-font-size-m);
     }
 
+    .label.humidity {
+        color: #6fa3d6;
+        gap: 5px;
+    }
+
     .buttons {
         width: 100%;
         gap: 24px;

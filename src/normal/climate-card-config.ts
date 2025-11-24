@@ -15,6 +15,7 @@ export type BetterThermostatUINormalCardConfig = LovelaceCardConfig &
     disable_menu?: boolean;
     prevent_interaction_on_scroll?: boolean;
     disable_eco?: boolean;
+    disable_humidity?: boolean;
   };
 
 export const betterThermostatUINormalCardConfigStruct = assign(
@@ -27,5 +28,6 @@ export const betterThermostatUINormalCardConfigStruct = assign(
     disable_menu: optional(boolean()),
     prevent_interaction_on_scroll: optional(boolean()),
     disable_eco: optional(boolean()),
+    disable_humidity: optional(boolean()),
   })
 );

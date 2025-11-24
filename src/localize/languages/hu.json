@@ -21,7 +21,8 @@
         "set_current_as_main": "Aktuális hőmérséklet használata",
         "show_current_as_primary": "Jelenlegi hőmérséklet megjelenítése elsődlegesként",
         "show_secondary": "Másodlagos információk megjelenítése",
-        "prevent_interaction_on_scroll": "Interakció megakadályozása görgetéskor"
+        "prevent_interaction_on_scroll": "Interakció megakadályozása görgetéskor",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

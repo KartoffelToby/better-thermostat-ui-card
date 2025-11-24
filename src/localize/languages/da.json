@@ -21,7 +21,8 @@
         "set_current_as_main": "Erstat målt temperatur med nuværende temperatur",
         "show_current_as_primary": "Vis nuværende temperatur som primær",
         "show_secondary": "Vis sekundær information",
-        "prevent_interaction_on_scroll": "Forhindre interaktion ved scrolling"
+        "prevent_interaction_on_scroll": "Forhindre interaktion ved scrolling",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

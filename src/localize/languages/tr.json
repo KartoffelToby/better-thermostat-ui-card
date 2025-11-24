@@ -21,7 +21,8 @@
         "set_current_as_main": "Hedef ve mevcut sıcaklık yerlerini değiştir",
         "show_current_as_primary": "Mevcut sıcaklığı birincil olarak göster",
         "show_secondary": "İkincil bilgileri göster",
-        "prevent_interaction_on_scroll": "Kaydırma sırasında etkileşimi önle"
+        "prevent_interaction_on_scroll": "Kaydırma sırasında etkileşimi önle",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

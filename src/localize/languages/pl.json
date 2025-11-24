@@ -21,7 +21,8 @@
         "set_current_as_main": "Zamień miejscami temperature docelową z aktualną",
         "show_current_as_primary": "Pokaż aktualną temperaturę jako główną",
         "show_secondary": "Pokaż dodatkowe informacje",
-        "prevent_interaction_on_scroll": "Zapobiegaj interakcji podczas przewijania"
+        "prevent_interaction_on_scroll": "Zapobiegaj interakcji podczas przewijania",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

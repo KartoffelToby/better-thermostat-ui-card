@@ -21,7 +21,8 @@
         "set_current_as_main": "Vymeňte cieľ za miesta s aktuálnou teplotou",
         "show_current_as_primary": "Zobraziť aktuálnu teplotu ako hlavnú",
         "show_secondary": "Zobraziť sekundárne informácie",
-        "prevent_interaction_on_scroll": "Zabrániť interakcii pri posúvaní"
+        "prevent_interaction_on_scroll": "Zabrániť interakcii pri posúvaní",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

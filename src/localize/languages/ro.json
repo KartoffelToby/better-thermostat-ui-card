@@ -21,7 +21,8 @@
         "set_current_as_main": "Schimbă locurile temperaturii țintă cu cea curentă",
         "show_current_as_primary": "Afișează temperatura curentă ca principală",
         "show_secondary": "Afișează informații secundare",
-        "prevent_interaction_on_scroll": "Previne interacțiunea la derulare"
+        "prevent_interaction_on_scroll": "Previne interacțiunea la derulare",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

@@ -31,6 +31,7 @@ export type BetterThermostatUISmallCardConfig = LovelaceCardConfig &
     show_temperature_control?: false;
     collapsible_controls?: boolean;
     disable_eco?: boolean;
+    disable_humidity?: boolean;
   };
 
 export const climateCardConfigStruct = assign(
@@ -44,5 +45,6 @@ export const climateCardConfigStruct = assign(
     show_temperature_control: optional(boolean()),
     collapsible_controls: optional(boolean()),
     disable_eco: optional(boolean()),
+    disable_humidity: optional(boolean()),
   })
 );

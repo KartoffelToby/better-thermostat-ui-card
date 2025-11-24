@@ -21,7 +21,8 @@
         "set_current_as_main": "Размяна на целевата температура с текущата температура",
         "show_current_as_primary": "Показване на текущата температура като основна",
         "show_secondary": "Показване на вторична информация",
-        "prevent_interaction_on_scroll": "Предотвратяване на взаимодействие при превъртане"
+        "prevent_interaction_on_scroll": "Предотвратяване на взаимодействие при превъртане",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

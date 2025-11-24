@@ -15,6 +15,7 @@ const SCHEMA: HaFormSchema[] = [
   { name: "disable_menu", selector: { boolean: {} } },
   { name: "prevent_interaction_on_scroll", selector: { boolean: {} } },
   { name: "disable_eco", selector: { boolean: {} } },
+  { name: "disable_humidity", selector: { boolean: {} } },
 ];
 
 @customElement(CLIMATE_CARD_EDITOR_NAME)

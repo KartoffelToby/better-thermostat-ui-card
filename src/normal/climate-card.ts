@@ -21,7 +21,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { classMap } from "lit/directives/class-map.js";
 import { BetterThermostatUINormalCardConfig } from "./climate-card-config";
-import { mdiMinus, mdiPlus, mdiThermometer, mdiThermostat, mdiWindowOpenVariant, mdiDotsVertical, mdiFire } from "@mdi/js";
+import { mdiMinus, mdiPlus, mdiThermometer, mdiThermostat, mdiWindowOpenVariant, mdiDotsVertical, mdiFire, mdiWaterPercent } from "@mdi/js";
 import { ShadowStyles } from './style';
 import {
   createStateControlCircularSliderController,
@@ -272,6 +272,9 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       if (window) {
         return html`<p class="label window-label"><ha-svg-icon .path=${mdiWindowOpenVariant}></ha-svg-icon></p>`;
       }
+      if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
+        return html`<p class="label">${this.hass.formatEntityAttributeValue(stateObj, "hvac_action")}</p>`;
+      }
       return html`<p class="label">${this.hass.formatEntityState(stateObj)}</p>`;
     };
 
@@ -296,6 +299,18 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
         return html`<p class="label secondary"><ha-svg-icon .path=${mdiThermostat}></ha-svg-icon><button @click=${this._handleSelect} .target=${"low"} class="target-button ${classMap({ selected: this._selectTarget === "low" })}">${renderTarget(this._targetTemperature.low!, false, true)}</button><span>·</span><button @click=${this._handleSelect} .target=${"high"} class="target-button ${classMap({ selected: this._selectTarget === "high" })}">${renderTarget(this._targetTemperature.high!, false, true)}</button></p>`;
       }
       return html`<p class="label secondary"></p>`;
+    };
+
+    const renderHumidity = () => {
+      const humidity = stateObj.attributes.current_humidity;
+      if (humidity == null || this._config.disable_humidity) return nothing;
+
+      return html`
+        <p class="label secondary humidity">
+          <ha-svg-icon .path=${mdiWaterPercent}></ha-svg-icon>
+          ${this.hass.formatEntityAttributeValue(stateObj, "current_humidity")}&nbsp;
+        </p>
+      `;
     };
 
     const buttons = (target: "value" | "low" | "high") => html`<div class="bt-buttons"><ha-outlined-icon-button .target=${target} .step=${-this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiMinus}></ha-svg-icon></ha-outlined-icon-button><ha-outlined-icon-button .target=${target} .step=${this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiPlus}></ha-svg-icon></ha-outlined-icon-button></div>`;
@@ -353,7 +368,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
               @value-changing=${this._valueChanging}
             >
             </ha-control-circular-slider>
-            <div class="info">${renderLabel()}${primary()}${secondary()}</div>
+            <div class="info">${renderLabel()}${primary()}${secondary()}${renderHumidity()}</div>
           </div>
         ${!this._config.disable_menu ? html`<ha-icon-button
           class="more-info"
@@ -385,7 +400,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   }
 
     return html`<div class="container" style=${styleMap({})}>
-      <div class="info">${renderLabel()}${primary()}${secondary()}</div>
+      <div class="info">${renderLabel()}${primary()}${secondary()}${renderHumidity()}</div>
     </div>`;
   }
 

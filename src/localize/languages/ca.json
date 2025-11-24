@@ -21,7 +21,8 @@
         "set_current_as_main": "Intercanviar la temperatura objectiu amb la temperatura actual",
         "show_current_as_primary": "Mostra la temperatura actual com a principal",
         "show_secondary": "Mostra informació secundària",
-        "prevent_interaction_on_scroll": "Evitar la interacció en desplaçar-se"
+        "prevent_interaction_on_scroll": "Evitar la interacció en desplaçar-se",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

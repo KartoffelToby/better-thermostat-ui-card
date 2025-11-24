@@ -21,7 +21,8 @@
         "set_current_as_main": "Zamijeni prikaz željene i trenutne temperature",
         "show_current_as_primary": "Prikaži trenutnu temperaturu kao primarnu",
         "show_secondary": "Prikaži sekundarne informacije",
-        "prevent_interaction_on_scroll": "Spriječi interakciju pri pomicanju"
+        "prevent_interaction_on_scroll": "Spriječi interakciju pri pomicanju",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

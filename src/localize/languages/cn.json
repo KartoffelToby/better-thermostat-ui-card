@@ -21,7 +21,8 @@
         "set_current_as_main": "将目标温度与当前温度交换",
         "show_current_as_primary": "显示当前温度为主",
         "show_secondary": "显示次要信息",
-        "prevent_interaction_on_scroll": "滚动时防止交互"
+        "prevent_interaction_on_scroll": "滚动时防止交互",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

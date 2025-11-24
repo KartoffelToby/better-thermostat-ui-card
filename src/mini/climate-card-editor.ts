@@ -18,7 +18,7 @@ import {
 } from "./climate-card-config";
 import { CLIMATE_CARD_EDITOR_NAME, CLIMATE_ENTITY_DOMAINS } from "./const";
 
-const CLIMATE_LABELS = ["hvac_modes", "show_temperature_control", "disable_eco"] as string[];
+const CLIMATE_LABELS = ["hvac_modes", "show_temperature_control", "disable_eco", "disable_humidity"] as string[];
 
 // Augment Home Assistant DOM events to include config-changed for this editor
 declare global {
@@ -42,6 +42,7 @@ const computeSchema = memoizeOne((localize: LocalizeFunc): HaFormSchema[] => [
       { name: "show_temperature_control", selector: { boolean: {} } },
       { name: "collapsible_controls", selector: { boolean: {} } },
       { name: "disable_eco", selector: { boolean: {} } },
+      { name: "disable_humidity", selector: { boolean: {} } },
     ],
   },
   ...computeActionsFormSchema(),

@@ -7,6 +7,7 @@
     "card": {
       "climate": {
         "disable_window": "Turn off the window open indicator",
+        "disable_humidity": "Turn off the humidity display",
         "disable_summer": "Turn off the summer indicator",
         "disable_eco": "Turn off the eco button",
         "disable_heat": "Turn off the on/heat button",

@@ -21,7 +21,8 @@
         "set_current_as_main": "Поміняйте місцями цільову з поточною температурою",
         "show_current_as_primary": "Показувати поточну температуру як основну",
         "show_secondary": "Показувати вторинну інформацію",
-        "prevent_interaction_on_scroll": "Запобігати взаємодії при прокручуванні"
+        "prevent_interaction_on_scroll": "Запобігати взаємодії при прокручуванні",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

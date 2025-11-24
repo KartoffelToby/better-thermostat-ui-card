@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@v1
       - name: Build
         run: |
+          git submodule update --init --recursive
           npm install --force
           npm run build
       - name: HACS Action

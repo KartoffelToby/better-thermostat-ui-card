@@ -21,7 +21,8 @@
         "set_current_as_main": "Поменять местами требуемую и текущую температуру",
         "show_current_as_primary": "Показывать текущую температуру как основную",
         "show_secondary": "Показывать вторичную информацию",
-        "prevent_interaction_on_scroll": "Предотвратить взаимодействие при прокрутке"
+        "prevent_interaction_on_scroll": "Предотвратить взаимодействие при прокрутке",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },
