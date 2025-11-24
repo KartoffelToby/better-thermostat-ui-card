@@ -22,6 +22,22 @@
       }
     }
   },
+  "editor": {
+    "card": {
+      "climate": {
+        "disable_window": "Raam verbergen",
+        "disable_summer": "Zomer verbergen",
+        "disable_eco": "Eco verbergen",
+        "disable_heat": "Verwarmen verbergen",
+        "disable_off": "Uit verbergen",
+        "disable_menu": "Menu verbergen",
+        "disable_battery_warning": "Batterij waarschuwing verbergen",
+        "disable_buttons": "Plus/min knoppen verbergen",
+        "eco_temperature": "Eco temperatuur",
+        "set_current_as_main": "Wissel doel- en huidige temperatuur"
+      }
+    }
+  },
   "extra_states": {
     "window_open": "Venster open",
     "window_closed": "Venster gesloten",
