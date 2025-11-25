@@ -20,17 +20,9 @@ import { CLIMATE_CARD_EDITOR_NAME, CLIMATE_ENTITY_DOMAINS } from "./const";
 
 const CLIMATE_LABELS = ["hvac_modes", "show_temperature_control", "disable_eco", "disable_humidity"] as string[];
 
-// Augment Home Assistant DOM events to include config-changed for this editor
-declare global {
-  interface HASSDomEvents {
-    "config-changed": {
-      config: BetterThermostatUISmallCardConfig;
-    };
-  }
-}
 export {};
 
-const computeSchema = memoizeOne((localize: LocalizeFunc): HaFormSchema[] => [
+const computeSchema = memoizeOne((): HaFormSchema[] => [
   { name: "entity", selector: { entity: { domain: CLIMATE_ENTITY_DOMAINS } } },
   { name: "name", selector: { text: {} } },
   { name: "icon", selector: { icon: {} }, context: { icon_entity: "entity" } },
@@ -72,7 +64,9 @@ export class ClimateCardEditor
     const localize = (key: string) => {
       const custom = customLocalize(key);
       if (custom && custom !== key) return custom;
-      return mushroomLocalize(key);
+      const mush = mushroomLocalize(key);
+      if (mush && mush !== key) return mush;
+      return this.hass!.localize(key);
     };
 
     if (GENERIC_LABELS.includes(schema.name)) {
@@ -91,13 +85,13 @@ export class ClimateCardEditor
       return nothing;
     }
 
-    const schema = computeSchema(this.hass!.localize);
+    const schema = computeSchema();
 
     return html`
       <ha-form
-        .hass=${this.hass}
-        .data=${this._config}
-        .schema=${schema}
+        .hass=${this.hass as any}
+        .data=${this._config as any}
+        .schema=${schema as any}
         .computeLabel=${this._computeLabel}
         @value-changed=${this._valueChanged}
       ></ha-form>
@@ -105,6 +99,6 @@ export class ClimateCardEditor
   }
 
   private _valueChanged(ev: CustomEvent): void {
-    fireEvent(this, "config-changed", { config: ev.detail.value });
+    fireEvent(this as any, "config-changed" as any, { config: ev.detail.value });
   }
 }

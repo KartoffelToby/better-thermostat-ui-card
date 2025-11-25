@@ -10,6 +10,7 @@ import typescript from "@rollup/plugin-typescript";
 import serve from "rollup-plugin-serve";
 import ignore from "./rollup-ignore-plugin.js";
 import alias from "@rollup/plugin-alias";
+import path from "path";
 
 const IGNORED_FILES = [
   "@material/mwc-notched-outline/mwc-notched-outline.js",
@@ -36,13 +37,14 @@ const serveOptions = {
 const plugins = [
   alias({
     entries: [
-      { find: "@lit-labs/observers/resize-controller", replacement: "./node_modules/@lit-labs/observers/resize-controller.js" }
+      { find: "@lit-labs/observers/resize-controller", replacement: path.resolve(__dirname, "node_modules/@lit-labs/observers/resize-controller.js") }
     ]
   }),
   ignore({
     files: IGNORED_FILES.map((file) => require.resolve(file)),
   }),
   typescript({
+    tsconfig: "tsconfig.build.json",
     declaration: false,
   }),
   nodeResolve(),
@@ -50,6 +52,9 @@ const plugins = [
   commonjs(),
   getBabelInputPlugin({
     babelHelpers: "bundled",
+    exclude: ["node_modules/**"],
+    include: ["src/**"],
+    extensions: [".js", ".ts"],
   }),
   getBabelOutputPlugin({
     presets: [
@@ -74,6 +79,10 @@ export default [
       inlineDynamicImports: true,
     },
     plugins,
+    // Don't treat local ha-frontend source files as external; only exclude node_modules and core libs
+    // Only mark Node builtin modules as external; bundle everything else so
+    // 'lit' and other ESM modules are included in the output bundle.
+    external: (id) => id.startsWith('node:'),
     moduleContext: (id) => {
       const thisAsWindowForModules = [
         "node_modules/@formatjs/intl-utils/lib/src/diff.js",

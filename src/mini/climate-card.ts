@@ -166,7 +166,7 @@ export class BetterThermostatUISmallCard
     const icon = this._config.icon;
     const appearance = computeAppearance(this._config);
     const picture = computeEntityPicture(stateObj, appearance.icon_type);
-    const window = stateObj.attributes.window_open;
+    const window = (stateObj.attributes as any).window_open;
     let stateDisplay = this.hass.formatEntityState(stateObj);
     if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
       stateDisplay = this.hass.formatEntityAttributeValue(stateObj, "hvac_action");
@@ -177,7 +177,7 @@ export class BetterThermostatUISmallCard
         "current_temperature"
       );
       const windowOpen = localize({
-        hass: this.hass,
+        hass: this.hass as any,
         string: "extra_states.window_open",
       });
       let humidity = "";
@@ -230,7 +230,7 @@ export class BetterThermostatUISmallCard
 
   protected renderIcon(stateObj: ClimateEntity, icon?: string): TemplateResult {
     const available = isAvailable(stateObj);
-    const window = stateObj.attributes.window_open;
+    const window = (stateObj.attributes as any).window_open;
     const eco = (stateObj.attributes as any).eco_mode === true;
     const color = getHvacModeColor(stateObj.state as HvacMode);
     const iconStyle = {};
@@ -275,7 +275,7 @@ export class BetterThermostatUISmallCard
 
     const color = getHvacActionColor(hvac_action);
     let icon = getHvacActionIcon(hvac_action);
-    const window = entity.attributes.window_open;
+    const window = (entity.attributes as any).window_open;
     if (window) {
       icon = "mdi:window-open-variant";
     }

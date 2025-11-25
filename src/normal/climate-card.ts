@@ -2,7 +2,6 @@ import { CSSResultGroup, html, nothing, PropertyValues } from "lit";
 import { ResizeController } from "@lit-labs/observers/resize-controller";
 
 import {
-  actionHandler,
   ActionHandlerEvent,
   HvacMode,
   HomeAssistant,
@@ -23,17 +22,9 @@ import { classMap } from "lit/directives/class-map.js";
 import { BetterThermostatUINormalCardConfig } from "./climate-card-config";
 import { mdiMinus, mdiPlus, mdiThermometer, mdiThermostat, mdiWindowOpenVariant, mdiDotsVertical, mdiFire, mdiWaterPercent } from "@mdi/js";
 import { ShadowStyles } from './style';
-import {
-  createStateControlCircularSliderController,
-  stateControlCircularSliderStyle,
-} from "../../ha-frontend/src/state-control/state-control-circular-slider-style";
-
-import { stateColorCss } from "../../ha-frontend/src/common/entity/state_color";
-import { stateActive } from "../../ha-frontend/src/common/entity/state_active";
-import { CLIMATE_HVAC_ACTION_TO_MODE } from "../../ha-frontend/src/data/climate";
-import { ClimateEntity } from "../../ha-frontend/src/data/climate";
-import { ResizeController } from "@lit-labs/observers/resize-controller";
-import type { ReactiveControllerHost } from "lit";
+import { CLIMATE_HVAC_ACTION_TO_MODE, ClimateEntity, stateColorCss, stateActive, stateControlCircularSliderStyle } from "../shims/ha-frontend-shim";
+import setupMushroomLocalize from "mushroom-cards/src/localize";
+import setupCustomlocalize from "../localize/localize";
 
 const SLIDER_MODES: Record<HvacMode, string> = {
   auto: "full",
@@ -90,27 +81,31 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     },
   });
 
-  private createStateControlCircularSliderController = (
-  element: ReactiveControllerHost & Element
-) =>
-  new ResizeController(element, {
+  private _sizeController = new ResizeController(this, {
     callback: (entries) => {
       const width = entries[0]?.contentRect.width;
       const height = entries[0]?.contentRect.height;
       const smaller = Math.min(width, height);
-      return smaller < 185
+      return smaller < 130
         ? "xs"
-        : smaller < 250
+        : smaller < 155
           ? "sm"
-          : smaller < 320
+          : smaller < 200
             ? "md"
-            : smaller > 400
+            : smaller > 300
               ? "xl"
               : "lg";
     },
   });
 
-  private _sizeController = this.createStateControlCircularSliderController(this);
+  protected firstUpdated(changedProperties: PropertyValues) {
+    super.firstUpdated(changedProperties);
+    const wrapper = this.shadowRoot?.querySelector(".bt-wrapper");
+    if (wrapper) {
+      this._sizeController.unobserve(this);
+      this._sizeController.observe(wrapper);
+    }
+  }
 
   public getCardSize(): number { return 3; }
   public getGridOptions(): LovelaceGridOptions { return { rows: 3, columns: 6, min_rows: 3 }; }
@@ -130,8 +125,8 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   }
 
   private _handleMoreInfo() {
-    fireEvent(this, "hass-more-info", {
-      entityId: this._config!.entity,
+    fireEvent(this as any, "hass-more-info" as any, {
+      entityId: this._config!.entity ?? null,
     });
   }
 
@@ -209,6 +204,15 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   protected render() {
     if (!this._config || !this._stateObj) return nothing;
     const stateObj = this._stateObj;
+    const customLocalize = setupCustomlocalize(this.hass as any);
+    const mushroomLocalize = setupMushroomLocalize(this.hass!);
+    const localize = (key: string) => {
+      const custom = customLocalize(key);
+      if (custom && custom !== key) return custom;
+      const mush = mushroomLocalize(key);
+      if (mush && mush !== key) return mush;
+      return this.hass!.localize(key);
+    };
     const active = isActive(stateObj);
     const available = isAvailable(stateObj);
     const sliderMode = SLIDER_MODES[(stateObj.state as HvacMode) || "off"] || "full";
@@ -219,7 +223,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
     const currentTemp = stateObj.attributes.current_temperature;
 
-    const window = stateObj.attributes.window_open;
+    const window = (stateObj.attributes as any).window_open;
 
 
     const renderTarget = (temperature: number, big = false, hideUnit = false) => {
@@ -232,7 +236,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           <ha-big-number
             .value=${temperature}
             .unit=${this.hass.config.unit_system.temperature}
-            .hass=${this.hass}
+              .hass=${this.hass as any}
             .formatOptions=${formatOptions}
           ></ha-big-number>
         `;
@@ -250,7 +254,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           <ha-big-number
             .value=${temperature}
             .unit=${this.hass.config.unit_system.temperature}
-            .hass=${this.hass}
+            .hass=${this.hass as any}
             .formatOptions=${formatOptions}
           ></ha-big-number>
         `;
@@ -266,14 +270,14 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     };
 
     const renderLabel = () => {
-      const window = stateObj.attributes.window_open;
+      const window = (stateObj.attributes as any).window_open;
       if (window) {
         return html`<p class="label window-label"><ha-svg-icon .path=${mdiWindowOpenVariant}></ha-svg-icon></p>`;
       }
       if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
-        return html`<p class="label">${this.hass.formatEntityAttributeValue(stateObj, "hvac_action")}</p>`;
+        return html`<p class="label hvac_action">${this.hass.formatEntityAttributeValue(stateObj, "hvac_action")}</p>`;
       }
-      return html`<p class="label">${this.hass.formatEntityState(stateObj)}</p>`;
+      return html`<p class="label hvac_action">${this.hass.formatEntityState(stateObj)}</p>`;
     };
 
     const primary = () => {
@@ -301,7 +305,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
     const renderHumidity = () => {
       const humidity = stateObj.attributes.current_humidity;
-      if (humidity == null || this._config.disable_humidity) return nothing;
+      if (humidity == null || this._config?.disable_humidity) return nothing;
 
       return html`
         <p class="label secondary humidity">
@@ -311,7 +315,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       `;
     };
 
-    const buttons = (target: "value" | "low" | "high") => html`<div class="bt-buttons"><ha-outlined-icon-button .target=${target} .step=${-this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiMinus}></ha-svg-icon></ha-outlined-icon-button><ha-outlined-icon-button .target=${target} .step=${this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiPlus}></ha-svg-icon></ha-outlined-icon-button></div>`;
+    const buttons = (target: "value" | "low" | "high") => html`<div class="bt-buttons"><ha-outlined-icon-button .target=${target as any} .step=${-this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiMinus}></ha-svg-icon></ha-outlined-icon-button><ha-outlined-icon-button .target=${target as any} .step=${this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiPlus}></ha-svg-icon></ha-outlined-icon-button></div>`;
 
     if (this._supportsTargetValue && available) {
       const mode = this._stateObj.state;
@@ -329,7 +333,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
         );
       }
       let stateColor = stateColorCss(this._stateObj);
-      if(window) {
+      if (window) {
         actionColor = "var(--info-color)";
         stateColor = "var(--info-color)";
       } else if ((this._stateObj.attributes as any).eco_mode === true) {
@@ -342,23 +346,25 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       const controlMaxWidth = this._resizeController.value
       ? `${this._resizeController.value}px`
       : undefined;
+      const name = this._config.name || this._stateObj.attributes.friendly_name || "";
+
       return html`
       <ha-card>
-        <p class="title">${this._stateObj.attributes.friendly_name}</p>
+        <p class="title">${name}</p>
         <div
           class="bt-wrapper container${containerSizeClass}"
-          style=${styleMap({
+            style=${styleMap({
             "--low-color": lowColor,
             "--high-color": highColor,
-            "--state-color": stateColor,
-            "--action-color": actionColor,
+            "--state-color": stateColor ?? "var(--primary-text-color)",
+            "--action-color": actionColor ?? "",
             maxWidth: controlMaxWidth,
           })}
         >
             <ha-control-circular-slider
               .preventInteractionOnScroll=${this.preventInteractionOnScroll}
               .inactive=${!active}
-              .mode=${sliderMode}
+              .mode=${sliderMode as any}
               .value=${this._targetTemperature.value}
               .min=${this._min}
               .max=${this._max}
@@ -375,6 +381,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           .label=${this.hass!.localize(
             "ui.panel.lovelace.cards.show_more_info"
           )}
+          .label=${localize("ui.panel.lovelace.cards.show_more_info")}
           .path=${mdiDotsVertical}
           @click=${this._handleMoreInfo}
           tabindex="0"
@@ -391,7 +398,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
             .entity=${this._stateObj}
             .modes=${this._stateObj.attributes.hvac_modes || []}
             .fill=${true}
-            .disableEco=${this._config.disable_eco}
+            .disableEco=${!!this._config.disable_eco}
           ></mushroom-climate-hvac-modes-control>
         </div>
       </ha-card>

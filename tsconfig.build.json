@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["es2021", "dom", "dom.iterable"],
+    "target": "es2021",
+    "skipLibCheck": true,
+    "noEmit": false,
+    "declaration": false
+  },
+  "include": ["src/**/*.ts"],
+    "exclude": ["node_modules", "ha-frontend/test/**", "ha-frontend/demo/**", "ha-frontend/gallery/**", "ha-frontend/cast/**", "ha-frontend/hassio/**", "test/**"]
+}

@@ -176,6 +176,10 @@ export const ShadowStyles = css`
         font-size: var(--ha-font-size-4xl);
     }
 
+    .bt-wrapper.container.sm .label.hvac_action {
+      font-size: calc(8px * var(--ha-font-size-scale));
+    }
+
 
     .bt-wrapper.container.md ha-big-number {
         font-size: 44px;
@@ -226,6 +230,7 @@ export const ShadowStyles = css`
 
     .bt-wrapper.container.xl .label.window-label {
       --mdc-icon-size: var(--ha-font-size-5xl);
+      padding-bottom: 0.5em;
     }
 
 
@@ -267,6 +272,18 @@ export const ShadowStyles = css`
 
     .target-button:focus-visible {
         transform: scale(1.1);
+    }
+
+    .label.hvac_action {
+          color: var(--action-color, inherit) !important;
+    }
+
+    .label.window-label {
+          color: var(--action-color, inherit);
+    }
+
+    .label.secondary:not(.label.humidity) {
+          color: var(--action-color, inherit);
     }
 
 `;
