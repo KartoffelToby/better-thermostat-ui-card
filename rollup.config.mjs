@@ -77,6 +77,20 @@ export default [
       dir: "dist",
       format: "es",
       inlineDynamicImports: true,
+      // Prepend a guard to prevent duplicate customElements.define calls
+      // This ensures that, when the bundle is loaded on a page that
+      // registers the same custom element from another bundle or module,
+      // the define call is only effective once and a console warning is issued.
+      banner:
+        'const _customElementsDefine = window.customElements.define;\n' +
+        'window.customElements.define = (name, cl, conf) => {\n' +
+        '  if (!customElements.get(name)) {\n' +
+        '    _customElementsDefine.call(window.customElements, name, cl, conf);\n' +
+        '  }\n' +
+        '  else {\n' +
+        '    console.warn(`BT UI: ${name} is loaded use the other`);\n' +
+        '  }\n' +
+        '};',
     },
     plugins,
     // Don't treat local ha-frontend source files as external; only exclude node_modules and core libs

@@ -23,6 +23,12 @@
   "paths": {
     "@lit-labs/observers/resize-controller": [
       "./node_modules/@lit-labs/observers/resize-controller.js"
+    ],
+    "lit/decorators": [
+      "src/lib/lit-decorators-guard.ts"
+    ],
+    "lit/decorators.js": [
+      "src/lib/lit-decorators-guard.ts"
     ]
   }
 }

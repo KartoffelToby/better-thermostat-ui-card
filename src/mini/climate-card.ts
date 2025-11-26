@@ -24,12 +24,7 @@ import {
   LovelaceCard,
   LovelaceCardEditor,
 } from "mushroom-cards/src/ha";
-import "mushroom-cards/src/shared/badge-icon";
-import "mushroom-cards/src/shared/card";
-import "mushroom-cards/src/shared/shape-avatar";
-import "mushroom-cards/src/shared/shape-icon";
-import "mushroom-cards/src/shared/state-info";
-import "mushroom-cards/src/shared/state-item";
+import { ensureElementLoaded } from "../utils/ensure-element-loaded";
 import { computeAppearance } from "mushroom-cards/src/utils/appearance";
 import { MushroomBaseCard } from "mushroom-cards/src/utils/base-card";
 import { cardStyle } from "mushroom-cards/src/utils/card-styles";
@@ -195,9 +190,22 @@ export class BetterThermostatUISmallCard
       (!this._config.collapsible_controls || isActive(stateObj)) &&
       this._controls.length;
 
+    const hvac_action:any = stateObj.attributes.hvac_action || "off";
+
+    const color = getHvacActionColor(hvac_action);
+    let actionStyle = {};
+    actionStyle["--action-color"] = `rgba(${color}, 0.6)`;
+    if ((stateObj.attributes as any)?.eco_mode === true) {
+      actionStyle["--action-color"] = `rgba(165, 214, 167, 0.6)`;
+    }
+    if (hvac_action === "off") {
+      actionStyle["--action-color"] = `rgba(0, 0, 0, 0)`;
+    }
+
     return html`
       <ha-card
         class=${classMap({ "fill-container": appearance.fill_container })}
+        style=${styleMap(actionStyle)}
       >
         <mushroom-card .appearance=${appearance} ?rtl=${rtl}>
           <mushroom-state-item
@@ -226,6 +234,44 @@ export class BetterThermostatUISmallCard
         </mushroom-card>
       </ha-card>
     `;
+  }
+
+  protected async firstUpdated(changedProperties: PropertyValues) {
+    super.firstUpdated(changedProperties);
+
+    // Ensure shared mushroom components are loaded only once
+    
+    await Promise.all([
+      (async () => {
+        if (!customElements.get("mushroom-badge-icon"))
+          await import("mushroom-cards/src/shared/badge-icon");
+      })(),
+      (async () => {
+        if (!customElements.get("mushroom-card"))
+          await import("mushroom-cards/src/shared/card");
+      })(),
+      (async () => {
+        if (!customElements.get("mushroom-shape-avatar"))
+          await import("mushroom-cards/src/shared/shape-avatar");
+      })(),
+      (async () => {
+        if (!customElements.get("mushroom-shape-icon"))
+          await import("mushroom-cards/src/shared/shape-icon");
+      })(),
+      (async () => {
+        if (!customElements.get("mushroom-state-info"))
+          await import("mushroom-cards/src/shared/state-info");
+      })(),
+      (async () => {
+        if (!customElements.get("mushroom-state-item"))
+          await import("mushroom-cards/src/shared/state-item");
+      })(),
+      (async () => {
+        if (!customElements.get("mushroom-button"))
+          await import("mushroom-cards/src/shared/button");
+      })(),
+    ]);
+    
   }
 
   protected renderIcon(stateObj: ClimateEntity, icon?: string): TemplateResult {
@@ -323,7 +369,7 @@ export class BetterThermostatUISmallCard
   private renderEcoButton(entity: ClimateEntity) {
     if (this._config?.disable_eco) return nothing;
     const presetModes = entity.attributes.preset_modes || [];
-    const hasEco = presetModes.includes("eco") || (entity.attributes as any).eco_mode !== undefined;
+    const hasEco = presetModes.includes("eco") || (entity.attributes as any).eco_mode === true;
     const isEco = (entity.attributes as any).eco_mode === true;
     
     if (!hasEco && !isEco) return nothing;
@@ -380,6 +426,25 @@ export class BetterThermostatUISmallCard
       super.styles,
       cardStyle,
       css`
+        :host>* {
+          overflow: hidden;
+        }
+        :host>*::before {
+            display: block;
+            content: "";
+            position: absolute;
+            right: -10%
+            bottom: -10%;
+            background: radial-gradient(100% 60% at 50% 90%, var(--action-color, transparent) 0%, transparent 100%);
+            opacity: 0.3;
+            pointer-events: none;
+            transform: translate(-50%, -20%);
+            left: 50% !important;
+            z-index: 0;
+            top: 50% !important;
+            width: 100%;
+            height: 100%;
+        }
         mushroom-state-item {
           cursor: pointer;
         }

@@ -10,13 +10,15 @@ export const ShadowStyles = css`
       overflow: visible;
     }
     ha-card {
-    position: relative;
+      position: relative;
       height: 100%;
       width: 100%;
       padding: 0;
       display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-left: 1em;
+      padding-right: 1em;
     }
 
     .title {
@@ -80,7 +82,7 @@ export const ShadowStyles = css`
 
     ha-control-circular-slider {
         grid-area: 1 / 1;
-        flex: 0 0 auto;
+        /*flex: 0 0 auto;*/
     }
 
     ha-control-circular-slider {
@@ -105,7 +107,7 @@ export const ShadowStyles = css`
         right: -10%;
         bottom: -10%;
         background: radial-gradient(50% 50% at 50% 50%, var(--action-color, transparent) 0%, transparent 100%);
-        opacity: 0.15;
+        opacity: 0.3;
         pointer-events: none;
         transform: translate(-50%, -50%);
         left: 50% !important;
@@ -130,7 +132,7 @@ export const ShadowStyles = css`
         font-size: var(--ha-font-size-m);
         line-height: var(--ha-line-height-normal);
         letter-spacing: .1px;
-        gap: 10px;
+        gap: 5px;
         --mdc-icon-size: 16px;
     }
 
@@ -142,6 +144,7 @@ export const ShadowStyles = css`
       letter-spacing: .1px;
       margin: 0;
       color: var(--secondary-text-color);
+      font-weight: 600;
     }
 
     .label ha-svg-icon {
@@ -176,6 +179,9 @@ export const ShadowStyles = css`
         font-size: var(--ha-font-size-4xl);
     }
 
+    .bt-wrapper.container.md .label.hvac_action {
+      font-size: var(--ha-font-size-s);
+    }
     .bt-wrapper.container.sm .label.hvac_action {
       font-size: calc(8px * var(--ha-font-size-scale));
     }
@@ -208,7 +214,8 @@ export const ShadowStyles = css`
     }
 
     .bt-wrapper.container.md .label.window-label {
-      --mdc-icon-size: var(--ha-font-size-2xl);
+      --mdc-icon-size: var(--ha-font-size-xl);
+      padding-top: 1rem;
     }
 
     .bt-wrapper.container.lg .label.window-label {
@@ -276,6 +283,7 @@ export const ShadowStyles = css`
 
     .label.hvac_action {
           color: var(--action-color, inherit) !important;
+          padding-top: 1rem;
     }
 
     .label.window-label {
@@ -284,6 +292,7 @@ export const ShadowStyles = css`
 
     .label.secondary:not(.label.humidity) {
           color: var(--action-color, inherit);
+          gap: 5px;
     }
 
 `;

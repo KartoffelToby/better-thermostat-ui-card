@@ -59,6 +59,10 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   @state() private _config?: BetterThermostatUINormalCardConfig;
   @state() private _stateObj?: ClimateEntity;
   @state() private _targetTemperature: Partial<Record<"value" | "low" | "high", number>> = {};
+  // When the user is actively interacting (dragging) the slider, prevent
+  // `willUpdate` from overwriting the in-progress value from the hass state
+  // updates. The circular slider fires `value-changing` events while dragging.
+  private _isDragging = false;
   @state() private _selectTarget: "value" | "low" | "high" = "low";
   @property({ type: Boolean }) public window: boolean = false;
   @property({ type: Boolean }) public summer: boolean = false;
@@ -86,6 +90,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       const width = entries[0]?.contentRect.width;
       const height = entries[0]?.contentRect.height;
       const smaller = Math.min(width, height);
+      //console.log("Size changed:", smaller);
       return smaller < 130
         ? "xs"
         : smaller < 155
@@ -135,11 +140,17 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       if (this._config?.entity) {
         this._stateObj = this.hass.states[this._config.entity] as ClimateEntity;
         if (this._stateObj) {
-          this._targetTemperature = {
-            value: this._stateObj.attributes.temperature,
-            low: this._stateObj.attributes.target_temp_low,
-            high: this._stateObj.attributes.target_temp_high,
-          };
+          // Only override local target values from the HA entity when
+          // the user is not currently dragging the control. This avoids the
+          // UI jumping back to the old value while the user is still
+          // interacting with the slider.
+          if (!this._isDragging) {
+            this._targetTemperature = {
+              value: this._stateObj.attributes.temperature,
+              low: this._stateObj.attributes.target_temp_low,
+              high: this._stateObj.attributes.target_temp_high,
+            };
+          }
         }
       }
     }
@@ -189,12 +200,17 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   private _valueChanged(ev: CustomEvent) {
     const value = (ev.detail as any).value;
     if (isNaN(value)) return;
+    // User finished dragging — commit value and stop ignoring hass updates.
+    this._isDragging = false;
     this._targetTemperature = { ...this._targetTemperature, value };
     this._callService("value");
   }
   private _valueChanging(ev: CustomEvent) {
     const value = (ev.detail as any).value;
     if (isNaN(value)) return;
+    // User is actively dragging; set flag so willUpdate doesn't reset
+    // _targetTemperature from hass state updates while the user drags.
+    this._isDragging = true;
     this._targetTemperature = { ...this._targetTemperature, value };
   }
 
@@ -348,6 +364,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       : undefined;
       const name = this._config.name || this._stateObj.attributes.friendly_name || "";
 
+
       return html`
       <ha-card>
         <p class="title">${name}</p>
@@ -398,7 +415,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
             .entity=${this._stateObj}
             .modes=${this._stateObj.attributes.hvac_modes || []}
             .fill=${true}
-            .disableEco=${!!this._config.disable_eco}
+            .disableEco=${this._config.disable_eco}
           ></mushroom-climate-hvac-modes-control>
         </div>
       </ha-card>

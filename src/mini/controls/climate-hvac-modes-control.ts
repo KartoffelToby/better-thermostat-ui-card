@@ -1,4 +1,4 @@
-import { html, LitElement, TemplateResult, nothing } from "lit";
+import { html, LitElement, TemplateResult, nothing, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import {
@@ -9,8 +9,7 @@ import {
   HvacMode,
   isAvailable,
 } from "mushroom-cards/src/ha";
-import "mushroom-cards/src/shared/button";
-import "mushroom-cards/src/shared/button-group";
+import { ensureElementLoaded } from "../../utils/ensure-element-loaded";
 import { getHvacModeColor, getHvacModeIcon } from "../utils";
 
 export const isHvacModesVisible = (entity: ClimateEntity, modes?: HvacMode[]) =>
@@ -77,7 +76,7 @@ export class ClimateHvacModesControl extends LitElement {
       .sort(compareClimateHvacModes);
 
     const presetModes = this.entity.attributes.preset_modes || [];
-    const hasEco = (presetModes.includes("eco") || presetModes.length > 0 || (this.entity.attributes as any).eco_mode !== undefined) && !this.disableEco;
+    const hasEco = (presetModes.includes("eco") || presetModes.length > 0 || (this.entity.attributes as any).eco_mode === true) && !this.disableEco;
 
     return html`
       <mushroom-button-group .fill=${this.fill} ?rtl=${rtl}>
@@ -110,5 +109,20 @@ export class ClimateHvacModesControl extends LitElement {
         <ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>
       </mushroom-button>
     `;
+  }
+
+  protected async firstUpdated(changedProperties: PropertyValues) {
+    super.firstUpdated(changedProperties);
+
+    await Promise.all([
+      (async () => {
+        if (!customElements.get("mushroom-button"))
+          await import("mushroom-cards/src/shared/button");
+      })(),
+      (async () => {
+        if (!customElements.get("mushroom-button-group"))
+          await import("mushroom-cards/src/shared/button-group");
+      })(),
+    ]);
   }
 }

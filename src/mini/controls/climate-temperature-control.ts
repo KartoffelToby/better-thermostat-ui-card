@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, TemplateResult } from "lit";
+import { html, LitElement, nothing, TemplateResult, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import {
@@ -8,9 +8,7 @@ import {
   isAvailable,
   UNIT_F,
 } from "mushroom-cards/src/ha";
-import "mushroom-cards/src/shared/button";
-import "mushroom-cards/src/shared/button-group";
-import "mushroom-cards/src/shared/input-number";
+import { ensureElementLoaded } from "../../utils/ensure-element-loaded";
 
 export const isTemperatureControlVisible = (entity: ClimateEntity) =>
   entity.attributes.temperature != null ||
@@ -124,5 +122,24 @@ export class ClimateTemperatureControl extends LitElement {
           : nothing}
       </mushroom-button-group>
     `;
+  }
+
+  protected async firstUpdated(changedProperties: PropertyValues) {
+    super.firstUpdated(changedProperties);
+
+    await Promise.all([
+      (async () => {
+        if (!customElements.get("mushroom-button"))
+          await import("mushroom-cards/src/shared/button");
+      })(),
+      (async () => {
+        if (!customElements.get("mushroom-button-group"))
+          await import("mushroom-cards/src/shared/button-group");
+      })(),
+      (async () => {
+        if (!customElements.get("mushroom-input-number"))
+          await import("mushroom-cards/src/shared/input-number");
+      })(),
+    ]);
   }
 }
