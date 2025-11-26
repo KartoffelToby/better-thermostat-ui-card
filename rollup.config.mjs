@@ -72,7 +72,7 @@ const plugins = [
 
 export default [
   {
-    input: "src/betterthermostat.ts",
+    input: "src/better-thermostat-ui-card.ts",
     output: {
       dir: "dist",
       format: "es",

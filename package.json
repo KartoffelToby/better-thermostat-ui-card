@@ -12,7 +12,7 @@
     "better-thermostat",
     "better_thermostat"
   ],
-  "module": "betterthermostat.js",
+  "module": "better-thermostat-ui-card.js",
   "repository": "https://github.com/KartoffelToby/better-thermostat-ui-card",
   "author": "Tobias Haber",
   "scripts": {

@@ -25,8 +25,8 @@ jobs:
 
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: /home/runner/work/better-thermostat-ui-card/better-thermostat-ui-card/dist/betterthermostat.js
-          asset_name: betterthermostat.js
+          file: /home/runner/work/better-thermostat-ui-card/better-thermostat-ui-card/dist/better-thermostat-ui-card.js
+          asset_name: better-thermostat-ui-card.js
           tag: ${{ github.ref }}
           overwrite: true
       - name: HACS Action
