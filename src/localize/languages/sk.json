@@ -18,7 +18,11 @@
         "disable_battery_warning": "Zakázať upozornenie na batériu",
         "disable_buttons": "Zakázať plus/mínus tlačidlá",
         "eco_temperature": "Eco teplota",
-        "set_current_as_main": "Vymeňte cieľ za miesta s aktuálnou teplotou"
+        "set_current_as_main": "Vymeňte cieľ za miesta s aktuálnou teplotou",
+        "show_current_as_primary": "Zobraziť aktuálnu teplotu ako hlavnú",
+        "show_secondary": "Zobraziť sekundárne informácie",
+        "prevent_interaction_on_scroll": "Zabrániť interakcii pri posúvaní",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

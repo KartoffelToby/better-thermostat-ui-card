@@ -1,0 +1,4 @@
+[submodule "ha-frontend"]
+	path = ha-frontend
+	url = git@github.com:home-assistant/frontend.git
+	branch = 20250925.1

@@ -18,7 +18,11 @@
         "disable_battery_warning": "Desativar aviso de bateria",
         "disable_buttons": "Desativar botões de mais/menos",
         "eco_temperature": "Modo Eco",
-        "set_current_as_main": "Mudar para a temperatura local actual"
+        "set_current_as_main": "Mudar para a temperatura local actual",
+        "show_current_as_primary": "Mostrar temperatura atual como principal",
+        "show_secondary": "Mostrar informações secundárias",
+        "prevent_interaction_on_scroll": "Prevenir interação ao rolar",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

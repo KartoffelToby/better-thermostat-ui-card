@@ -13,10 +13,13 @@ jobs:
     name: Test build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
       - name: Build
         run: |
           npm install --force
+          npm ci --ignore-scripts
           npm run build
       - name: HACS Action
         uses: "hacs/action@main"

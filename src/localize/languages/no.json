@@ -18,7 +18,11 @@
         "disable_battery_warning": "Deaktiver batterivarsel",
         "disable_buttons": "Deaktiver pluss/minus knapper",
         "eco_temperature": "Eco temperatur",
-        "set_current_as_main": "Bytt måltemperatur med nåværende temperatur"
+        "set_current_as_main": "Bytt måltemperatur med nåværende temperatur",
+        "show_current_as_primary": "Vis nåværende temperatur som primær",
+        "show_secondary": "Vis sekundær informasjon",
+        "prevent_interaction_on_scroll": "Forhindre interaksjon ved rulling",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

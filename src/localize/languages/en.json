@@ -7,6 +7,7 @@
     "card": {
       "climate": {
         "disable_window": "Turn off the window open indicator",
+        "disable_humidity": "Turn off the humidity display",
         "disable_summer": "Turn off the summer indicator",
         "disable_eco": "Turn off the eco button",
         "disable_heat": "Turn off the on/heat button",
@@ -15,7 +16,10 @@
         "disable_battery_warning": "Turn off the battery warning",
         "disable_buttons": "Turn off the plus/minus buttons",
         "eco_temperature": "Target temp for night/away/eco mode triggerd by ui button",
-        "set_current_as_main": "Swap target with current temperature places"
+        "set_current_as_main": "Swap target with current temperature places",
+        "show_current_as_primary": "Show current temperature as primary",
+        "show_secondary": "Show secondary information",
+        "prevent_interaction_on_scroll": "Prevent interaction on scroll"
       }
     }
   },

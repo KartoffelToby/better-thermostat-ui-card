@@ -1,0 +1,35 @@
+import { assign, array, any, boolean, object, optional } from "superstruct";
+import { LovelaceCardConfig } from "mushroom-cards/src/ha";
+import {
+  EntitySharedConfig,
+  entitySharedConfigStruct,
+} from "mushroom-cards/src/shared/config/entity-config";
+import { lovelaceCardConfigStruct } from "mushroom-cards/src/shared/config/lovelace-card-config";
+
+// Config for the normal (bigger) climate card.
+export type BetterThermostatUINormalCardConfig = LovelaceCardConfig &
+  EntitySharedConfig & {
+    features?: any[];
+    show_current_as_primary?: boolean;
+    show_secondary?: boolean;
+    disable_buttons?: boolean;
+    disable_menu?: boolean;
+    prevent_interaction_on_scroll?: boolean;
+    disable_eco?: boolean;
+    disable_humidity?: boolean;
+  };
+
+export const betterThermostatUINormalCardConfigStruct = assign(
+  lovelaceCardConfigStruct,
+  entitySharedConfigStruct,
+  object({
+    features: optional(array(any())),
+    show_current_as_primary: optional(boolean()),
+    show_secondary: optional(boolean()),
+    disable_buttons: optional(boolean()),
+    disable_menu: optional(boolean()),
+    prevent_interaction_on_scroll: optional(boolean()),
+    disable_eco: optional(boolean()),
+    disable_humidity: optional(boolean()),
+  })
+);
