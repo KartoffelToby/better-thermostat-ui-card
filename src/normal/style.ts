@@ -315,7 +315,7 @@ export const ShadowStyles = css`
       left: 0;
       width: 100%;
       height: 100%;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: space-evenly;
@@ -326,6 +326,9 @@ export const ShadowStyles = css`
       overflow: hidden;
       transition: max-height 300ms ease-in-out, padding 300ms ease-in-out;
       z-index: -1;
+      overflow: scroll;
+      box-sizing: border-box;
+      background-color: rgba(var(--rgb-card-background-color), 0.6);
     }
     .preset-select.open {
       max-height: 100%;

@@ -587,17 +587,21 @@ export class BetterThermostatUISmallCard
           left: 0;
           width: 100%;
           height: 100%;
-          backdrop-filter: blur(4px);
+          backdrop-filter: blur(8px);
           display: flex;
           align-items: center;
           justify-content: space-evenly;
           z-index: 10;
-          gap: 5px;
+          gap: 15px;
           flex-direction: row;
           max-height: 0%;
           overflow: hidden;
           transition: max-height 300ms ease-in-out, padding 300ms ease-in-out;
           z-index: -1;
+          padding: 0 1em 0em 1em;
+          overflow: scroll;
+          box-sizing: border-box;
+          background-color: rgba(var(--rgb-card-background-color), 0.3);
         }
         .preset-select.open {
           max-height: 100%;
