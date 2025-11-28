@@ -1,3 +1,4 @@
+import { icon } from './../../ha-frontend/src/common/structs/is-icon';
 import { CSSResultGroup, html, nothing, PropertyValues } from "lit";
 import { ResizeController } from "@lit-labs/observers/resize-controller";
 
@@ -25,6 +26,7 @@ import { ShadowStyles } from './style';
 import { CLIMATE_HVAC_ACTION_TO_MODE, ClimateEntity, stateColorCss, stateActive, stateControlCircularSliderStyle } from "../shims/ha-frontend-shim";
 import setupMushroomLocalize from "mushroom-cards/src/localize";
 import setupCustomlocalize from "../localize/localize";
+import { getHvacModeColor, getHvacModeIcon } from "./utils";
 
 const SLIDER_MODES: Record<HvacMode, string> = {
   auto: "full",
@@ -64,6 +66,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   // updates. The circular slider fires `value-changing` events while dragging.
   private _isDragging = false;
   @state() private _selectTarget: "value" | "low" | "high" = "low";
+  @state() private _presetOpen: boolean = false;
   @property({ type: Boolean }) public window: boolean = false;
   @property({ type: Boolean }) public summer: boolean = false;
   @property({ type: String }) public status: string = "loading";
@@ -110,6 +113,8 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       this._sizeController.unobserve(this);
       this._sizeController.observe(wrapper);
     }
+    // Ensure overlay/pointerdown handler is cleaned up when component is removed
+    // (no-op; assigned when opening preset select)
   }
 
   public getCardSize(): number { return 3; }
@@ -130,6 +135,9 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   }
 
   private _handleMoreInfo() {
+    // Dispatch the event on this element so the local more-info mixin
+    // listener catches it. Also, ensure the entity id gets passed to the
+    // more-info dialog.
     fireEvent(this as any, "hass-more-info" as any, {
       entityId: this._config!.entity ?? null,
     });
@@ -352,10 +360,17 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       if (window) {
         actionColor = "var(--info-color)";
         stateColor = "var(--info-color)";
-      } else if ((this._stateObj.attributes as any).eco_mode === true) {
-        stateColor = "rgb(165, 214, 167)";
-        actionColor = "rgb(165, 214, 167)";
+      } else if ((this._stateObj.attributes as any).preset_mode !== 'none') {
+        const pre_color = getHvacModeColor((this._stateObj.attributes as any).preset_mode);
+        stateColor = `rgb(${pre_color})`;
+        actionColor = `rgb(${pre_color})`;
+      };
+
+      if (mode === "off") {
+        stateColor = "var(--rgb-grey)";
+        actionColor = "var(--rgb-grey)";
       }
+
 
       const lowColor = stateColorCss(this._stateObj, active ? "heat" : "off");
       const highColor = stateColorCss(this._stateObj, active ? "cool" : "off");
@@ -364,6 +379,13 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       : undefined;
       const name = this._config.name || this._stateObj.attributes.friendly_name || "";
 
+      const iconStyle = {};
+      iconStyle["--icon-color"] = `var(--rgb-grey)`;
+      iconStyle["--bg-color"] = `rgba(var(--rgb-grey), 0.2)`;
+
+      const buttonModes = ["heat", {
+        ...this._stateObj.attributes.preset_modes
+      }, "off"]
 
       return html`
       <ha-card>
@@ -395,28 +417,39 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           </div>
         ${!this._config.disable_menu ? html`<ha-icon-button
           class="more-info"
-          .label=${this.hass!.localize(
-            "ui.panel.lovelace.cards.show_more_info"
-          )}
           .label=${localize("ui.panel.lovelace.cards.show_more_info")}
           .path=${mdiDotsVertical}
-          @click=${this._handleMoreInfo}
+          @click=${(e: Event) => {
+            e.stopPropagation();
+            this._handleMoreInfo();
+          }}
           tabindex="0"
         ></ha-icon-button>` : nothing}
 
 
         <div class="actions">
           ${!this._config.disable_buttons ? buttons("value") : nothing}
-          <mushroom-climate-hvac-modes-control
-           style=${styleMap({
-            "--icon-color": actionColor,
-           })}
-            .hass=${this.hass}
-            .entity=${this._stateObj}
-            .modes=${this._stateObj.attributes.hvac_modes || []}
-            .fill=${true}
-            .disableEco=${this._config.disable_eco}
-          ></mushroom-climate-hvac-modes-control>
+
+
+            <div class=${classMap({ 'preset-select': true, open: this._presetOpen })}>
+          ${this._stateObj.attributes.preset_modes.map((mode: any) => html`
+              <mushroom-button
+                style=${styleMap(iconStyle)}
+                .mode=${mode}
+                .disabled=${!isAvailable(this._stateObj)}
+                  @click=${this.triggerModeChange.bind(this, mode)}
+                  @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+              >
+                <ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>
+              </mushroom-button>
+          `)}
+        </div>
+
+        <mushroom-button-group .fill=${true} ?rtl=${false}>
+          ${(buttonModes).map((mode) => this.renderModeButton(mode))}
+        </mushroom-button-group>
+
+          
         </div>
       </ha-card>
 
@@ -426,6 +459,97 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     return html`<div class="container" style=${styleMap({})}>
       <div class="info">${renderLabel()}${primary()}${secondary()}${renderHumidity()}</div>
     </div>`;
+  }
+
+  private renderModeButton(mode: HvacMode) {
+
+    if(typeof mode !== "string") {
+          mode = this._stateObj.attributes.preset_mode;
+          const iconStyle = {};
+          const color = getHvacModeColor(mode);
+          const selectedMode = (this._stateObj.attributes.preset_mode !== 'none') ? this._stateObj.attributes.preset_mode : mode;
+          if (selectedMode === this._stateObj.attributes.preset_mode) {
+            iconStyle["--icon-color"] = `rgb(${color})`;
+            iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
+          }
+          const icon = getHvacModeIcon(this._stateObj.attributes.preset_mode);
+
+          return html`
+            <mushroom-button
+              style=${styleMap(iconStyle)}
+              .mode=${selectedMode}
+              .disabled=${!isAvailable(this._stateObj)}
+              @click=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+            >
+              <ha-icon .icon=${icon}></ha-icon>
+            </mushroom-button>
+          `;
+    }
+
+    const iconStyle = {};
+    const color = mode === "off" ? "var(--rgb-grey)" : getHvacModeColor(mode);
+    if (mode === this._stateObj.state) {
+      iconStyle["--icon-color"] = `rgb(${color})`;
+      iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
+    }
+
+    return html`
+      <mushroom-button
+        style=${styleMap(iconStyle)}
+        .mode=${mode}
+        .disabled=${!isAvailable(this._stateObj)}
+        @click=${this.triggerModeChange.bind(this, mode)}
+        @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+      >
+        <ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>
+      </mushroom-button>
+    `;
+  }
+
+  private _openPresetSelect(open = true) {
+    console.log("Opening preset select:", open);
+    this._presetOpen = open;
+    if (open) {
+      window.addEventListener("pointerdown", this._onDocumentPointerDown);
+    } else {
+      window.removeEventListener("pointerdown", this._onDocumentPointerDown);
+    }
+  }
+
+  private _onDocumentPointerDown = (ev: PointerEvent) => {
+    const path = ev.composedPath();
+    const presetEl = this.shadowRoot?.querySelector('.preset-select');
+    if (!presetEl) return;
+    // If the click is outside the preset-select element, close the menu
+    if (!path.includes(presetEl as EventTarget)) {
+      this._openPresetSelect(false);
+    }
+  };
+
+  private triggerModeChange(mode: any) {
+    // check if mode is in HvacMode
+    console.log(this._stateObj);
+    if (this._stateObj.attributes.hvac_modes.includes(mode)) {
+      this.hass.callService("climate", "set_hvac_mode", {
+        entity_id: this._stateObj?.entity_id,
+        hvac_mode: mode,
+      });
+      this._openPresetSelect(false);
+      return;
+    } else if (this._stateObj?.attributes.preset_modes && this._stateObj.attributes.preset_modes.includes(mode)) {
+      if (mode === this._stateObj.attributes.preset_mode) mode = "none";
+      this.hass.callService("climate", "set_preset_mode", {
+        entity_id: this._stateObj?.entity_id,
+        preset_mode: mode,
+      });
+      this._openPresetSelect(false);
+      return;
+    }
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener("pointerdown", this._onDocumentPointerDown);
+    super.disconnectedCallback();
   }
 
   private _handleAction(_ev: ActionHandlerEvent) { /* placeholder for future actions */ }

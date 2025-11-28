@@ -19,6 +19,7 @@ export const ShadowStyles = css`
       justify-content: space-between;
       padding-left: 1em;
       padding-right: 1em;
+      overflow: hidden;
     }
 
     .title {
@@ -96,6 +97,15 @@ export const ShadowStyles = css`
         --high-color,
         var(--disabled-color)
       );
+    }
+
+
+    hui-climate-preset-modes-card-feature  ha-control-select-menu  .select-anchor  .content {
+      display: none;
+    }
+
+    ::slotted(mushroom-button-group) {
+    display: none;
     }
 
 
@@ -253,6 +263,8 @@ export const ShadowStyles = css`
 
     .actions {
       padding: 0 12px 12px 12px;
+      justify-content: center;
+      gap: 18px;
     }
 
     .dual {
@@ -293,6 +305,31 @@ export const ShadowStyles = css`
     .label.secondary:not(.label.humidity) {
           color: var(--action-color, inherit);
           gap: 5px;
+    }
+
+
+
+    .preset-select {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      z-index: 10;
+      gap: 5px;
+      flex-direction: column;
+      max-height: 0%;
+      overflow: hidden;
+      transition: max-height 300ms ease-in-out, padding 300ms ease-in-out;
+      z-index: -1;
+    }
+    .preset-select.open {
+      max-height: 100%;
+      z-index: 10;
     }
 
 `;

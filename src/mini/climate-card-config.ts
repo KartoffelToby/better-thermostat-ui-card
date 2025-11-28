@@ -1,4 +1,4 @@
-import { array, assign, boolean, object, optional, string } from "superstruct";
+import { array, assign, any, boolean, object, optional, string } from "superstruct";
 import { HvacMode, LovelaceCardConfig } from "mushroom-cards/src/ha";
 import {
   ActionsSharedConfig,
@@ -28,6 +28,7 @@ export type BetterThermostatUISmallCardConfig = LovelaceCardConfig &
   EntitySharedConfig &
   AppearanceSharedConfig &
   ActionsSharedConfig & {
+    features?: any[];
     show_temperature_control?: false;
     collapsible_controls?: boolean;
     disable_eco?: boolean;
@@ -42,6 +43,7 @@ export const climateCardConfigStruct = assign(
     actionsSharedConfigStruct
   ),
   object({
+    features: optional(array(any())),
     show_temperature_control: optional(boolean()),
     collapsible_controls: optional(boolean()),
     disable_eco: optional(boolean()),

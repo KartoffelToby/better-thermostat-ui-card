@@ -30,6 +30,9 @@ export class ClimateHvacModesControl extends LitElement {
   @property({ type: Boolean, attribute: "disable-eco" })
   public disableEco: boolean = false;
 
+  @property({ attribute: false })
+  public feature?: TemplateResult;
+
   private callService(e: CustomEvent) {
     e.stopPropagation();
     const mode = (e.target! as any).mode as HvacMode;
@@ -82,11 +85,11 @@ export class ClimateHvacModesControl extends LitElement {
       <mushroom-button-group .fill=${this.fill} ?rtl=${rtl}>
         ${modes.map((mode) => {
           if (mode === "off" && hasEco) {
-            return html`${this.renderEcoButton()}${this.renderModeButton(mode)}`;
+            return html`${this.feature ?? this.renderEcoButton()}${this.renderModeButton(mode)}`;
           }
           return this.renderModeButton(mode);
         })}
-        ${hasEco && !modes.includes("off") ? this.renderEcoButton() : nothing}
+        ${hasEco && !modes.includes("off") ? (this.feature ?? this.renderEcoButton()) : nothing}
       </mushroom-button-group>
     `;
   }

@@ -44,6 +44,7 @@ import {
   getHvacActionColor,
   getHvacActionIcon,
   getHvacModeColor,
+  getHvacModeIcon,
 } from "./utils";
 import { localize } from "../localize/localize";
 
@@ -86,6 +87,7 @@ export class BetterThermostatUISmallCard
   }
 
   @state() private _activeControl?: ClimateCardControl;
+  @state() private _presetOpen: boolean = false;
 
   private get _controls(): ClimateCardControl[] {
     if (!this._config || !this._stateObj) return [];
@@ -195,13 +197,23 @@ export class BetterThermostatUISmallCard
     const color = getHvacActionColor(hvac_action);
     let actionStyle = {};
     actionStyle["--action-color"] = `rgba(${color}, 0.6)`;
-    if ((stateObj.attributes as any)?.eco_mode === true) {
-      actionStyle["--action-color"] = `rgba(165, 214, 167, 0.6)`;
+
+
+    if ((this._stateObj.attributes as any).preset_mode !== 'none') {
+        const pre_color = getHvacModeColor((this._stateObj.attributes as any).preset_mode);
+        actionStyle["--action-color"] = `rgba(${pre_color}, 0.6)`;
+        actionStyle["--rgb-state-climate-heat"] = pre_color;
+    };
+
+    if ((this._stateObj.attributes as any).window_open) {
+        actionStyle["--action-color"] = `var(--info-color)`;
     }
     if (hvac_action === "off") {
       actionStyle["--action-color"] = `rgba(0, 0, 0, 0)`;
     }
-
+    const iconStyle = {};
+    iconStyle["--icon-color"] = `var(--rgb-grey)`;
+    iconStyle["--bg-color"] = `rgba(var(--rgb-grey), 0.2)`;
     return html`
       <ha-card
         class=${classMap({ "fill-container": appearance.fill_container })}
@@ -231,6 +243,21 @@ export class BetterThermostatUISmallCard
                 </div>
               `
             : nothing}
+
+  
+              <div class=${classMap({ 'preset-select': true, open: this._presetOpen })}>
+            ${(stateObj.attributes.preset_modes ?? []).map((mode: any) => html`
+                <mushroom-button
+                  style=${styleMap(iconStyle)}
+                  .mode=${mode}
+                  .disabled=${!isAvailable(stateObj)}
+                    @click=${this.triggerModeChange.bind(this, mode)}
+                    @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+                >
+                  <ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>
+                </mushroom-button>
+            `)}
+          </div>
         </mushroom-card>
       </ha-card>
     `;
@@ -272,6 +299,11 @@ export class BetterThermostatUISmallCard
       })(),
     ]);
     
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener("pointerdown", this._onDocumentPointerDown);
+    super.disconnectedCallback();
   }
 
   protected renderIcon(stateObj: ClimateEntity, icon?: string): TemplateResult {
@@ -392,6 +424,102 @@ export class BetterThermostatUISmallCard
     `;
   }
 
+  private renderPresetButton(entity: ClimateEntity) {
+    if (this._config?.disable_eco) return nothing;
+    const presetModes = entity.attributes.preset_modes || [];
+    const isEco = (entity.attributes as any).eco_mode === true;
+    const hasPreset = presetModes.includes("eco") || presetModes.length > 0 || isEco;
+    if (!hasPreset) return nothing;
+
+    const selectedMode = (entity.attributes as any).preset_mode;
+    const iconStyle = {};
+    let icon = "mdi:leaf";
+    if (selectedMode && selectedMode !== "none") {
+      icon = getHvacModeIcon(selectedMode);
+      const color = getHvacModeColor(selectedMode);
+      iconStyle["--icon-color"] = `rgb(${color})`;
+      iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
+    } else if (isEco) {
+      const color = "165, 214, 167";
+      iconStyle["--icon-color"] = `rgb(${color})`;
+      iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
+    }
+
+    return html`
+      <mushroom-button
+        style=${styleMap(iconStyle)}
+        .disabled=${!isAvailable(entity)}
+        @click=${(e: Event) => { e.stopPropagation(); this.toggleEco(e as CustomEvent); }}
+        @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+      >
+        <ha-icon .icon=${icon}></ha-icon>
+      </mushroom-button>
+    `;
+  }
+
+  private renderPresetFeature(entity: ClimateEntity) {
+          const mode = entity.attributes.preset_mode || "none";
+          const iconStyle = {};
+          const color = getHvacModeColor(mode as HvacMode);
+          const selectedMode = (entity.attributes.preset_mode !== 'none') ? entity.attributes.preset_mode : mode;
+          if (selectedMode === entity.attributes.preset_mode) {
+            iconStyle["--icon-color"] = `rgb(${color})`;
+            iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
+          }
+          const icon = getHvacModeIcon((entity.attributes.preset_mode || "none") as HvacMode);
+
+          return html`
+            <mushroom-button
+              style=${styleMap(iconStyle)}
+              .mode=${selectedMode}
+              @click=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+            >
+              <ha-icon .icon=${icon}></ha-icon>
+            </mushroom-button>
+          `;
+  }
+
+  private _openPresetSelect(open = true) {
+    this._presetOpen = open;
+    if (open) {
+      window.addEventListener("pointerdown", this._onDocumentPointerDown);
+    } else {
+      window.removeEventListener("pointerdown", this._onDocumentPointerDown);
+    }
+  }
+
+  private _onDocumentPointerDown = (ev: PointerEvent) => {
+    const path = ev.composedPath();
+    const presetEl = this.shadowRoot?.querySelector('.preset-select');
+    if (!presetEl) return;
+    // If the click is outside the preset-select element, close the menu
+    if (!path.includes(presetEl as EventTarget)) {
+      this._openPresetSelect(false);
+    }
+  };
+
+  private triggerModeChange(mode: any) {
+    const stateObj = this._stateObj;
+    if (!stateObj) return;
+    if (stateObj.attributes.hvac_modes.includes(mode)) {
+      this.hass.callService("climate", "set_hvac_mode", {
+        entity_id: stateObj.entity_id,
+        hvac_mode: mode,
+      });
+      // 
+      this._openPresetSelect(false);
+      return;
+    } else if (stateObj?.attributes.preset_modes && stateObj.attributes.preset_modes.includes(mode)) {
+      if (mode === stateObj.attributes.preset_mode) mode = "none";
+      this.hass.callService("climate", "set_preset_mode", {
+        entity_id: stateObj.entity_id,
+        preset_mode: mode,
+      });
+      this._openPresetSelect(false);
+      return;
+    }
+  }
+
   private renderActiveControl(entity: ClimateEntity) {
     const hvac_modes: HvacMode[] = ["heat", "off"];
     const appearance = computeAppearance(this._config!);
@@ -404,7 +532,7 @@ export class BetterThermostatUISmallCard
             .entity=${entity}
             .fill=${appearance.layout !== "horizontal"}
           ></mushroom-climate-temperature-control>
-          ${this.renderEcoButton(entity)}
+          ${this.renderPresetFeature(entity)}
         `;
       case "hvac_mode_control":
         return html`
@@ -414,6 +542,7 @@ export class BetterThermostatUISmallCard
             .modes=${hvac_modes}
             .fill=${appearance.layout !== "horizontal"}
             .disableEco=${this._config?.disable_eco}
+            .feature=${this.renderPresetFeature(entity)}
           ></mushroom-climate-hvac-modes-control>
         `;
       default:
@@ -451,6 +580,28 @@ export class BetterThermostatUISmallCard
         mushroom-climate-temperature-control,
         mushroom-climate-hvac-modes-control {
           flex: 1;
+        }
+        .preset-select {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          backdrop-filter: blur(4px);
+          display: flex;
+          align-items: center;
+          justify-content: space-evenly;
+          z-index: 10;
+          gap: 5px;
+          flex-direction: row;
+          max-height: 0%;
+          overflow: hidden;
+          transition: max-height 300ms ease-in-out, padding 300ms ease-in-out;
+          z-index: -1;
+        }
+        .preset-select.open {
+          max-height: 100%;
+          z-index: 10;
         }
       `,
     ];

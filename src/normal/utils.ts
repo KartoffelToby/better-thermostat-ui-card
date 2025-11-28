@@ -1,5 +1,6 @@
 import { HvacAction, HvacMode } from "mushroom-cards/src/ha";
 
+
 export const CLIMATE_HVAC_MODE_COLORS: Record<any, string> = {
   auto: "var(--rgb-state-climate-auto)",
   cool: "var(--rgb-state-climate-cool)",
