@@ -18,7 +18,11 @@
         "disable_battery_warning": "Atspējot baterijas brīdinājumu",
         "disable_buttons": "Atspējot plus/mīnus pogas",
         "eco_temperature": "Eko režīma temperatūra",
-        "set_current_as_main": "Apmainīt pašreizējo un mērķa temperatūru vietām"
+        "set_current_as_main": "Apmainīt pašreizējo un mērķa temperatūru vietām",
+        "show_current_as_primary": "Rādīt pašreizējo temperatūru kā galveno",
+        "show_secondary": "Rādīt sekundāro informāciju",
+        "prevent_interaction_on_scroll": "Novērst mijiedarbību ritinot",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

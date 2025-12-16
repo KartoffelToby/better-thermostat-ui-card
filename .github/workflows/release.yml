@@ -9,13 +9,15 @@ jobs:
     name: Prepare release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
       # Build
       - name: Build the file
         run: |
           cd /home/runner/work/better-thermostat-ui-card/better-thermostat-ui-card
           npm install --force
+          npm ci --ignore-scripts
           npm run build
       # Upload build file to the releas as an asset.
       - name: Upload zip to release

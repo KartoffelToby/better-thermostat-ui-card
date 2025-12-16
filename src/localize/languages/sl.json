@@ -18,7 +18,11 @@
         "disable_battery_warning": "Onemogoči opozorilo o bateriji",
         "disable_buttons": "Onemogoči gumbe plus/minus",
         "eco_temperature": "Eco temperatura",
-        "set_current_as_main": "Zamenjaj ciljno temperaturo s trenutno temperaturo"
+        "set_current_as_main": "Zamenjaj ciljno temperaturo s trenutno temperaturo",
+        "show_current_as_primary": "Prikaži trenutno temperaturo kot primarno",
+        "show_secondary": "Prikaži sekundarne informacije",
+        "prevent_interaction_on_scroll": "Prepreči interakcijo med drsenjem",
+        "disable_humidity": "Turn off the humidity display"
       }
     }
   },

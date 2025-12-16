@@ -24,7 +24,7 @@ import * as fi from './languages/fi.json';
 import * as ro from './languages/ro.json';
 import * as ca from './languages/ca.json';
 import * as lv from './languages/lv.json';
-import { HomeAssistant } from '../ha';
+import { HomeAssistant } from 'mushroom-cards/src/ha';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const languages: any = {
@@ -57,23 +57,33 @@ const languages: any = {
 };
 const DEFAULT_LANG = "en";
 
+function getLangs(hass?: HomeAssistant) {
+  const raw = hass?.locale.language ?? DEFAULT_LANG;
+  const langs = [raw];
+  const primary = raw.split(/[-_]/)[0];
+  if (primary && primary !== raw) langs.push(primary);
+  if (!langs.includes(DEFAULT_LANG)) langs.push(DEFAULT_LANG);
+  return langs;
+}
+
 export function localize({ hass, string, search = '', replace = '' }: { hass?: HomeAssistant; string: string; search?: string; replace?: string; }): string {
-  const lang = hass?.locale.language ?? DEFAULT_LANG;
+  const langs = getLangs(hass);
 
-  let translated: string;
+  let translated: string | undefined;
 
-  try {
-    translated = string.split('.').reduce((o, i) => o[i], languages[lang]);
-  } catch (e) {
-    translated = string.split('.').reduce((o, i) => o[i], languages['en']);
+  for (const lang of langs) {
+    try {
+      translated = string.split('.').reduce((o, i) => o[i], languages[lang]);
+    } catch (e) {
+      translated = undefined as any;
+    }
+    if (translated !== undefined) break;
   }
 
-  if (translated === undefined) translated = string.split('.').reduce((o, i) => o[i], languages['en']);
-
-  if (search !== '' && replace !== '') {
+  if (search !== '' && replace !== '' && typeof translated === "string") {
     translated = translated.replace(search, replace);
   }
-  return translated;
+  return translated ?? string;
 }
 
 
@@ -88,11 +98,14 @@ function getTranslatedString(key: string, lang: string): string | undefined {
 }
 
 export default function setupCustomlocalize(hass?: HomeAssistant) {
-    return function (key: string) {
-        const lang = hass?.locale.language ?? DEFAULT_LANG;
+  return function (key: string) {
+    const langs = getLangs(hass);
 
-        let translated = getTranslatedString(key, lang);
-        if (!translated) translated = getTranslatedString(key, DEFAULT_LANG);
-        return translated ?? key;
-    };
+    let translated: string | undefined;
+    for (const lang of langs) {
+      translated = getTranslatedString(key, lang);
+      if (translated) break;
+    }
+    return translated ?? key;
+  };
 }

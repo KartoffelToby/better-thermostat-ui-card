@@ -1,0 +1,29 @@
+title: Cover
+icon: mdi:window-shutter
+cards:
+      - type: grid
+        columns: 1
+        square: false
+        cards:
+          - type: custom:better-thermostat-normal-climate-card
+            entity: climate.demo
+      - type: grid
+        columns: 1
+        square: false
+        cards:
+          - type: custom:better-thermostat-mini-climate-card
+            entity: climate.demo
+            show_temperature_control: true
+            collapsible_controls: true
+            hvac_modes:
+              - heat
+              - "off"
+      - type: grid
+        columns: 1
+        square: false
+        cards:
+          - type: entities
+            entities:
+              - input_boolean.fenster
+              - input_number.home_hydro
+              - input_number.home_thermostat_temperature
