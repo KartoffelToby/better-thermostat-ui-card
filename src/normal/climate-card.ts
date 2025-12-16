@@ -65,6 +65,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   // `willUpdate` from overwriting the in-progress value from the hass state
   // updates. The circular slider fires `value-changing` events while dragging.
   private _isDragging = false;
+  private _lastInteraction = 0;
   @state() private _selectTarget: "value" | "low" | "high" = "low";
   @state() private _presetOpen: boolean = false;
   @property({ type: Boolean }) public window: boolean = false;
@@ -152,7 +153,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           // the user is not currently dragging the control. This avoids the
           // UI jumping back to the old value while the user is still
           // interacting with the slider.
-          if (!this._isDragging) {
+          if (!this._isDragging && Date.now() - this._lastInteraction > 3000) {
             this._targetTemperature = {
               value: this._stateObj.attributes.temperature,
               low: this._stateObj.attributes.target_temp_low,
@@ -190,6 +191,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   private _debouncedCallService = simpleDebounce((target: "value" | "low" | "high") => this._callService(target), 1000);
 
   private _handleButton(ev: Event) {
+    this._lastInteraction = Date.now();
     const btn = ev.currentTarget as any;
     const target = btn.target as "value" | "low" | "high";
     const step = btn.step as number;
@@ -210,6 +212,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     if (isNaN(value)) return;
     // User finished dragging — commit value and stop ignoring hass updates.
     this._isDragging = false;
+    this._lastInteraction = Date.now();
     this._targetTemperature = { ...this._targetTemperature, value };
     this._callService("value");
   }
