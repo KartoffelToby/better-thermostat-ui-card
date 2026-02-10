@@ -74,7 +74,7 @@ export class ClimateHvacModesControl extends LitElement {
   protected render(): TemplateResult {
     const rtl = computeRTL(this.hass);
 
-    const modes = this.entity.attributes.hvac_modes
+    const modes = (this.entity.attributes.hvac_modes ?? [])
       .filter((mode) => (this.modes ?? []).includes(mode))
       .sort(compareClimateHvacModes);
 
@@ -118,14 +118,9 @@ export class ClimateHvacModesControl extends LitElement {
     super.firstUpdated(changedProperties);
 
     await Promise.all([
-      (async () => {
-        if (!customElements.get("mushroom-button"))
-          await import("mushroom-cards/src/shared/button");
-      })(),
-      (async () => {
-        if (!customElements.get("mushroom-button-group"))
-          await import("mushroom-cards/src/shared/button-group");
-      })(),
+      ensureElementLoaded("mushroom-button", "mushroom-cards/src/shared/button"),
+      ensureElementLoaded("mushroom-button-group", "mushroom-cards/src/shared/button-group"),
     ]);
+    this.requestUpdate();
   }
 }
