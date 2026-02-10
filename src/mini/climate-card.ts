@@ -84,9 +84,12 @@ export class BetterThermostatUISmallCard
     const climates = entities.filter((e) =>
       CLIMATE_ENTITY_DOMAINS.includes(e.split(".")[0])
     );
+    const btEntity = climates.find(
+      (e) => (hass.states[e]?.attributes as any)?.call_for_heat !== undefined
+    );
     return {
       type: `custom:${CLIMATE_CARD_NAME}`,
-      entity: climates[0],
+      entity: btEntity ?? climates[0],
     };
   }
 

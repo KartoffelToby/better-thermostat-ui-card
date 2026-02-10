@@ -15,7 +15,7 @@ import {
 import { LovelaceGridOptions } from "mushroom-cards/src/ha";
 import { MushroomBaseElement } from "mushroom-cards/src/utils/base-element";
 import { registerCustomCard } from "mushroom-cards/src/utils/custom-cards";
-import { CLIMATE_CARD_EDITOR_NAME, CLIMATE_CARD_NAME } from "./const";
+import { CLIMATE_CARD_EDITOR_NAME, CLIMATE_CARD_NAME, CLIMATE_ENTITY_DOMAINS } from "./const";
 import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { classMap } from "lit/directives/class-map.js";
@@ -84,6 +84,22 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./climate-card-editor");
     return document.createElement(CLIMATE_CARD_EDITOR_NAME) as LovelaceCardEditor;
+  }
+
+  public static async getStubConfig(
+    hass: HomeAssistant
+  ): Promise<BetterThermostatUINormalCardConfig> {
+    const entities = Object.keys(hass.states);
+    const climates = entities.filter((e) =>
+      CLIMATE_ENTITY_DOMAINS.includes(e.split(".")[0])
+    );
+    const btEntity = climates.find(
+      (e) => (hass.states[e]?.attributes as any)?.call_for_heat !== undefined
+    );
+    return {
+      type: `custom:${CLIMATE_CARD_NAME}`,
+      entity: btEntity ?? climates[0],
+    };
   }
 
   private _resizeController = new ResizeController(this, {
