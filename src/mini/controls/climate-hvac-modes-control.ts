@@ -35,7 +35,7 @@ export class ClimateHvacModesControl extends LitElement {
 
   private callService(e: CustomEvent) {
     e.stopPropagation();
-    const mode = (e.target! as any).mode as HvacMode;
+    const mode = (e.currentTarget! as any).mode as HvacMode;
     this.hass.callService("climate", "set_hvac_mode", {
       entity_id: this.entity!.entity_id,
       hvac_mode: mode,

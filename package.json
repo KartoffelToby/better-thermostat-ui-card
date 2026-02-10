@@ -26,14 +26,13 @@
   "dependencies": {
     "@lit-labs/observers": "^2.1.0",
     "@mdi/js": "^7.4.47",
-    "@rollup/plugin-alias": "^5.1.1",
-    "hammerjs": "^2.0.8",
     "lit": "^3.3.2",
     "memoize-one": "^6.0.0",
     "superstruct": "^2.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
+    "@rollup/plugin-alias": "^5.1.1",
     "@babel/preset-env": "^7.29.0",
     "@babel/preset-typescript": "^7.28.5",
     "@braintree/sanitize-url": "^7.1.2",
@@ -44,7 +43,6 @@
     "@codemirror/state": "^6.5.4",
     "@codemirror/view": "^6.39.13",
     "@date-fns/tz": "^1.4.1",
-    "@egjs/hammerjs": "^2.0.17",
     "@formatjs/intl-datetimeformat": "^6.18.2",
     "@formatjs/intl-displaynames": "^6.8.13",
     "@formatjs/intl-durationformat": "^0.7.6",
@@ -77,7 +75,6 @@
     "@rollup/plugin-typescript": "^12.3.0",
     "@tsparticles/engine": "^3.9.1",
     "@tsparticles/preset-links": "^3.2.0",
-    "@types/hammerjs": "^2.0.46",
     "@types/node": "^24.10.12",
     "@vaadin/combo-box": "^24.9.10",
     "@vaadin/vaadin-themable-mixin": "^24.9.10",

@@ -278,9 +278,6 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     };
 
     const renderCurrent = (temperature: number, big = false) => {
-      const formatOptions: Intl.NumberFormatOptions = {
-        maximumFractionDigits: 1,
-      };
       const formatted = this.hass.formatEntityAttributeValue(stateObj, "current_temperature", temperature);
       if (big) {
         return html`
@@ -288,7 +285,6 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
             .value=${temperature}
             .unit=${this.hass.config.unit_system.temperature}
             .hass=${this.hass as any}
-            .formatOptions=${formatOptions}
           ></ha-big-number>
         `;
       }
@@ -453,9 +449,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       iconStyle["--icon-color"] = `var(--rgb-grey)`;
       iconStyle["--bg-color"] = `rgba(var(--rgb-grey), 0.2)`;
 
-      const buttonModes = ["heat", {
-        ...this._stateObj.attributes.preset_modes
-      }, "off"]
+      const buttonModes: string[] = ["heat", "presets", "off"]
 
       return html`
       <ha-card>
@@ -531,18 +525,18 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     </div></ha-card>`;
   }
 
-  private renderModeButton(mode: HvacMode) {
+  private renderModeButton(mode: string) {
 
-    if(typeof mode !== "string") {
-          mode = this._stateObj.attributes.preset_mode;
+    if(mode === "presets") {
+          const presetMode = this._stateObj.attributes.preset_mode;
           const iconStyle = {};
-          const color = getHvacModeColor(mode);
-          const selectedMode = (this._stateObj.attributes.preset_mode !== 'none') ? this._stateObj.attributes.preset_mode : mode;
-          if (selectedMode === this._stateObj.attributes.preset_mode) {
+          const selectedMode = (presetMode != null && presetMode !== 'none') ? presetMode : "none";
+          const color = getHvacModeColor(selectedMode as HvacMode);
+          if (presetMode != null && presetMode !== 'none') {
             iconStyle["--icon-color"] = `rgb(${color})`;
             iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
           }
-          const icon = getHvacModeIcon(this._stateObj.attributes.preset_mode);
+          const icon = getHvacModeIcon(selectedMode as HvacMode);
           const presets = (this._stateObj.attributes.preset_modes?.filter(p => p != "none") || []) as HvacMode[];
 
 
@@ -574,7 +568,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     }
 
     const iconStyle = {};
-    const color = mode === "off" ? "var(--rgb-grey)" : getHvacModeColor(mode);
+    const color = mode === "off" ? "var(--rgb-grey)" : getHvacModeColor(mode as HvacMode);
     if (mode === this._stateObj.state) {
       iconStyle["--icon-color"] = `rgb(${color})`;
       iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
@@ -586,9 +580,8 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
         .mode=${mode}
         .disabled=${!isAvailable(this._stateObj)}
         @click=${this.triggerModeChange.bind(this, mode)}
-        @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
       >
-        <ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>
+        <ha-icon .icon=${getHvacModeIcon(mode as HvacMode)}></ha-icon>
       </mushroom-button>
     `;
   }
@@ -613,7 +606,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   };
 
   private triggerModeChange(mode: any) {
-    if (this._stateObj.attributes.hvac_modes.includes(mode)) {
+    if (Array.isArray(this._stateObj?.attributes?.hvac_modes) && this._stateObj.attributes.hvac_modes.includes(mode)) {
       this.hass.callService("climate", "set_hvac_mode", {
         entity_id: this._stateObj?.entity_id,
         hvac_mode: mode,

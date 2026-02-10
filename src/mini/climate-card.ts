@@ -188,7 +188,7 @@ export class BetterThermostatUISmallCard
           "current_humidity"
         )}`;
       }
-      stateDisplay += ` ⸱ ${window ? ` (${windowOpen}) ` : ""} ${temperature}${humidity}`;
+      stateDisplay += ` ⸱ ${window ? `(${windowOpen}) ` : ""}${temperature}${humidity}`;
     }
     const rtl = computeRTL(this.hass);
 
@@ -256,7 +256,8 @@ export class BetterThermostatUISmallCard
                   .mode=${mode}
                   .disabled=${!isAvailable(stateObj)}
                     @click=${this.triggerModeChange.bind(this, mode)}
-                    @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+                    .actionHandler=${actionHandler({ hasHold: true })}
+                    @action=${(e: ActionHandlerEvent) => { if (e.detail.action === "hold") { e.stopPropagation(); this._openPresetSelect(true); } }}
                 >
                   <ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>
                 </mushroom-button>
@@ -356,7 +357,7 @@ export class BetterThermostatUISmallCard
         <mushroom-badge-icon
           slot="badge"
           .icon=${"mdi:alert"}
-          title=${"Degraded mode"}
+          title=${localize({ hass: this.hass as any, string: "extra_states.degraded_mode" })}
           @click=${(ev: Event) => { ev.stopPropagation(); ev.preventDefault(); this.dispatchEvent(new CustomEvent("hass-more-info", { detail: { entityId: entity.entity_id }, bubbles: true, composed: true })); }}
           style=${styleMap({
             "--main-color": "var(--warning-color)",
@@ -370,7 +371,7 @@ export class BetterThermostatUISmallCard
         <mushroom-badge-icon
           slot="badge"
           .icon=${"mdi:wifi-strength-off-outline"}
-          title=${"Connection lost: " + errorEntityId}
+          title=${localize({ hass: this.hass as any, string: "extra_states.connection_lost", search: "{name}", replace: errorEntityId })}
           @click=${(ev: Event) => this._handleErrorClick(ev, errorEntityId)}
           style=${styleMap({
             "--main-color": "var(--error-color)",
@@ -384,7 +385,7 @@ export class BetterThermostatUISmallCard
         <mushroom-badge-icon
           slot="badge"
           .icon=${"mdi:battery-alert"}
-          title=${"Low battery: " + lowBattery.name}
+          title=${localize({ hass: this.hass as any, string: "extra_states.low_battery", search: "{name}", replace: lowBattery.name })}
           @click=${(ev: Event) => this._handleLowBatteryClick(ev, lowBattery)}
           style=${styleMap({
             "--main-color": "var(--error-color)",
@@ -583,7 +584,8 @@ export class BetterThermostatUISmallCard
         style=${styleMap(iconStyle)}
         .disabled=${!isAvailable(entity)}
         @click=${(e: Event) => { e.stopPropagation(); this.toggleEco(e as CustomEvent); }}
-        @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+        .actionHandler=${actionHandler({ hasHold: true })}
+        @action=${(e: ActionHandlerEvent) => { if (e.detail.action === "hold") { e.stopPropagation(); this._openPresetSelect(true); } }}
       >
         <ha-icon .icon=${icon}></ha-icon>
       </mushroom-button>
@@ -591,15 +593,16 @@ export class BetterThermostatUISmallCard
   }
 
   private renderPresetFeature(entity: ClimateEntity) {
-          const mode = entity.attributes.preset_mode || "none";
+          const presetMode = entity.attributes.preset_mode;
+          const mode = (presetMode != null && presetMode !== 'none') ? presetMode : "none";
           const iconStyle = {};
           const color = getHvacModeColor(mode as HvacMode);
-          const selectedMode = (entity.attributes.preset_mode !== 'none') ? entity.attributes.preset_mode : mode;
-          if (selectedMode === entity.attributes.preset_mode) {
+          const selectedMode = (presetMode != null && presetMode !== 'none') ? presetMode : mode;
+          if (presetMode != null && presetMode !== 'none') {
             iconStyle["--icon-color"] = `rgb(${color})`;
             iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
           }
-          const icon = getHvacModeIcon((entity.attributes.preset_mode || "none") as HvacMode);
+          const icon = getHvacModeIcon(mode as HvacMode);
 
           const presets = (entity.attributes.preset_modes?.filter(p => p != "none") || [] as HvacMode[]);
           if (presets.length === 1) {
@@ -608,7 +611,8 @@ export class BetterThermostatUISmallCard
                   style=${styleMap(iconStyle)}
                   .mode=${selectedMode}
                     @click=${this.triggerModeChange.bind(this, presets[0])}
-                    @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+                    .actionHandler=${actionHandler({ hasHold: true })}
+                    @action=${(e: ActionHandlerEvent) => { if (e.detail.action === "hold") { e.stopPropagation(); this._openPresetSelect(true); } }}
                 >
                   <ha-icon .icon=${getHvacModeIcon(presets[0] as HvacMode)}></ha-icon>
                 </mushroom-button>

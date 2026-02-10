@@ -40,6 +40,9 @@
     "cooling": "Cooling",
     "heating": "Heating",
     "cooling_off": "Cooling off",
-    "heating_off": "Heating off"
+    "heating_off": "Heating off",
+    "degraded_mode": "Degraded mode",
+    "connection_lost": "Connection lost: {name}",
+    "low_battery": "Low battery: {name}"
   }
 }
