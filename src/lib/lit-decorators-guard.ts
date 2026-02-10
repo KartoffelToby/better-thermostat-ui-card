@@ -1,5 +1,7 @@
-export * from "lit/decorators.js";
-import { customElement as baseCustomElement } from "lit/decorators.js";
+// Use a direct relative path to the real lit module to avoid the circular
+// tsconfig paths alias (which maps "lit/decorators.js" back to this file).
+export * from "../../node_modules/lit/decorators.js";
+import { customElement as baseCustomElement } from "../../node_modules/lit/decorators.js";
 
 export function customElement(name: string) {
   const base = baseCustomElement(name as any);

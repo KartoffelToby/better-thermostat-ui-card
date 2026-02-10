@@ -22,7 +22,7 @@
         "show_current_as_primary": "Visa aktuell temperatur som primär",
         "show_secondary": "Visa sekundär information",
         "prevent_interaction_on_scroll": "Förhindra interaktion vid rullning",
-        "disable_humidity": "Turn off the humidity display",
+        "disable_humidity": "Inaktivera fuktighetsvisning",
         "show_temperature_control": "Visa temperaturkontroll",
         "collapsible_controls": "Ihopfällbara kontroller",
         "disable_connection_lost_warning": "Inaktivera varning för tappad anslutning",

@@ -13,12 +13,13 @@ jobs:
         with:
           submodules: recursive
       # Build
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.5
       - name: Build the file
         run: |
-          cd /home/runner/work/better-thermostat-ui-card/better-thermostat-ui-card
-          npm install --force
-          npm ci --ignore-scripts
-          npm run build
+          bun install
+          bun run build
       # Upload build file to the releas as an asset.
       - name: Upload zip to release
         uses: svenstaro/upload-release-action@v1-release

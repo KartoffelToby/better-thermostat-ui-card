@@ -22,7 +22,7 @@
         "show_current_as_primary": "Jelenlegi hőmérséklet megjelenítése elsődlegesként",
         "show_secondary": "Másodlagos információk megjelenítése",
         "prevent_interaction_on_scroll": "Interakció megakadályozása görgetéskor",
-        "disable_humidity": "Turn off the humidity display",
+        "disable_humidity": "Páratartalom megjelenítés kikapcsolása",
         "show_temperature_control": "Hőmérséklet-szabályzó megjelenítése",
         "collapsible_controls": "Összecsukható vezérlők",
         "disable_connection_lost_warning": "Kapcsolatvesztés figyelmeztetés kikapcsolása",

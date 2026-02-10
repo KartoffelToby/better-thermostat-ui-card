@@ -1,4 +1,3 @@
-import { icon } from './../../ha-frontend/src/common/structs/is-icon';
 import { CSSResultGroup, html, nothing, PropertyValues } from "lit";
 import { ResizeController } from "@lit-labs/observers/resize-controller";
 
@@ -27,7 +26,7 @@ import { CLIMATE_HVAC_ACTION_TO_MODE, ClimateEntity, stateColorCss, stateActive,
 import setupMushroomLocalize from "mushroom-cards/src/localize";
 import setupCustomlocalize from "../localize/localize";
 import { getHvacModeColor, getHvacModeIcon } from "./utils";
-import { info } from 'console';
+
 
 interface BatteryState {
   battery: string;
@@ -250,7 +249,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     const active = isActive(stateObj);
     const available = isAvailable(stateObj);
     const sliderMode = SLIDER_MODES[(stateObj.state as HvacMode) || "off"] || "full";
-    const preventInteractionOnScroll = this._config?.prevent_interaction_on_scroll ?? false;
+    this.preventInteractionOnScroll = Boolean(this._config?.prevent_interaction_on_scroll);
 
     const showCurrentAsPrimary = this._config.show_current_as_primary;
     const showSecondary = this._config.show_secondary;
@@ -503,7 +502,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
 
             <div class=${classMap({ 'preset-select': true, open: this._presetOpen })}>
-          ${this._stateObj.attributes.preset_modes.map((mode: any) => html`
+          ${(this._stateObj.attributes.preset_modes ?? []).map((mode: any) => html`
               <mushroom-button
                 style=${styleMap(iconStyle)}
                 .mode=${mode}
@@ -527,9 +526,9 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     `;
   }
 
-    return html`<div class="container" style=${styleMap({})}>
+    return html`<ha-card><div class="container" style=${styleMap({})}>
       <div class="info">${renderLabel()}${primary()}${secondary()}${renderHumidity()}</div>
-    </div>`;
+    </div></ha-card>`;
   }
 
   private renderModeButton(mode: HvacMode) {
@@ -595,7 +594,6 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   }
 
   private _openPresetSelect(open = true) {
-    console.log("Opening preset select:", open);
     this._presetOpen = open;
     if (open) {
       window.addEventListener("pointerdown", this._onDocumentPointerDown);
@@ -615,8 +613,6 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   };
 
   private triggerModeChange(mode: any) {
-    // check if mode is in HvacMode
-    console.log(this._stateObj);
     if (this._stateObj.attributes.hvac_modes.includes(mode)) {
       this.hass.callService("climate", "set_hvac_mode", {
         entity_id: this._stateObj?.entity_id,

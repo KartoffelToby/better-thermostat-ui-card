@@ -22,7 +22,7 @@
         "show_current_as_primary": "Показване на текущата температура като основна",
         "show_secondary": "Показване на вторична информация",
         "prevent_interaction_on_scroll": "Предотвратяване на взаимодействие при превъртане",
-        "disable_humidity": "Turn off the humidity display",
+        "disable_humidity": "Изключване на показването на влажността",
         "show_temperature_control": "Показване на контрол на температурата",
         "collapsible_controls": "Сгъваеми контроли",
         "disable_connection_lost_warning": "Изключване на предупреждение за загубена връзка",

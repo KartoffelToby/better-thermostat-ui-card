@@ -79,7 +79,7 @@ export class ClimateHvacModesControl extends LitElement {
       .sort(compareClimateHvacModes);
 
     const presetModes = this.entity.attributes.preset_modes || [];
-    const hasEco = (presetModes.includes("eco") || presetModes.length > 0 || (this.entity.attributes as any).eco_mode === true) && !this.disableEco;
+    const hasEco = (presetModes.includes("eco") || (this.entity.attributes as any).eco_mode === true) && !this.disableEco;
 
     return html`
       <mushroom-button-group .fill=${this.fill} ?rtl=${rtl}>

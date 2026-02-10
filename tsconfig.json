@@ -16,19 +16,20 @@
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "outDir": "dist",
-    "rootDir": "."
+    "rootDir": ".",
+    "baseUrl": "./",
+    "paths": {
+      "@lit-labs/observers/resize-controller": [
+        "./node_modules/@lit-labs/observers/resize-controller.js"
+      ],
+      "lit/decorators": [
+        "src/lib/lit-decorators-guard.ts"
+      ],
+      "lit/decorators.js": [
+        "src/lib/lit-decorators-guard.ts"
+      ]
+    }
   },
   "include": ["**/*.ts"],
-  "exclude": ["node_modules", "ha-frontend/test", "ha-frontend/demo", "ha-frontend/gallery", "ha-frontend/cast", "ha-frontend/hassio"],
-  "paths": {
-    "@lit-labs/observers/resize-controller": [
-      "./node_modules/@lit-labs/observers/resize-controller.js"
-    ],
-    "lit/decorators": [
-      "src/lib/lit-decorators-guard.ts"
-    ],
-    "lit/decorators.js": [
-      "src/lib/lit-decorators-guard.ts"
-    ]
-  }
+  "exclude": ["node_modules", "ha-frontend/test", "ha-frontend/demo", "ha-frontend/gallery", "ha-frontend/cast", "ha-frontend/hassio"]
 }

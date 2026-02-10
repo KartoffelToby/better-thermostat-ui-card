@@ -11,6 +11,12 @@ import serve from "rollup-plugin-serve";
 import ignore from "./rollup-ignore-plugin.js";
 import alias from "@rollup/plugin-alias";
 import path from "path";
+import { fileURLToPath } from "url";
+import { createRequire } from "module";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
 
 const IGNORED_FILES = [
   "@material/mwc-notched-outline/mwc-notched-outline.js",

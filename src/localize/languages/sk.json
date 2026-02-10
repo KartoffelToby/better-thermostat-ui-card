@@ -22,7 +22,7 @@
         "show_current_as_primary": "Zobraziť aktuálnu teplotu ako hlavnú",
         "show_secondary": "Zobraziť sekundárne informácie",
         "prevent_interaction_on_scroll": "Zabrániť interakcii pri posúvaní",
-        "disable_humidity": "Turn off the humidity display",
+        "disable_humidity": "Vypnúť zobrazenie vlhkosti",
         "show_temperature_control": "Zobraziť ovládanie teploty",
         "collapsible_controls": "Skladateľné ovládanie",
         "disable_connection_lost_warning": "Vypnúť upozornenie na stratu spojenia",

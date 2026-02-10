@@ -14,6 +14,7 @@
         "disable_menu": "Išjungti meniu",
         "disable_battery_warning": "Išjungti baterijos pranešimą",
         "disable_buttons": "Nerodyti plius/minus mygtukų",
+        "disable_humidity": "Išjungti drėgmės rodymą",
         "eco_temperature": "ECO temperatūros rėžimas",
         "set_current_as_main": "Sukeiskite dabartinę ir tikslinę temperatūrą vietomis",
         "show_temperature_control": "Rodyti temperatūros valdymą",

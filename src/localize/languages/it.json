@@ -22,7 +22,7 @@
         "show_current_as_primary": "Mostra temperatura attuale come principale",
         "show_secondary": "Mostra informazioni secondarie",
         "prevent_interaction_on_scroll": "Prevenire interazione durante lo scorrimento",
-        "disable_humidity": "Turn off the humidity display",
+        "disable_humidity": "Disattiva visualizzazione umidità",
         "show_temperature_control": "Mostra controllo temperatura",
         "collapsible_controls": "Controlli comprimibili",
         "disable_connection_lost_warning": "Disabilita avviso perdita connessione",

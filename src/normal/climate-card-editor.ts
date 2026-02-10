@@ -99,8 +99,10 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
   @state() private _config?: BetterThermostatUINormalCardConfig;
 
   static get styles(): CSSResultGroup {
+    const base = super.styles;
+    const baseArray = Array.isArray(base) ? base : base ? [base] : [];
     return [
-      ...super.styles as CSSResultGroup[],
+      ...baseArray,
       css`
         :host {
           display: block;

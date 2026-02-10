@@ -172,7 +172,7 @@ export class BetterThermostatUISmallCard
     if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
       stateDisplay = this.hass.formatEntityAttributeValue(stateObj, "hvac_action");
     }
-    if (stateObj.attributes.current_temperature !== null) {
+    if (stateObj.attributes.current_temperature != null) {
       const temperature = this.hass.formatEntityAttributeValue(
         stateObj,
         "current_temperature"
@@ -237,7 +237,7 @@ export class BetterThermostatUISmallCard
               ? this.renderPicture(picture)
               : this.renderIcon(stateObj, icon)}
             ${this.renderBadge(stateObj)}
-            ${this.renderStateInfo(stateObj, appearance, name, stateDisplay)};
+            ${this.renderStateInfo(stateObj, appearance, name, stateDisplay)}
           </mushroom-state-item>
           ${isControlVisible
             ? html`
@@ -711,7 +711,7 @@ export class BetterThermostatUISmallCard
             display: block;
             content: "";
             position: absolute;
-            right: -10%
+            right: -10%;
             bottom: -10%;
             background: radial-gradient(100% 60% at 50% 90%, var(--action-color, transparent) 0%, transparent 100%);
             opacity: 0.3;
@@ -740,7 +740,6 @@ export class BetterThermostatUISmallCard
           display: flex;
           align-items: center;
           justify-content: space-evenly;
-          z-index: 10;
           gap: 15px;
           flex-direction: row;
           max-height: 0%;
@@ -748,7 +747,6 @@ export class BetterThermostatUISmallCard
           transition: max-height 300ms ease-in-out, padding 300ms ease-in-out;
           z-index: -1;
           padding: 0 1em 0em 1em;
-          overflow: scroll;
           box-sizing: border-box;
           background-color: rgba(var(--rgb-card-background-color), 0.3);
         }

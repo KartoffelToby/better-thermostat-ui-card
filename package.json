@@ -97,7 +97,7 @@
     "leaflet-draw": "^1.0.4",
     "leaflet.markercluster": "^1.5.3",
     "marked": "^17.0.1",
-    "mushroom-cards": "github:piitaya/lovelace-mushroom#main",
+    "mushroom-cards": "github:piitaya/lovelace-mushroom#3f0c3d15f9116931af194cd6abbe74c8ac4d692e",
     "prettier": "^3.8.1",
     "qrcode": "^1.5.4",
     "rollup": "4.46.2",
@@ -111,6 +111,6 @@
     "xss": "^1.0.15"
   },
   "volta": {
-    "node": "18.20.4"
+    "node": "24"
   }
 }
