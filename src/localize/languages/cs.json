@@ -22,7 +22,16 @@
         "show_secondary": "Zobrazit sekundární informace",
         "prevent_interaction_on_scroll": "Zabránit interakci při posouvání",
         "disable_humidity": "Zakázat zobrazení vlhkosti",
-        "set_current_as_main": "Prohodit místa cílové a aktuální teploty"
+        "set_current_as_main": "Prohodit místa cílové a aktuální teploty",
+        "show_temperature_control": "Zobrazit ovládání teploty",
+        "collapsible_controls": "Sbalitelné ovládání",
+        "disable_connection_lost_warning": "Vypnout upozornění na ztrátu spojení",
+        "disable_degraded_warning": "Vypnout upozornění na zhoršený režim",
+        "low_battery_threshold": "Práh upozornění na nízkou baterii (%)",
+        "section_display": "Zobrazení",
+        "section_interaction": "Interakce",
+        "section_features": "Funkce",
+        "section_warnings": "Upozornění"
       }
     }
   },

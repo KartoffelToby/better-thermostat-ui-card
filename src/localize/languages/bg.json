@@ -22,7 +22,16 @@
         "show_current_as_primary": "Показване на текущата температура като основна",
         "show_secondary": "Показване на вторична информация",
         "prevent_interaction_on_scroll": "Предотвратяване на взаимодействие при превъртане",
-        "disable_humidity": "Turn off the humidity display"
+        "disable_humidity": "Turn off the humidity display",
+        "show_temperature_control": "Показване на контрол на температурата",
+        "collapsible_controls": "Сгъваеми контроли",
+        "disable_connection_lost_warning": "Изключване на предупреждение за загубена връзка",
+        "disable_degraded_warning": "Изключване на предупреждение за влошен режим",
+        "low_battery_threshold": "Праг на предупреждение за изтощена батерия (%)",
+        "section_display": "Дисплей",
+        "section_interaction": "Взаимодействие",
+        "section_features": "Функции",
+        "section_warnings": "Предупреждения"
       }
     }
   },

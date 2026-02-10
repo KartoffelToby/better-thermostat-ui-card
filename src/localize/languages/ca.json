@@ -22,7 +22,16 @@
         "show_current_as_primary": "Mostra la temperatura actual com a principal",
         "show_secondary": "Mostra informació secundària",
         "prevent_interaction_on_scroll": "Evitar la interacció en desplaçar-se",
-        "disable_humidity": "Turn off the humidity display"
+        "disable_humidity": "Turn off the humidity display",
+        "show_temperature_control": "Mostra el control de temperatura",
+        "collapsible_controls": "Controls plegables",
+        "disable_connection_lost_warning": "Desactiva avís de pèrdua de connexió",
+        "disable_degraded_warning": "Desactiva avís de mode degradat",
+        "low_battery_threshold": "Llindar d'avís de bateria baixa (%)",
+        "section_display": "Visualització",
+        "section_interaction": "Interacció",
+        "section_features": "Funcionalitats",
+        "section_warnings": "Avisos"
       }
     }
   },

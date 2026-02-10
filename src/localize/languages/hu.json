@@ -22,7 +22,16 @@
         "show_current_as_primary": "Jelenlegi hőmérséklet megjelenítése elsődlegesként",
         "show_secondary": "Másodlagos információk megjelenítése",
         "prevent_interaction_on_scroll": "Interakció megakadályozása görgetéskor",
-        "disable_humidity": "Turn off the humidity display"
+        "disable_humidity": "Turn off the humidity display",
+        "show_temperature_control": "Hőmérséklet-szabályzó megjelenítése",
+        "collapsible_controls": "Összecsukható vezérlők",
+        "disable_connection_lost_warning": "Kapcsolatvesztés figyelmeztetés kikapcsolása",
+        "disable_degraded_warning": "Korlátozott mód figyelmeztetés kikapcsolása",
+        "low_battery_threshold": "Alacsony akkumulátor figyelmeztetési küszöb (%)",
+        "section_display": "Megjelenítés",
+        "section_interaction": "Interakció",
+        "section_features": "Funkciók",
+        "section_warnings": "Figyelmeztetések"
       }
     }
   },

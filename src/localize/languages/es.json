@@ -22,7 +22,16 @@
         "show_current_as_primary": "Mostrar temperatura actual como principal",
         "show_secondary": "Mostrar información secundaria",
         "prevent_interaction_on_scroll": "Evitar interacción al desplazarse",
-        "disable_humidity": "Turn off the humidity display"
+        "disable_humidity": "Turn off the humidity display",
+        "show_temperature_control": "Mostrar control de temperatura",
+        "collapsible_controls": "Controles plegables",
+        "disable_connection_lost_warning": "Desactivar aviso de pérdida de conexión",
+        "disable_degraded_warning": "Desactivar aviso de modo degradado",
+        "low_battery_threshold": "Umbral de aviso de batería baja (%)",
+        "section_display": "Pantalla",
+        "section_interaction": "Interacción",
+        "section_features": "Funciones",
+        "section_warnings": "Advertencias"
       }
     }
   },

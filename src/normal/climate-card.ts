@@ -21,12 +21,17 @@ import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { classMap } from "lit/directives/class-map.js";
 import { BetterThermostatUINormalCardConfig } from "./climate-card-config";
-import { mdiMinus, mdiPlus, mdiThermometer, mdiThermostat, mdiWindowOpenVariant, mdiDotsVertical, mdiFire, mdiWaterPercent } from "@mdi/js";
+import { mdiMinus, mdiPlus, mdiThermometer, mdiThermostat, mdiWindowOpenVariant, mdiDotsVertical, mdiFire, mdiWaterPercent, mdiBattery10, mdiAlert, mdiBatteryAlert, mdiWifiStrengthOffOutline } from "@mdi/js";
 import { ShadowStyles } from './style';
 import { CLIMATE_HVAC_ACTION_TO_MODE, ClimateEntity, stateColorCss, stateActive, stateControlCircularSliderStyle } from "../shims/ha-frontend-shim";
 import setupMushroomLocalize from "mushroom-cards/src/localize";
 import setupCustomlocalize from "../localize/localize";
 import { getHvacModeColor, getHvacModeIcon } from "./utils";
+import { info } from 'console';
+
+interface BatteryState {
+  battery: string;
+}
 
 const SLIDER_MODES: Record<HvacMode, string> = {
   auto: "full",
@@ -74,6 +79,8 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   @property({ type: String }) public mode: string = "off";
   @property({ type: Number }) public current: number = 0;
   @property({ type: Number }) public current_humidity: number = 0;
+  private lowBattery: { name: string; battery: number } | undefined;
+  private error: any = [];
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./climate-card-editor");
@@ -297,14 +304,75 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     };
 
     const renderLabel = () => {
+
+      // --- Low battery detection ---
+      let lowBatteryEntity: { name: string; battery: number } | undefined;
+      if ((stateObj.attributes as any)?.batteries !== undefined && !this?._config?.disable_battery_warning) {
+        try {
+          const showLowBatteryWarningWhenPercentageLowerThan = this._config?.low_battery_threshold ?? 10;
+          const batteries = Object.entries(JSON.parse((stateObj.attributes as any).batteries) as Record<string, BatteryState>);
+          const parsedBatteries = batteries.map((data) => ({ "name": data[0], "battery": data[1].battery === "on" ? showLowBatteryWarningWhenPercentageLowerThan - 1 : data[1].battery === "off" ? 100 : parseFloat(data[1].battery) }));
+          const lowBatteries = parsedBatteries.filter((entity) => entity.battery < showLowBatteryWarningWhenPercentageLowerThan);
+          lowBatteryEntity = lowBatteries[0];
+          this.lowBattery = lowBatteryEntity;
+        } catch (_e) {
+          this.lowBattery = undefined;
+        }
+      } else {
+        this.lowBattery = undefined;
+      }
+
+      // --- Connection error detection ---
+      let errorEntityId: string | undefined;
+      if ((stateObj.attributes as any)?.errors !== undefined && !this?._config?.disable_connection_lost_warning) {
+        try {
+          const errors = JSON.parse((stateObj.attributes as any).errors);
+          if (Array.isArray(errors) && errors.length > 0) {
+            const first = errors[0];
+            this.error = first;
+            if (typeof first === "string") {
+              errorEntityId = first;
+            } else if (typeof first === "object" && first !== null) {
+              errorEntityId = first.entity_id || first.entity || first.name;
+            }
+          } else {
+            this.error = [];
+          }
+        } catch (_e) {
+          this.error = [];
+        }
+      } else {
+        this.error = [];
+      }
+
+      // --- Build warning icons ---
+      const degradedMode = !this?._config?.disable_degraded_warning && (stateObj.attributes as any)?.degraded_mode === true;
+      const warningIcons = html`
+        ${degradedMode ? html`
+          <p class="label degraded-label" title=${"Degraded mode"} style="color: var(--warning-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, stateObj.entity_id); }}>
+            <ha-svg-icon .path=${mdiAlert}></ha-svg-icon>
+          </p>
+        ` : nothing}
+        ${errorEntityId ? html`
+          <p class="label error-label" title=${"Connection lost: " + errorEntityId} style="color: var(--error-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, errorEntityId!); }}>
+            <ha-svg-icon .path=${mdiWifiStrengthOffOutline}></ha-svg-icon>
+          </p>
+        ` : nothing}
+        ${lowBatteryEntity ? html`
+          <p class="label batteries-label" title=${"Low battery: " + lowBatteryEntity.name} style="color: var(--error-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, lowBatteryEntity!.name); }}>
+            <ha-svg-icon .path=${mdiBatteryAlert}></ha-svg-icon>
+          </p>
+        ` : nothing}
+      `;
+
       const window = (stateObj.attributes as any).window_open;
       if (window) {
-        return html`<p class="label window-label"><ha-svg-icon .path=${mdiWindowOpenVariant}></ha-svg-icon></p>`;
+        return html`${warningIcons}<p class="label window-label"><ha-svg-icon .path=${mdiWindowOpenVariant}></ha-svg-icon></p>`;
       }
       if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
-        return html`<p class="label hvac_action">${this.hass.formatEntityAttributeValue(stateObj, "hvac_action")}</p>`;
+        return html`${warningIcons}<p class="label hvac_action">${this.hass.formatEntityAttributeValue(stateObj, "hvac_action")}</p>`;
       }
-      return html`<p class="label hvac_action">${this.hass.formatEntityState(stateObj)}</p>`;
+      return html`${warningIcons}<p class="label hvac_action">${this.hass.formatEntityState(stateObj)}</p>`;
     };
 
     const primary = () => {
@@ -565,6 +633,15 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       this._openPresetSelect(false);
       return;
     }
+  }
+
+  private _openMoreInfo(ev: Event, entityId: string) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    if (!entityId) return;
+    fireEvent(this as any, "hass-more-info" as any, {
+      entityId,
+    });
   }
 
   disconnectedCallback() {

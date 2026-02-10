@@ -50,6 +50,10 @@ import { localize } from "../localize/localize";
 
 type ClimateCardControl = "temperature_control" | "hvac_mode_control";
 
+interface BatteryState {
+  battery: string;
+}
+
 const CONTROLS_ICONS: Record<ClimateCardControl, string> = {
   temperature_control: "mdi:thermometer",
   hvac_mode_control: "mdi:thermostat",
@@ -342,9 +346,138 @@ export class BetterThermostatUISmallCard
     const unavailable = !isAvailable(entity);
     if (unavailable) {
       return super.renderBadge(entity);
-    } else {
-      return this.renderActionBadge(entity);
     }
+
+    const lowBattery = this._getLowBattery(entity);
+    const errorEntityId = this._getErrorEntityId(entity);
+    const degradedMode = !this._config?.disable_degraded_warning && (entity.attributes as any)?.degraded_mode === true;
+    if (degradedMode) {
+      return html`
+        <mushroom-badge-icon
+          slot="badge"
+          .icon=${"mdi:alert"}
+          title=${"Degraded mode"}
+          @click=${(ev: Event) => { ev.stopPropagation(); ev.preventDefault(); this.dispatchEvent(new CustomEvent("hass-more-info", { detail: { entityId: entity.entity_id }, bubbles: true, composed: true })); }}
+          style=${styleMap({
+            "--main-color": "var(--warning-color)",
+            "--icon-color": "black",
+          })}
+        ></mushroom-badge-icon>
+      `;
+    }
+    if (errorEntityId) {
+      return html`
+        <mushroom-badge-icon
+          slot="badge"
+          .icon=${"mdi:wifi-strength-off-outline"}
+          title=${"Connection lost: " + errorEntityId}
+          @click=${(ev: Event) => this._handleErrorClick(ev, errorEntityId)}
+          style=${styleMap({
+            "--main-color": "var(--error-color)",
+          })}
+        ></mushroom-badge-icon>
+      `;
+    }
+
+    if (lowBattery) {
+      return html`
+        <mushroom-badge-icon
+          slot="badge"
+          .icon=${"mdi:battery-alert"}
+          title=${"Low battery: " + lowBattery.name}
+          @click=${(ev: Event) => this._handleLowBatteryClick(ev, lowBattery)}
+          style=${styleMap({
+            "--main-color": "var(--error-color)",
+          })}
+        ></mushroom-badge-icon>
+      `;
+    }
+
+    return this.renderActionBadge(entity);
+  }
+
+  private _getLowBattery(entity: ClimateEntity) {
+    if (this._config?.disable_battery_warning) return undefined;
+
+    const batteriesRaw = (entity.attributes as any)?.batteries;
+    if (batteriesRaw === undefined) return undefined;
+
+    try {
+      const showLowBatteryWarningWhenPercentageLowerThan = this._config?.low_battery_threshold ?? 10;
+      const batteries = Object.entries(
+        JSON.parse(batteriesRaw) as Record<string, BatteryState>
+      );
+      const parsedBatteries = batteries.map((data) => ({
+        name: data[0],
+        battery:
+          data[1].battery === "on"
+            ? showLowBatteryWarningWhenPercentageLowerThan - 1
+            : data[1].battery === "off"
+              ? 100
+              : parseFloat(data[1].battery),
+      }));
+      return parsedBatteries.find(
+        (battery) =>
+          battery.battery < showLowBatteryWarningWhenPercentageLowerThan
+      );
+    } catch (error) {
+      return undefined;
+    }
+  }
+
+  private _getErrorEntityId(entity: ClimateEntity) {
+    if (this._config?.disable_connection_lost_warning) return undefined;
+
+    const errorsRaw = (entity.attributes as any)?.errors;
+    if (errorsRaw === undefined) return undefined;
+
+    try {
+      const errors = JSON.parse(errorsRaw);
+      if (!Array.isArray(errors) || errors.length === 0) return undefined;
+
+      const first = errors[0];
+      if (typeof first === "string") return first;
+      if (typeof first === "object" && first !== null) {
+        return first.entity_id || first.entity || first.name;
+      }
+
+      return undefined;
+    } catch (error) {
+      return undefined;
+    }
+  }
+
+  private _handleErrorClick(ev: Event, entityId: string) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    if (!entityId) return;
+
+    this.dispatchEvent(
+      new CustomEvent("hass-more-info", {
+        detail: { entityId },
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
+  private _handleLowBatteryClick(
+    ev: Event,
+    lowBattery: { name: string; battery: number }
+  ) {
+    ev.stopPropagation();
+    ev.preventDefault();
+
+    const entityId = lowBattery?.name;
+    if (!entityId) return;
+
+    this.dispatchEvent(
+      new CustomEvent("hass-more-info", {
+        detail: { entityId },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   renderActionBadge(entity: ClimateEntity) {

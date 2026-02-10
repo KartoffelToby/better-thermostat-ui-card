@@ -24,6 +24,10 @@ import * as fi from './languages/fi.json';
 import * as ro from './languages/ro.json';
 import * as ca from './languages/ca.json';
 import * as lv from './languages/lv.json';
+import * as gl from './languages/gl.json';
+import * as kr from './languages/kr.json';
+import * as lt from './languages/lt.json';
+import * as ptBR from './languages/pt-BR.json';
 import { HomeAssistant } from 'mushroom-cards/src/ha';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,6 +58,10 @@ const languages: any = {
   ro: ro,
   ca: ca,
   lv: lv,
+  gl: gl,
+  kr: kr,
+  lt: lt,
+  'pt-BR': ptBR,
 };
 const DEFAULT_LANG = "en";
 

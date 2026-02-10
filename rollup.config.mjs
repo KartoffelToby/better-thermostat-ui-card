@@ -93,6 +93,13 @@ export default [
         '};',
     },
     plugins,
+    onwarn(warning, warn) {
+      // Suppress circular dependency warnings from culori (internal to the library)
+      if (warning.code === 'CIRCULAR_DEPENDENCY' && warning.ids?.some(id => id.includes('node_modules/culori/'))) {
+        return;
+      }
+      warn(warning);
+    },
     // Don't treat local ha-frontend source files as external; only exclude node_modules and core libs
     // Only mark Node builtin modules as external; bundle everything else so
     // 'lit' and other ESM modules are included in the output bundle.

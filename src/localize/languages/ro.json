@@ -22,7 +22,16 @@
         "show_current_as_primary": "Afișează temperatura curentă ca principală",
         "show_secondary": "Afișează informații secundare",
         "prevent_interaction_on_scroll": "Previne interacțiunea la derulare",
-        "disable_humidity": "Turn off the humidity display"
+        "disable_humidity": "Turn off the humidity display",
+        "show_temperature_control": "Afișează controlul temperaturii",
+        "collapsible_controls": "Controale pliabile",
+        "disable_connection_lost_warning": "Dezactivează avertismentul de pierdere a conexiunii",
+        "disable_degraded_warning": "Dezactivează avertismentul de mod degradat",
+        "low_battery_threshold": "Prag avertisment baterie descărcată (%)",
+        "section_display": "Afișare",
+        "section_interaction": "Interacțiune",
+        "section_features": "Funcționalități",
+        "section_warnings": "Avertismente"
       }
     }
   },

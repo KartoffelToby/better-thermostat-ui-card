@@ -22,20 +22,16 @@
         "show_current_as_primary": "显示当前温度为主",
         "show_secondary": "显示次要信息",
         "prevent_interaction_on_scroll": "滚动时防止交互",
-        "disable_humidity": "Turn off the humidity display"
-      }
-    }
-  },
-  "editor": {
-    "card": {
-      "climate": {
-        "disable_eco": "停用节能模式按钮",
-        "disable_off": "停用开关按钮",
-        "disable_menu": "停用菜单按钮",
-        "disable_battery_warning": "停用电量警告",
-        "disable_buttons": "停用温度加减按钮",
-        "eco_temperature": "节能模式温度",
-        "set_current_as_main": "交换目标温度与当前温度位置"
+        "disable_humidity": "关闭湿度显示",
+        "show_temperature_control": "显示温度控制",
+        "collapsible_controls": "可折叠控制",
+        "disable_connection_lost_warning": "关闭连接丢失警告",
+        "disable_degraded_warning": "关闭降级模式警告",
+        "low_battery_threshold": "低电量警告阈值 (%)",
+        "section_display": "显示",
+        "section_interaction": "交互",
+        "section_features": "功能",
+        "section_warnings": "警告"
       }
     }
   },

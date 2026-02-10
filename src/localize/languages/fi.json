@@ -22,7 +22,16 @@
         "show_current_as_primary": "Näytä nykyinen lämpötila ensisijaisena",
         "show_secondary": "Näytä toissijaiset tiedot",
         "prevent_interaction_on_scroll": "Estä vuorovaikutus vieritettäessä",
-        "disable_humidity": "Turn off the humidity display"
+        "disable_humidity": "Turn off the humidity display",
+        "show_temperature_control": "Näytä lämpötilan säätö",
+        "collapsible_controls": "Kokoon taittuvat säätimet",
+        "disable_connection_lost_warning": "Poista yhteyden katkeamisen varoitus käytöstä",
+        "disable_degraded_warning": "Poista heikentyneen tilan varoitus käytöstä",
+        "low_battery_threshold": "Alhaisen akun varoituskynnys (%)",
+        "section_display": "Näyttö",
+        "section_interaction": "Vuorovaikutus",
+        "section_features": "Ominaisuudet",
+        "section_warnings": "Varoitukset"
       }
     }
   },

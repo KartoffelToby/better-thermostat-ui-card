@@ -22,7 +22,16 @@
         "prevent_interaction_on_scroll": "Предотвратить взаимодействие при прокрутке",
         "disable_humidity": "Отключить отображение влажности",
         "eco_temperature": "Температура режима Eco",
-        "set_current_as_main": "Поменять местами требуемую и текущую температуру"
+        "set_current_as_main": "Поменять местами требуемую и текущую температуру",
+        "show_temperature_control": "Показать управление температурой",
+        "collapsible_controls": "Сворачиваемые элементы управления",
+        "disable_connection_lost_warning": "Отключить предупреждение о потере соединения",
+        "disable_degraded_warning": "Отключить предупреждение о деградированном режиме",
+        "low_battery_threshold": "Порог предупреждения о низком заряде (%)",
+        "section_display": "Отображение",
+        "section_interaction": "Взаимодействие",
+        "section_features": "Функции",
+        "section_warnings": "Предупреждения"
       }
     }
   },

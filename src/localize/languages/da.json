@@ -22,7 +22,16 @@
         "show_current_as_primary": "Vis nuværende temperatur som primær",
         "show_secondary": "Vis sekundær information",
         "prevent_interaction_on_scroll": "Forhindre interaktion ved scrolling",
-        "disable_humidity": "Turn off the humidity display"
+        "disable_humidity": "Turn off the humidity display",
+        "show_temperature_control": "Vis temperaturkontrol",
+        "collapsible_controls": "Sammenklappelige kontroller",
+        "disable_connection_lost_warning": "Deaktiver advarsel om mistet forbindelse",
+        "disable_degraded_warning": "Deaktiver advarsel om forringet tilstand",
+        "low_battery_threshold": "Grænse for advarsel om lavt batteri (%)",
+        "section_display": "Visning",
+        "section_interaction": "Interaktion",
+        "section_features": "Funktioner",
+        "section_warnings": "Advarsler"
       }
     }
   },

@@ -22,7 +22,16 @@
         "show_current_as_primary": "Показувати поточну температуру як основну",
         "show_secondary": "Показувати вторинну інформацію",
         "prevent_interaction_on_scroll": "Запобігати взаємодії при прокручуванні",
-        "disable_humidity": "Turn off the humidity display"
+        "disable_humidity": "Turn off the humidity display",
+        "show_temperature_control": "Показати контроль температури",
+        "collapsible_controls": "Згортані елементи керування",
+        "disable_connection_lost_warning": "Вимкнути попередження про втрату з'єднання",
+        "disable_degraded_warning": "Вимкнути попередження про деградований режим",
+        "low_battery_threshold": "Поріг попередження про низький заряд (%)",
+        "section_display": "Відображення",
+        "section_interaction": "Взаємодія",
+        "section_features": "Функції",
+        "section_warnings": "Попередження"
       }
     }
   },

@@ -1,4 +1,4 @@
-import { array, assign, any, boolean, object, optional, string } from "superstruct";
+import { array, assign, any, boolean, number, object, optional, string } from "superstruct";
 import { HvacMode, LovelaceCardConfig } from "mushroom-cards/src/ha";
 import {
   ActionsSharedConfig,
@@ -29,10 +29,19 @@ export type BetterThermostatUISmallCardConfig = LovelaceCardConfig &
   AppearanceSharedConfig &
   ActionsSharedConfig & {
     features?: any[];
-    show_temperature_control?: false;
+    show_temperature_control?: boolean;
     collapsible_controls?: boolean;
+    show_current_as_primary?: boolean;
+    show_secondary?: boolean;
+    disable_buttons?: boolean;
+    disable_menu?: boolean;
+    prevent_interaction_on_scroll?: boolean;
     disable_eco?: boolean;
     disable_humidity?: boolean;
+    disable_battery_warning?: boolean;
+    disable_connection_lost_warning?: boolean;
+    disable_degraded_warning?: boolean;
+    low_battery_threshold?: number;
   };
 
 export const climateCardConfigStruct = assign(
@@ -46,7 +55,16 @@ export const climateCardConfigStruct = assign(
     features: optional(array(any())),
     show_temperature_control: optional(boolean()),
     collapsible_controls: optional(boolean()),
+    show_current_as_primary: optional(boolean()),
+    show_secondary: optional(boolean()),
+    disable_buttons: optional(boolean()),
+    disable_menu: optional(boolean()),
+    prevent_interaction_on_scroll: optional(boolean()),
     disable_eco: optional(boolean()),
     disable_humidity: optional(boolean()),
+    disable_battery_warning: optional(boolean()),
+    disable_connection_lost_warning: optional(boolean()),
+    disable_degraded_warning: optional(boolean()),
+    low_battery_threshold: optional(number()),
   })
 );
