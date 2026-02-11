@@ -42,7 +42,7 @@
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/node": "^20.8.10",
     "prettier": "^3.0.3",
-    "rollup": "4.2.0",
+    "rollup": "4.57.1",
     "rollup-plugin-import-css": "^3.3.5",
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-serve": "^2.0.2",
