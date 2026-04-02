@@ -129,7 +129,7 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
     return html`
       <ha-form
         .hass=${this.hass as any}
-        .data=${{ low_battery_threshold: 10, ...this._config } as any}
+        .data=${{ ...this._config, low_battery_threshold: this._config?.low_battery_threshold ?? 10 } as any}
         .schema=${SCHEMA as any}
         .computeLabel=${(schema: HaFormSchema) => {
           if (schema.name === "entity") {

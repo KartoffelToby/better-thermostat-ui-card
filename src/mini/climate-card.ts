@@ -311,7 +311,15 @@ export class BetterThermostatUISmallCard
 
   disconnectedCallback() {
     window.removeEventListener("pointerdown", this._onDocumentPointerDown);
+    this._presetOpen = false;
     super.disconnectedCallback();
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    if (this._presetOpen) {
+      window.addEventListener("pointerdown", this._onDocumentPointerDown);
+    }
   }
 
   protected renderIcon(stateObj: ClimateEntity, icon?: string): TemplateResult {
@@ -586,7 +594,7 @@ export class BetterThermostatUISmallCard
   private triggerModeChange(mode: any) {
     const stateObj = this._stateObj;
     if (!stateObj) return;
-    if (stateObj.attributes.hvac_modes.includes(mode)) {
+    if (stateObj.attributes.hvac_modes?.includes(mode)) {
       this.hass.callService("climate", "set_hvac_mode", {
         entity_id: stateObj.entity_id,
         hvac_mode: mode,

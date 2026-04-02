@@ -13,9 +13,11 @@ import { ensureElementLoaded } from "../../utils/ensure-element-loaded";
 import { getHvacModeColor, getHvacModeIcon } from "../utils";
 
 export const isHvacModesVisible = (entity: ClimateEntity, modes?: HvacMode[]) =>
-  (entity.attributes.hvac_modes || []).some((mode) =>
-    (modes ?? []).includes(mode)
-  );
+  modes === undefined
+    ? (entity.attributes.hvac_modes || []).length > 0
+    : (entity.attributes.hvac_modes || []).some((mode) =>
+        modes.includes(mode)
+      );
 
 @customElement("mushroom-climate-hvac-modes-control")
 export class ClimateHvacModesControl extends LitElement {
@@ -54,10 +56,9 @@ export class ClimateHvacModesControl extends LitElement {
   private renderEcoButton() {
     const isEco = (this.entity.attributes as any).eco_mode === true;
     const iconStyle = {};
-    const color = "165, 214, 167";
     if (isEco) {
-      iconStyle["--icon-color"] = `rgb(${color})`;
-      iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
+      iconStyle["--icon-color"] = `rgb(var(--bt-state-eco))`;
+      iconStyle["--bg-color"] = `rgba(var(--bt-state-eco), 0.2)`;
     }
 
     return html`

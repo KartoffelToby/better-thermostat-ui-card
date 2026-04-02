@@ -1,6 +1,8 @@
 import { HvacAction, HvacMode } from "mushroom-cards/src/ha";
 
-export const CLIMATE_HVAC_MODE_COLORS: Record<any, string> = {
+type ClimateMode = HvacMode | "none" | "eco" | "away" | "boost" | "sleep" | "comfort" | "activity" | "home";
+
+export const CLIMATE_HVAC_MODE_COLORS: Partial<Record<ClimateMode, string>> = {
   auto: "var(--rgb-state-climate-auto)",
   cool: "var(--rgb-state-climate-cool)",
   dry: "var(--rgb-state-climate-dry)",
@@ -25,7 +27,7 @@ export const CLIMATE_HVAC_ACTION_COLORS: Record<HvacAction, string> = {
   off: "var(--rgb-state-climate-off)",
 };
 
-export const CLIMATE_HVAC_MODE_ICONS: Record<any, string> = {
+export const CLIMATE_HVAC_MODE_ICONS: Partial<Record<ClimateMode, string>> = {
   none: "mdi:auto-mode",
   auto: "mdi:thermostat-auto",
   cool: "mdi:snowflake",
@@ -52,7 +54,7 @@ export const CLIMATE_HVAC_ACTION_ICONS: Record<HvacAction, string> = {
 };
 
 export function getHvacModeColor(hvacMode: HvacMode): string {
-  return CLIMATE_HVAC_MODE_COLORS[hvacMode] ?? CLIMATE_HVAC_MODE_COLORS.off;
+  return CLIMATE_HVAC_MODE_COLORS[hvacMode] ?? CLIMATE_HVAC_MODE_COLORS.off ?? "";
 }
 
 export function getHvacActionColor(hvacAction: HvacAction): string {
@@ -65,6 +67,6 @@ export function getHvacModeIcon(hvacMode: HvacMode): string {
   return CLIMATE_HVAC_MODE_ICONS[hvacMode] ?? "mdi:thermostat";
 }
 
-export function getHvacActionIcon(hvacAction: HvacAction): string | undefined {
+export function getHvacActionIcon(hvacAction: HvacAction): string {
   return CLIMATE_HVAC_ACTION_ICONS[hvacAction] ?? "";
 }

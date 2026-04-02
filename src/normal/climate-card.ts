@@ -360,17 +360,17 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       const degradedMode = !this?._config?.disable_degraded_warning && (stateObj.attributes as any)?.degraded_mode === true;
       const warningIcons = html`
         ${degradedMode ? html`
-          <p class="label degraded-label" title=${"Degraded mode"} style="color: var(--warning-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, stateObj.entity_id); }}>
+          <p class="label degraded-label" title=${localize("extra_states.degraded_mode")} style="color: var(--warning-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, stateObj.entity_id); }}>
             <ha-svg-icon .path=${mdiAlert}></ha-svg-icon>
           </p>
         ` : nothing}
         ${errorEntityId ? html`
-          <p class="label error-label" title=${"Connection lost: " + errorEntityId} style="color: var(--error-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, errorEntityId!); }}>
+          <p class="label error-label" title=${localize("extra_states.connection_lost").replace("{name}", errorEntityId)} style="color: var(--error-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, errorEntityId!); }}>
             <ha-svg-icon .path=${mdiWifiStrengthOffOutline}></ha-svg-icon>
           </p>
         ` : nothing}
         ${lowBatteryEntity ? html`
-          <p class="label batteries-label" title=${"Low battery: " + lowBatteryEntity.name} style="color: var(--error-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, lowBatteryEntity!.name); }}>
+          <p class="label batteries-label" title=${localize("extra_states.low_battery").replace("{name}", lowBatteryEntity.name)} style="color: var(--error-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, lowBatteryEntity!.name); }}>
             <ha-svg-icon .path=${mdiBatteryAlert}></ha-svg-icon>
           </p>
         ` : nothing}
