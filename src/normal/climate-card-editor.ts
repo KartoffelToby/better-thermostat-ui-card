@@ -11,7 +11,6 @@ import { CLIMATE_CARD_EDITOR_NAME, CLIMATE_ENTITY_DOMAINS } from "./const";
 import { mdiEye, mdiGestureTap, mdiTune, mdiAlert } from "@mdi/js";
 
 const CLIMATE_LABELS = [
-  "collapsible_controls",
   "show_current_as_primary", "show_secondary",
   "disable_buttons", "disable_menu", "prevent_interaction_on_scroll",
   "disable_eco", "disable_humidity",
@@ -36,7 +35,6 @@ const SCHEMA: HaFormSchema[] = [
         schema: [
           { name: "show_current_as_primary", selector: { boolean: {} } },
           { name: "show_secondary", selector: { boolean: {} } },
-          { name: "collapsible_controls", selector: { boolean: {} } },
         ],
       },
     ],

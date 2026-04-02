@@ -8,13 +8,13 @@ export const CLIMATE_HVAC_MODE_COLORS: Record<any, string> = {
   heat: "var(--rgb-state-climate-heat)",
   heat_cool: "var(--rgb-state-climate-heat-cool)",
   off: "var(--rgb-state-climate-off)",
-  eco: "165, 214, 167",
-  away: "176, 190, 197",
-  boost: "239, 83, 80",
-  sleep: "63, 81, 181",
-  comfort: "121, 85, 72",
-  activity: "230, 74, 25",
-  home: "76, 175, 80",
+  eco: "var(--bt-state-eco)",
+  away: "var(--bt-state-away)",
+  boost: "var(--bt-state-boost)",
+  sleep: "var(--bt-state-sleep)",
+  comfort: "var(--bt-state-comfort)",
+  activity: "var(--bt-state-activity)",
+  home: "var(--bt-state-home)",
 };
 
 export const CLIMATE_HVAC_ACTION_COLORS: Record<HvacAction, string> = {
@@ -35,12 +35,12 @@ export const CLIMATE_HVAC_MODE_ICONS: Record<any, string> = {
   heat_cool: "mdi:sun-snowflake-variant",
   off: "mdi:power",
   eco: "mdi:leaf",
-  away: "mdi:airplane-off",
-  boost: "mdi:rocket",
-  sleep: "mdi:sleep",
+  away: "mdi:account-arrow-right",
+  boost: "mdi:rocket-launch",
+  sleep: "mdi:bed",
   comfort: "mdi:sofa",
-  activity: "mdi:run",
-  home: "mdi:home-outline",
+  activity: "mdi:motion-sensor",
+  home: "mdi:home",
 };
 
 export const CLIMATE_HVAC_ACTION_ICONS: Record<HvacAction, string> = {

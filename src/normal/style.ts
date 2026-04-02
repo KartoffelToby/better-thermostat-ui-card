@@ -8,6 +8,14 @@ export const ShadowStyles = css`
       width: 100% !important;
       box-sizing: border-box;
       overflow: visible;
+      --bt-state-eco: 165, 214, 167;
+      --bt-state-away: 176, 190, 197;
+      --bt-state-boost: 239, 83, 80;
+      --bt-state-sleep: 63, 81, 181;
+      --bt-state-comfort: 121, 85, 72;
+      --bt-state-activity: 230, 74, 25;
+      --bt-state-home: 76, 175, 80;
+      --default-deep-orange: 244, 99, 108 !important;
     }
     ha-card {
       position: relative;
@@ -36,6 +44,9 @@ export const ShadowStyles = css`
       flex: none;
     }
 
+    .bt-wrapper {
+      --state-climate-heat-color: #f4636c !important;
+    }
 
     .bt-wrapper.container {
       display: flex;
@@ -88,6 +99,7 @@ export const ShadowStyles = css`
 
     ha-control-circular-slider {
       max-width: 320px !important;
+      --default-deep-orange: 244, 99, 108 !important;
       --control-circular-slider-color: var(--state-color, var(--primary-text-color));
       --control-circular-slider-low-color: var(
         --low-color,

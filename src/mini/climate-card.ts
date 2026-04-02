@@ -6,7 +6,7 @@ import {
   PropertyValues,
   TemplateResult,
 } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, eventOptions, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import {
@@ -524,77 +524,6 @@ export class BetterThermostatUISmallCard
     `;
   }
 
-  private toggleEco(e: CustomEvent) {
-    e.stopPropagation();
-    const stateObj = this._stateObj;
-    if (!stateObj) return;
-    const isEco = (stateObj.attributes as any).eco_mode === true;
-    this.hass.callService("better_thermostat", "set_eco_mode", {
-      entity_id: stateObj.entity_id,
-      enable: !isEco,
-    });
-  }
-
-  private renderEcoButton(entity: ClimateEntity) {
-    if (this._config?.disable_eco) return nothing;
-    const presetModes = entity.attributes.preset_modes || [];
-    const hasEco = presetModes.includes("eco") || (entity.attributes as any).eco_mode === true;
-    const isEco = (entity.attributes as any).eco_mode === true;
-    
-    if (!hasEco && !isEco) return nothing;
-
-    const iconStyle = {};
-    const color = "165, 214, 167";
-    if (isEco) {
-      iconStyle["--icon-color"] = `rgb(${color})`;
-      iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
-    }
-
-    return html`
-      <mushroom-button
-        style=${styleMap(iconStyle)}
-        .disabled=${!isAvailable(entity)}
-        @click=${this.toggleEco}
-      >
-        <ha-icon icon="mdi:leaf"></ha-icon>
-      </mushroom-button>
-    `;
-  }
-
-  private renderPresetButton(entity: ClimateEntity) {
-    if (this._config?.disable_eco) return nothing;
-    const presetModes = entity.attributes.preset_modes || [];
-    const isEco = (entity.attributes as any).eco_mode === true;
-    const hasPreset = presetModes.includes("eco") || presetModes.length > 0 || isEco;
-    if (!hasPreset) return nothing;
-
-    const selectedMode = (entity.attributes as any).preset_mode;
-    const iconStyle = {};
-    let icon = "mdi:leaf";
-    if (selectedMode && selectedMode !== "none") {
-      icon = getHvacModeIcon(selectedMode);
-      const color = getHvacModeColor(selectedMode);
-      iconStyle["--icon-color"] = `rgb(${color})`;
-      iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
-    } else if (isEco) {
-      const color = "165, 214, 167";
-      iconStyle["--icon-color"] = `rgb(${color})`;
-      iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
-    }
-
-    return html`
-      <mushroom-button
-        style=${styleMap(iconStyle)}
-        .disabled=${!isAvailable(entity)}
-        @click=${(e: Event) => { e.stopPropagation(); this.toggleEco(e as CustomEvent); }}
-        .actionHandler=${actionHandler({ hasHold: true })}
-        @action=${(e: ActionHandlerEvent) => { if (e.detail.action === "hold") { e.stopPropagation(); this._openPresetSelect(true); } }}
-      >
-        <ha-icon .icon=${icon}></ha-icon>
-      </mushroom-button>
-    `;
-  }
-
   private renderPresetFeature(entity: ClimateEntity) {
           const presetMode = entity.attributes.preset_mode;
           const mode = (presetMode != null && presetMode !== 'none') ? presetMode : "none";
@@ -614,8 +543,7 @@ export class BetterThermostatUISmallCard
                   style=${styleMap(iconStyle)}
                   .mode=${selectedMode}
                     @click=${this.triggerModeChange.bind(this, presets[0])}
-                    .actionHandler=${actionHandler({ hasHold: true })}
-                    @action=${(e: ActionHandlerEvent) => { if (e.detail.action === "hold") { e.stopPropagation(); this._openPresetSelect(true); } }}
+                    @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
                 >
                   <ha-icon .icon=${getHvacModeIcon(presets[0] as HvacMode)}></ha-icon>
                 </mushroom-button>
@@ -635,6 +563,7 @@ export class BetterThermostatUISmallCard
           }
   }
 
+  @eventOptions({passive: true})
   private _openPresetSelect(open = true) {
     this._presetOpen = open;
     if (open) {
@@ -711,6 +640,18 @@ export class BetterThermostatUISmallCard
       super.styles,
       cardStyle,
       css`
+        :host {
+          --rgb-state-climate-heat: 244, 99, 108;
+
+          --bt-state-window: var(--info-color);
+          --bt-state-eco: 165, 214, 167;
+          --bt-state-away: 176, 190, 197;
+          --bt-state-boost: 239, 83, 80;
+          --bt-state-sleep: 63, 81, 181;
+          --bt-state-comfort: 121, 85, 72;
+          --bt-state-activity: 230, 74, 25;
+          --bt-state-home: 76, 175, 80;
+        }
         :host>* {
           overflow: hidden;
         }

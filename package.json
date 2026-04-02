@@ -19,9 +19,9 @@
     "start": "rollup -c --bundleConfigAsCjs --watch",
     "build": "rollup -c --bundleConfigAsCjs",
     "format": "prettier --write .",
-    "start:hass-stable": "docker run --rm -p 8123:8123 -v ./.dev:/config homeassistant/home-assistant:stable",
-    "start:hass": "docker run --rm -p 8123:8123 -v ./.dev:/config homeassistant/home-assistant:beta",
-    "start:hass-dev": "docker run --rm -p 8123:8123 -v ./.dev:/config homeassistant/home-assistant:dev"
+    "start:hass-stable": "docker run --pull always --rm -p 8123:8123 -v ./.dev:/config homeassistant/home-assistant:stable",
+    "start:hass": "docker run --rm --pull always -p 8123:8123 -v ./.dev:/config homeassistant/home-assistant:beta",
+    "start:hass-dev": "docker run --pull always --rm -p 8123:8123 -v ./.dev:/config homeassistant/home-assistant:dev"
   },
   "dependencies": {
     "@lit-labs/observers": "^2.1.0",

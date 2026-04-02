@@ -1,0 +1,18 @@
+- id: '1775136844016'
+  alias: New automation
+  description: ''
+  triggers:
+  - trigger: event
+    event_type: tesr
+    context:
+      user_id:
+      - 47e116be2f14443d82f864b92e02b872
+  conditions: []
+  actions:
+  - action: climate.set_temperature
+    metadata: {}
+    target:
+      device_id: e00114a5f4fe7685b4c1da69a13a73f3
+    data:
+      temperature: 25
+  mode: single
