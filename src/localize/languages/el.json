@@ -1,7 +1,7 @@
 {
   "common": {
     "version": "Έκδοση",
-    "current": "Tρέχουσα"
+    "current": "Tρέχουσα",
     "current_humidity": "Τρέχουσα υγρασία",
     "current_temperature": "Τρέχουσα θερμοκρασία",
     "target_temperature": "Στόχος θερμοκρασίας"
