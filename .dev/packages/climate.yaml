@@ -4,7 +4,7 @@ climate:
     heater: input_boolean.home_thermostat_heater
     target_sensor: input_number.home_thermostat_temperature
     min_temp: 7
-    max_temp: 35
+    max_temp: 65
     precision: 0.5
     target_temp_step: 0.5
     ac_mode: false
@@ -17,9 +17,17 @@ input_boolean:
 input_number:
   home_thermostat_temperature:
     name: home_thermostat_temperature
+    unit_of_measurement: "°C"
     initial: 20
     min: 0
-    max: 35
+    max: 65
+    step: 0.5
+  inner_sensor_thermostat_temperature:
+    name: inner_sensor_thermostat_temperature
+    unit_of_measurement: "°C"
+    initial: 20
+    min: 0
+    max: 65
     step: 0.5
 
 homeassistant:

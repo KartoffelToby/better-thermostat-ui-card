@@ -6,7 +6,7 @@ import {
   PropertyValues,
   TemplateResult,
 } from "lit";
-import { customElement, eventOptions, state } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import {
@@ -117,7 +117,7 @@ export class BetterThermostatUISmallCard
     return this._controls.length > 0;
   }
 
-  _onControlTap(ctrl, e): void {
+  _onControlTap(ctrl: ClimateCardControl, e: Event): void {
     e.stopPropagation();
     this._activeControl = ctrl;
   }
@@ -202,15 +202,15 @@ export class BetterThermostatUISmallCard
     const hvac_action:any = stateObj.attributes.hvac_action || "off";
 
     const color = getHvacActionColor(hvac_action);
-    let actionStyle = {};
+    let actionStyle: any = {};
     actionStyle["--action-color"] = `rgba(${color}, 0.6)`;
 
-
-    if ((this._stateObj.attributes as any).preset_mode !== 'none') {
-        const pre_color = getHvacModeColor((this._stateObj.attributes as any).preset_mode);
-        actionStyle["--action-color"] = `rgba(${pre_color}, 0.6)`;
-        actionStyle["--rgb-state-climate-heat"] = pre_color;
-    };
+    const preset = (this._stateObj.attributes as any).preset_mode;
+    if (preset !== undefined && preset !== "none") {
+      const pre_color = getHvacModeColor(preset);
+      actionStyle["--action-color"] = `rgba(${pre_color}, 0.6)`;
+      actionStyle["--rgb-state-climate-heat"] = pre_color;
+    }
 
     if ((this._stateObj.attributes as any).window_open) {
         actionStyle["--action-color"] = `var(--info-color)`;
@@ -310,7 +310,7 @@ export class BetterThermostatUISmallCard
   }
 
   disconnectedCallback() {
-    window.removeEventListener("pointerdown", this._onDocumentPointerDown);
+    window.removeEventListener("pointerdown", this._onDocumentPointerDown as EventListener, { passive: true } as any);
     this._presetOpen = false;
     super.disconnectedCallback();
   }
@@ -318,7 +318,7 @@ export class BetterThermostatUISmallCard
   connectedCallback() {
     super.connectedCallback();
     if (this._presetOpen) {
-      window.addEventListener("pointerdown", this._onDocumentPointerDown);
+      window.addEventListener("pointerdown", this._onDocumentPointerDown as EventListener, { passive: true } as any);
     }
   }
 
@@ -550,8 +550,9 @@ export class BetterThermostatUISmallCard
                 <mushroom-button
                   style=${styleMap(iconStyle)}
                   .mode=${selectedMode}
-                    @click=${this.triggerModeChange.bind(this, presets[0])}
-                    @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+                  .actionHandler=${actionHandler({ hasHold: true })}
+                  @click=${this.triggerModeChange.bind(this, presets[0])}
+                  @action=${(e: ActionHandlerEvent) => { if (e.detail.action === 'hold') { e.stopPropagation(); this._openPresetSelect(true); } }}
                 >
                   <ha-icon .icon=${getHvacModeIcon(presets[0] as HvacMode)}></ha-icon>
                 </mushroom-button>
@@ -561,7 +562,9 @@ export class BetterThermostatUISmallCard
               <mushroom-button
                 style=${styleMap(iconStyle)}
                 .mode=${selectedMode}
+                .actionHandler=${actionHandler({ hasHold: true })}
                 @click=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+                @action=${(e: ActionHandlerEvent) => { if (e.detail.action === 'hold') { e.stopPropagation(); this._openPresetSelect(true); } }}
               >
                 <ha-icon .icon=${icon}></ha-icon>
               </mushroom-button>
@@ -571,18 +574,17 @@ export class BetterThermostatUISmallCard
           }
   }
 
-  @eventOptions({passive: true})
   private _openPresetSelect(open = true) {
     this._presetOpen = open;
     if (open) {
-      window.addEventListener("pointerdown", this._onDocumentPointerDown);
+      window.addEventListener("pointerdown", this._onDocumentPointerDown as EventListener, { passive: true } as any);
     } else {
-      window.removeEventListener("pointerdown", this._onDocumentPointerDown);
+      window.removeEventListener("pointerdown", this._onDocumentPointerDown as EventListener, { passive: true } as any);
     }
   }
 
-  private _onDocumentPointerDown = (ev: PointerEvent) => {
-    const path = ev.composedPath();
+  private _onDocumentPointerDown = (ev: Event) => {
+    const path = (ev as any).composedPath?.() ?? [];
     const presetEl = this.shadowRoot?.querySelector('.preset-select');
     if (!presetEl) return;
     // If the click is outside the preset-select element, close the menu
@@ -599,7 +601,6 @@ export class BetterThermostatUISmallCard
         entity_id: stateObj.entity_id,
         hvac_mode: mode,
       });
-      // 
       this._openPresetSelect(false);
       return;
     } else if (stateObj?.attributes.preset_modes && stateObj.attributes.preset_modes.includes(mode)) {

@@ -151,7 +151,7 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
     const value = ev.detail.value as BetterThermostatUINormalCardConfig;
     this._config = value;
     this.dispatchEvent(
-      new CustomEvent("config-changed", { detail: { config: value } })
+      new CustomEvent("config-changed", { detail: { config: value }, bubbles: true, composed: true })
     );
   }
 }

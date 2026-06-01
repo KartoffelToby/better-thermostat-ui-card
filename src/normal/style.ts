@@ -142,7 +142,7 @@ export const ShadowStyles = css`
 
     .info {
         position: absolute;
-        top: 0;
+        top: 1.2em;
         left: 0;
         right: 0;
         bottom: 0;
@@ -307,11 +307,11 @@ export const ShadowStyles = css`
 
     .label.hvac_action {
           color: var(--action-color, inherit) !important;
-          padding-top: 1rem;
+          padding-top: 0rem;
     }
 
     .label.window-label {
-          color: var(--action-color, inherit);
+          color: var(--info-color, inherit);
     }
 
     .label.secondary:not(.label.humidity) {
