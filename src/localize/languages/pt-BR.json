@@ -18,7 +18,20 @@
         "disable_battery_warning": "Desabilitar aviso de bateria",
         "disable_buttons": "Desabilitar botões mais/menos",
         "eco_temperature": "Temperatura eco",
-        "set_current_as_main": "Trocar pela temperatura atual do local"
+        "set_current_as_main": "Trocar pela temperatura atual do local",
+        "show_current_as_primary": "Mostrar temperatura atual como principal",
+        "show_secondary": "Mostrar informações secundárias",
+        "prevent_interaction_on_scroll": "Prevenir interação ao rolar",
+        "disable_humidity": "Desativar exibição de umidade",
+        "show_temperature_control": "Mostrar controle de temperatura",
+        "collapsible_controls": "Controles recolhíveis",
+        "disable_connection_lost_warning": "Desativar aviso de perda de conexão",
+        "disable_degraded_warning": "Desativar aviso de modo degradado",
+        "low_battery_threshold": "Limite de aviso de bateria fraca (%)",
+        "section_display": "Exibição",
+        "section_interaction": "Interação",
+        "section_features": "Funcionalidades",
+        "section_warnings": "Avisos"
       }
     }
   },

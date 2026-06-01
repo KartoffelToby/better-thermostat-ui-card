@@ -18,7 +18,20 @@
         "disable_battery_warning": "Desactivar advertència de bateria",
         "disable_buttons": "Desactivar botons de més/menys",
         "eco_temperature": "Temperatura eco",
-        "set_current_as_main": "Intercanviar la temperatura objectiu amb la temperatura actual"
+        "set_current_as_main": "Intercanviar la temperatura objectiu amb la temperatura actual",
+        "show_current_as_primary": "Mostra la temperatura actual com a principal",
+        "show_secondary": "Mostra informació secundària",
+        "prevent_interaction_on_scroll": "Evitar la interacció en desplaçar-se",
+        "disable_humidity": "Desactivar la visualització d'humitat",
+        "show_temperature_control": "Mostra el control de temperatura",
+        "collapsible_controls": "Controls plegables",
+        "disable_connection_lost_warning": "Desactiva avís de pèrdua de connexió",
+        "disable_degraded_warning": "Desactiva avís de mode degradat",
+        "low_battery_threshold": "Llindar d'avís de bateria baixa (%)",
+        "section_display": "Visualització",
+        "section_interaction": "Interacció",
+        "section_features": "Funcionalitats",
+        "section_warnings": "Avisos"
       }
     }
   },

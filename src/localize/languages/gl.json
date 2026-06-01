@@ -14,8 +14,18 @@
         "disable_menu": "Desactivar menú",
         "disable_battery_warning": "Desactivar alerta de batería",
         "disable_buttons": "Desactivar botóns máis/menos",
+        "disable_humidity": "Desactivar visualización de humidade",
         "eco_temperature": "Temperatura Eco",
-        "set_current_as_main": "Establecer temperatura obxectivo como temperatura actual"
+        "set_current_as_main": "Establecer temperatura obxectivo como temperatura actual",
+        "show_temperature_control": "Mostrar control de temperatura",
+        "collapsible_controls": "Controis pregables",
+        "disable_connection_lost_warning": "Desactivar aviso de perda de conexión",
+        "disable_degraded_warning": "Desactivar aviso de modo degradado",
+        "low_battery_threshold": "Limiar de aviso de batería baixa (%)",
+        "section_display": "Visualización",
+        "section_interaction": "Interacción",
+        "section_features": "Funcionalidades",
+        "section_warnings": "Avisos"
       }
     }
   },

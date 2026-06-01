@@ -1,2 +1,14 @@
 node_modules
 dist
+.dev/*
+!.dev/configuration.yaml
+!.dev/lovelace.yaml
+!.dev/lovelace-bt-showcase.yaml
+!.dev/lovelace.yaml
+!.dev/automations.yaml
+!.dev/scripts.yaml
+!.dev/scenes.yaml
+!.dev/views
+!.dev/www
+!.dev/packages
+.dev/www/community/*

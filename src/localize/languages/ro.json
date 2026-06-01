@@ -18,7 +18,20 @@
         "disable_battery_warning": "Dezactivează avertizarea bateriei",
         "disable_buttons": "Dezactivează butoanele plus/minus",
         "eco_temperature": "Temperatura eco",
-        "set_current_as_main": "Schimbă locurile temperaturii țintă cu cea curentă"
+        "set_current_as_main": "Schimbă locurile temperaturii țintă cu cea curentă",
+        "show_current_as_primary": "Afișează temperatura curentă ca principală",
+        "show_secondary": "Afișează informații secundare",
+        "prevent_interaction_on_scroll": "Previne interacțiunea la derulare",
+        "disable_humidity": "Dezactivează afișarea umidității",
+        "show_temperature_control": "Afișează controlul temperaturii",
+        "collapsible_controls": "Controale pliabile",
+        "disable_connection_lost_warning": "Dezactivează avertismentul de pierdere a conexiunii",
+        "disable_degraded_warning": "Dezactivează avertismentul de mod degradat",
+        "low_battery_threshold": "Prag avertisment baterie descărcată (%)",
+        "section_display": "Afișare",
+        "section_interaction": "Interacțiune",
+        "section_features": "Funcționalități",
+        "section_warnings": "Avertismente"
       }
     }
   },

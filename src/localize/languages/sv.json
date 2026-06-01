@@ -18,7 +18,20 @@
         "disable_battery_warning": "Inaktivera batterivarning",
         "disable_buttons": "Inaktivera plus/minus knappar",
         "eco_temperature": "Eco temperatur",
-        "set_current_as_main": "Byt måltemperatur med nuvarande temperatur"
+        "set_current_as_main": "Byt måltemperatur med nuvarande temperatur",
+        "show_current_as_primary": "Visa aktuell temperatur som primär",
+        "show_secondary": "Visa sekundär information",
+        "prevent_interaction_on_scroll": "Förhindra interaktion vid rullning",
+        "disable_humidity": "Inaktivera fuktighetsvisning",
+        "show_temperature_control": "Visa temperaturkontroll",
+        "collapsible_controls": "Ihopfällbara kontroller",
+        "disable_connection_lost_warning": "Inaktivera varning för tappad anslutning",
+        "disable_degraded_warning": "Inaktivera varning för försämrat läge",
+        "low_battery_threshold": "Tröskelvärde för varning om låg batterinivå (%)",
+        "section_display": "Visning",
+        "section_interaction": "Interaktion",
+        "section_features": "Funktioner",
+        "section_warnings": "Varningar"
       }
     }
   },

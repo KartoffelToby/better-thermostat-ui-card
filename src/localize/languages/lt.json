@@ -14,8 +14,18 @@
         "disable_menu": "Išjungti meniu",
         "disable_battery_warning": "Išjungti baterijos pranešimą",
         "disable_buttons": "Nerodyti plius/minus mygtukų",
+        "disable_humidity": "Išjungti drėgmės rodymą",
         "eco_temperature": "ECO temperatūros rėžimas",
-        "set_current_as_main": "Sukeiskite dabartinę ir tikslinę temperatūrą vietomis"
+        "set_current_as_main": "Sukeiskite dabartinę ir tikslinę temperatūrą vietomis",
+        "show_temperature_control": "Rodyti temperatūros valdymą",
+        "collapsible_controls": "Sulankstomi valdikliai",
+        "disable_connection_lost_warning": "Išjungti ryšio praradimo įspėjimą",
+        "disable_degraded_warning": "Išjungti pabloginto režimo įspėjimą",
+        "low_battery_threshold": "Žemo akumuliatoriaus įspėjimo riba (%)",
+        "section_display": "Rodymas",
+        "section_interaction": "Sąveika",
+        "section_features": "Funkcijos",
+        "section_warnings": "Įspėjimai"
       }
     }
   },

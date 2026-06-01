@@ -18,7 +18,20 @@
         "disable_battery_warning": "Wyłącz ostrzeżenie o baterii",
         "disable_buttons": "Wyłącz przyciski plus/minus",
         "eco_temperature": "Temperatura eko",
-        "set_current_as_main": "Zamień miejscami temperature docelową z aktualną"
+        "set_current_as_main": "Zamień miejscami temperature docelową z aktualną",
+        "show_current_as_primary": "Pokaż aktualną temperaturę jako główną",
+        "show_secondary": "Pokaż dodatkowe informacje",
+        "prevent_interaction_on_scroll": "Zapobiegaj interakcji podczas przewijania",
+        "disable_humidity": "Wyłącz wyświetlanie wilgotności",
+        "show_temperature_control": "Pokaż kontrolę temperatury",
+        "collapsible_controls": "Zwijane kontrolki",
+        "disable_connection_lost_warning": "Wyłącz ostrzeżenie o utracie połączenia",
+        "disable_degraded_warning": "Wyłącz ostrzeżenie o trybie ograniczonym",
+        "low_battery_threshold": "Próg ostrzeżenia o niskim stanie baterii (%)",
+        "section_display": "Wyświetlanie",
+        "section_interaction": "Interakcja",
+        "section_features": "Funkcje",
+        "section_warnings": "Ostrzeżenia"
       }
     }
   },

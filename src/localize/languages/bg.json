@@ -18,7 +18,20 @@
         "disable_battery_warning": "Деактивиране на предупреждение за батерията",
         "disable_buttons": "Деактивиране на бутоните плюс/минус",
         "eco_temperature": "Еко температура",
-        "set_current_as_main": "Размяна на целевата температура с текущата температура"
+        "set_current_as_main": "Размяна на целевата температура с текущата температура",
+        "show_current_as_primary": "Показване на текущата температура като основна",
+        "show_secondary": "Показване на вторична информация",
+        "prevent_interaction_on_scroll": "Предотвратяване на взаимодействие при превъртане",
+        "disable_humidity": "Изключване на показването на влажността",
+        "show_temperature_control": "Показване на контрол на температурата",
+        "collapsible_controls": "Сгъваеми контроли",
+        "disable_connection_lost_warning": "Изключване на предупреждение за загубена връзка",
+        "disable_degraded_warning": "Изключване на предупреждение за влошен режим",
+        "low_battery_threshold": "Праг на предупреждение за изтощена батерия (%)",
+        "section_display": "Дисплей",
+        "section_interaction": "Взаимодействие",
+        "section_features": "Функции",
+        "section_warnings": "Предупреждения"
       }
     }
   },

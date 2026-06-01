@@ -18,7 +18,20 @@
         "disable_battery_warning": "Batterie-Warnung deaktivieren",
         "disable_buttons": "Plus/Minus Buttons deaktivieren",
         "eco_temperature": "Eco Temperatur",
-        "set_current_as_main": "Zieltemperatur mit aktueller Temperatur tauschen"
+        "set_current_as_main": "Zieltemperatur mit aktueller Temperatur tauschen",
+        "show_current_as_primary": "Aktuelle Temperatur als primär anzeigen",
+        "show_secondary": "Sekundäre Informationen anzeigen",
+        "prevent_interaction_on_scroll": "Interaktion beim Scrollen verhindern",
+        "disable_humidity": "Deaktiviere die Anzeige der Luftfeuchtigkeit",
+        "show_temperature_control": "Temperaturregelung anzeigen",
+        "collapsible_controls": "Einklappbare Steuerung",
+        "disable_connection_lost_warning": "Verbindungsverlust-Warnung deaktivieren",
+        "disable_degraded_warning": "Warnung für eingeschränkten Modus deaktivieren",
+        "low_battery_threshold": "Schwellenwert Batteriewarnung (%)",
+        "section_display": "Anzeige",
+        "section_interaction": "Interaktion",
+        "section_features": "Funktionen",
+        "section_warnings": "Warnungen"
       }
     }
   },

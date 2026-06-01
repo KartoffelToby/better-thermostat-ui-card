@@ -14,8 +14,21 @@
         "disable_menu": "메뉴 표시 하지 않기",
         "disable_battery_warning": "배터리 경고 표시 하지 않기",
         "disable_buttons": "온도 조절 버튼 표시 하지 않기",
+        "disable_humidity": "습도 표시 끄기",
         "eco_temperature": "절전 모드 온도",
-        "set_current_as_main": "현재 온도를 기본 목표 온도로 설정"
+        "set_current_as_main": "현재 온도를 기본 목표 온도로 설정",
+        "show_current_as_primary": "현재 온도를 기본으로 표시",
+        "show_secondary": "보조 정보 표시",
+        "prevent_interaction_on_scroll": "스크롤 시 상호작용 방지",
+        "show_temperature_control": "온도 조절 표시",
+        "collapsible_controls": "접을 수 있는 컨트롤",
+        "disable_connection_lost_warning": "연결 끊김 경고 끄기",
+        "disable_degraded_warning": "저하 모드 경고 끄기",
+        "low_battery_threshold": "배터리 부족 경고 임계값 (%)",
+        "section_display": "표시",
+        "section_interaction": "상호 작용",
+        "section_features": "기능",
+        "section_warnings": "경고"
       }
     }
   },
