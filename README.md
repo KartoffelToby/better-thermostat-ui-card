@@ -7,6 +7,7 @@
 This is a advanced climate card for HA, but with some improvements for the custom [better_thermostat](https://github.com/KartoffelToby/better_thermostat) integration. (you need at least 1.8.0)
 
 As for now the main improvement is the ability to see the extra status from better_thermostat like if a window open is detected etc.
+You can configure the cards as you like, we use the latest HA UI Configuration tool.
 
 ## Better Thermostat Normal UI Card
 
