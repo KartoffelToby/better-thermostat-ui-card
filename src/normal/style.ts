@@ -51,9 +51,9 @@ export const ShadowStyles = css`
     .bt-wrapper.container {
       display: grid;
       width: 100%;
-      place-items: center;
+      justify-items: center;
       overflow: hidden;
-      position: relative;
+      position: relative !important;
       max-width: 100%;
       box-sizing: border-box;
       flex: 1;
@@ -203,9 +203,7 @@ export const ShadowStyles = css`
         justify-content: center;
         padding-bottom: 12px;
     }
-    .bt-wrapper.container {
-      position: relative !important;
-    }
+    /* merged duplicate .bt-wrapper.container rules */
     .bt-wrapper.container ha-big-number {
         font-size: var(--ha-font-size-4xl);
     }
