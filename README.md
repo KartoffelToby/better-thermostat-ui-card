@@ -6,6 +6,8 @@
 
 This is a advanced climate card for HA, but with some improvements for the custom [better_thermostat](https://github.com/KartoffelToby/better_thermostat) integration. (you need at least 1.8.0)
 
+Note: The Eco toggle uses the preset-based API introduced in better_thermostat 1.8.0 (preset_mode "eco"). The card will prefer calling `climate.set_preset_mode` with `preset_mode: "eco"` when the preset is available; a fallback to the legacy `better_thermostat.set_eco_mode` service is kept for older installations.
+
 As for now the main improvement is the ability to see the extra status from better_thermostat like if a window open is detected etc.
 You can configure the cards as you like, we use the latest HA UI Configuration tool.
 

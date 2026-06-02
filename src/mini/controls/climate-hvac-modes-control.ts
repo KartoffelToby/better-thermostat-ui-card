@@ -46,11 +46,25 @@ export class ClimateHvacModesControl extends LitElement {
 
   private toggleEco(e: CustomEvent) {
     e.stopPropagation();
-    const isEco = (this.entity.attributes as any).eco_mode === true;
-    this.hass.callService("better_thermostat", "set_eco_mode", {
-      entity_id: this.entity!.entity_id,
-      enable: !isEco,
-    });
+    // Prefer the preset-based flow introduced in better_thermostat >= 1.8.0.
+    // Toggle the 'eco' preset if available, otherwise fall back to legacy flag.
+    const presetMode = (this.entity.attributes as any).preset_mode;
+    const hasEcoPreset = (this.entity.attributes as any).preset_modes?.includes("eco");
+    const isEco = presetMode === "eco" || (this.entity.attributes as any).eco_mode === true;
+
+    if (hasEcoPreset) {
+      const newMode = isEco ? "none" : "eco";
+      this.hass.callService("climate", "set_preset_mode", {
+        entity_id: this.entity!.entity_id,
+        preset_mode: newMode,
+      });
+    } else {
+      // Fallback for older integrations: toggle the legacy attribute via integration service
+      this.hass.callService("better_thermostat", "set_eco_mode", {
+        entity_id: this.entity!.entity_id,
+        enable: !isEco,
+      });
+    }
   }
 
   private renderEcoButton() {
