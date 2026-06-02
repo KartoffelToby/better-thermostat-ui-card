@@ -123,7 +123,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           ? "sm"
           : smaller < 200
             ? "md"
-            : smaller > 300
+            : smaller > 250
               ? "xl"
               : "lg";
     },

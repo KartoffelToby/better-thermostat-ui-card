@@ -494,11 +494,12 @@ export class BetterThermostatUISmallCard
 
   renderActionBadge(entity: ClimateEntity) {
     const hvac_action = entity.attributes.hvac_action;
-    if (!hvac_action || hvac_action == "off") return nothing;
+    const window = (entity.attributes as any).window_open;
+
+    if (!hvac_action || hvac_action == "off" && !window) return nothing;
 
     const color = getHvacActionColor(hvac_action);
     let icon = getHvacActionIcon(hvac_action);
-    const window = (entity.attributes as any).window_open;
     if (window) {
       icon = "mdi:window-open-variant";
     }
