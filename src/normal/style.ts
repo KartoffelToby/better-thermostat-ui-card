@@ -49,15 +49,15 @@ export const ShadowStyles = css`
     }
 
     .bt-wrapper.container {
-      display: flex;
+      display: grid;
       width: 100%;
-      place-items: center;
+      justify-items: center;
       overflow: hidden;
-      position: relative;
+      position: relative !important;
       max-width: 100%;
       box-sizing: border-box;
       flex: 1;
-      align-items: center;
+      align-items: start;
       justify-content: center;
       left: 50%;
       transform: translateX(-50%);
@@ -94,11 +94,14 @@ export const ShadowStyles = css`
 
     ha-control-circular-slider {
         grid-area: 1 / 1;
+        width: 100% !important;
+        height: auto !important;
+        min-width: 0 !important;
+        position: relative;
         /*flex: 0 0 auto;*/
     }
 
     ha-control-circular-slider {
-      max-width: 320px !important;
       --default-deep-orange: 244, 99, 108 !important;
       --control-circular-slider-color: var(--state-color, var(--primary-text-color));
       --control-circular-slider-low-color: var(
@@ -133,29 +136,36 @@ export const ShadowStyles = css`
         pointer-events: none;
         transform: translate(-50%, -50%);
         left: 50% !important;
-        top: 50% !important;
-        width: 90%;
-        height: 100%;
+        top: 45% !important;
+        width: 85%;
+        height: 85%;
+        z-index: -5;
     }
 
 
 
     .info {
         position: absolute;
-        top: 1.2em;
+        top: 0.2em;
         left: 0;
         right: 0;
         bottom: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: start;
         pointer-events: none;
         font-size: var(--ha-font-size-m);
         line-height: var(--ha-line-height-normal);
         letter-spacing: .1px;
         gap: 5px;
         --mdc-icon-size: 16px;
+        height: 100%;
+        width: 100%;
+    }
+
+    .info .label:first-child {
+      margin-top: 2.3rem;
     }
 
     .label {
@@ -193,6 +203,7 @@ export const ShadowStyles = css`
         justify-content: center;
         padding-bottom: 12px;
     }
+    /* merged duplicate .bt-wrapper.container rules */
     .bt-wrapper.container ha-big-number {
         font-size: var(--ha-font-size-4xl);
     }
@@ -219,6 +230,15 @@ export const ShadowStyles = css`
 
     .bt-wrapper.container.md .info {
       font-size: var(--ha-font-size-m);
+      top: -1rem;
+    }
+
+    .bt-wrapper.container.sm .info {
+      top: -1.5rem;
+    }
+
+    .bt-wrapper.container.xs .info {
+      top: -2rem;
     }
 
     .bt-wrapper.container.lg .info {
@@ -249,7 +269,7 @@ export const ShadowStyles = css`
     }
 
     .bt-wrapper.container.xl .info {
-      font-size: var(--ha-font-size-xl);
+      font-size: var(--ha-font-size-l);
     }
 
     .bt-wrapper.container.xl .label {
@@ -258,7 +278,8 @@ export const ShadowStyles = css`
     }
 
     .bt-wrapper.container.xl .label.window-label {
-      --mdc-icon-size: var(--ha-font-size-5xl);
+      --ha-font-size-scale: 1.3 !important;
+      --mdc-icon-size: calc(40px * var(--ha-font-size-scale));
       padding-bottom: 0.5em;
     }
 
@@ -307,7 +328,7 @@ export const ShadowStyles = css`
 
     .label.hvac_action {
           color: var(--action-color, inherit) !important;
-          padding-top: 0rem;
+          padding-top: 1.5rem;
     }
 
     .label.window-label {
