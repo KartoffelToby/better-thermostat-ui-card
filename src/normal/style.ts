@@ -49,16 +49,16 @@ export const ShadowStyles = css`
     }
 
     .bt-wrapper.container {
-      display: grid;
+      display: flex;
       width: 100%;
-      justify-items: center;
+      justify-content: center;
+      align-items: center;
       overflow: hidden;
       position: relative !important;
       max-width: 100%;
       box-sizing: border-box;
-      flex: 1;
-      align-items: start;
-      justify-content: center;
+      flex: 1 1 0%;
+      min-height: 0;
       left: 50%;
       transform: translateX(-50%);
     }
@@ -67,11 +67,18 @@ export const ShadowStyles = css`
       justify-content: center !important;
     }
 
-    .container:before {
-      content: "";
-      display: block;
-      padding-top: 100%;
-      grid-area: 1 / 1;
+    .control-content {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      aspect-ratio: 1 / 1;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+      place-items: center;
+      container-type: size;
     }
 
     .more-info {
@@ -95,10 +102,11 @@ export const ShadowStyles = css`
     ha-control-circular-slider {
         grid-area: 1 / 1;
         width: 100% !important;
-        height: auto !important;
+        height: 100% !important;
+        max-width: 100%;
+        max-height: 100%;
         min-width: 0 !important;
         position: relative;
-        /*flex: 0 0 auto;*/
     }
 
     ha-control-circular-slider {
@@ -145,27 +153,32 @@ export const ShadowStyles = css`
 
 
     .info {
+        grid-area: 1 / 1;
         position: absolute;
-        top: 0.2em;
+        top: 0;
         left: 0;
         right: 0;
         bottom: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: start;
+        justify-content: center;
         pointer-events: none;
-        font-size: var(--ha-font-size-m);
+        font-size: clamp(10px, 5.5cqmin, 28px);
         line-height: var(--ha-line-height-normal);
         letter-spacing: .1px;
-        gap: 5px;
-        --mdc-icon-size: 16px;
+        gap: clamp(4px, 2.2cqmin, 20px);
+        --mdc-icon-size: clamp(12px, 6.5cqmin, 32px);
         height: 100%;
         width: 100%;
     }
 
-    .info .label:first-child {
-      margin-top: 2.3rem;
+    .label-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     .label {
@@ -179,19 +192,25 @@ export const ShadowStyles = css`
       font-weight: 600;
     }
 
+    .primary-state {
+      font-size: clamp(20px, 12cqmin, 60px);
+      margin: 0;
+      font-weight: 500;
+    }
+
     .label ha-svg-icon {
             bottom: 5%;
     }
 
     .label.secondary {
-        font-size: var(--ha-font-size-m);
+        font-size: clamp(9px, 5cqmin, 24px);
         line-height: var(--ha-line-height-normal);
-        --mdc-icon-size: var(--ha-font-size-m);
+        --mdc-icon-size: clamp(10px, 5cqmin, 24px);
     }
 
     .label.humidity {
         color: #6fa3d6;
-        gap: 5px;
+        gap: clamp(2px, 1.8cqmin, 8px);
     }
 
     .buttons {
@@ -204,83 +223,10 @@ export const ShadowStyles = css`
         padding-bottom: 12px;
     }
     /* merged duplicate .bt-wrapper.container rules */
+    /* Sizing defaults */
+    /* Responsive Text Scaling using Container Queries */
     .bt-wrapper.container ha-big-number {
-        font-size: var(--ha-font-size-4xl);
-    }
-
-    .bt-wrapper.container.sm ha-big-number {
-        font-size: var(--ha-font-size-4xl);
-    }
-
-    .bt-wrapper.container.md .label.hvac_action {
-      font-size: var(--ha-font-size-s);
-    }
-    .bt-wrapper.container.sm .label.hvac_action {
-      font-size: calc(8px * var(--ha-font-size-scale));
-    }
-
-
-    .bt-wrapper.container.md ha-big-number {
-        font-size: 44px;
-    }
-
-    .bt-wrapper.container.lg ha-big-number {
-        font-size: 57px;
-    }
-
-    .bt-wrapper.container.md .info {
-      font-size: var(--ha-font-size-m);
-      top: -1rem;
-    }
-
-    .bt-wrapper.container.sm .info {
-      top: -1.5rem;
-    }
-
-    .bt-wrapper.container.xs .info {
-      top: -2rem;
-    }
-
-    .bt-wrapper.container.lg .info {
-      font-size: var(--ha-font-size-l);
-    }
-
-    .bt-wrapper.container.md .label {
-      font-size: var(--ha-font-size-m);
-      --mdc-icon-size: var(--ha-font-size-l);
-    }
-
-    .bt-wrapper.container.lg .label {
-      font-size: var(--ha-font-size-l);
-      --mdc-icon-size: var(--ha-font-size-xl);
-    }
-
-    .bt-wrapper.container.md .label.window-label {
-      --mdc-icon-size: var(--ha-font-size-xl);
-      padding-top: 1rem;
-    }
-
-    .bt-wrapper.container.lg .label.window-label {
-      --mdc-icon-size: var(--ha-font-size-4xl);
-    }
-
-    .bt-wrapper.container.xl ha-big-number {
-      font-size: 70px;
-    }
-
-    .bt-wrapper.container.xl .info {
-      font-size: var(--ha-font-size-l);
-    }
-
-    .bt-wrapper.container.xl .label {
-      font-size: var(--ha-font-size-xl);
-      --mdc-icon-size: var(--ha-font-size-2xl);
-    }
-
-    .bt-wrapper.container.xl .label.window-label {
-      --ha-font-size-scale: 1.3 !important;
-      --mdc-icon-size: calc(40px * var(--ha-font-size-scale));
-      padding-bottom: 0.5em;
+      font-size: clamp(26px, 24cqmin, 120px);
     }
 
 
@@ -288,8 +234,8 @@ export const ShadowStyles = css`
     .bt-buttons {
       display: flex;
       align-items: center;
-      gap: 0;
-      justify-content: space-around;
+      gap: 24px;
+      justify-content: center;
       padding: 1em 0;
       padding-top: 0;
     }
@@ -328,16 +274,16 @@ export const ShadowStyles = css`
 
     .label.hvac_action {
           color: var(--action-color, inherit) !important;
-          padding-top: 1.5rem;
     }
 
     .label.window-label {
           color: var(--info-color, inherit);
+          --mdc-icon-size: clamp(20px, 15cqmin, 75px);
     }
 
     .label.secondary:not(.label.humidity) {
           color: var(--action-color, inherit);
-          gap: 5px;
+          gap: clamp(2px, 1.8cqmin, 8px);
     }
 
 
@@ -351,17 +297,19 @@ export const ShadowStyles = css`
       backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
-      justify-content: space-evenly;
+      justify-content: center;
+      align-content: center;
       z-index: 10;
-      gap: 5px;
-      flex-direction: column;
+      gap: 12px;
+      flex-direction: row;
+      flex-wrap: wrap;
       max-height: 0%;
       overflow: hidden;
       transition: max-height 300ms ease-in-out, padding 300ms ease-in-out;
       z-index: -1;
-      overflow: scroll;
       box-sizing: border-box;
       background-color: rgba(var(--rgb-card-background-color), 0.6);
+      padding: 16px;
     }
     .preset-select.open {
       max-height: 100%;
