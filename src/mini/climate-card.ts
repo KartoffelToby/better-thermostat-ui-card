@@ -184,6 +184,7 @@ export class BetterThermostatUISmallCard
         hass: this.hass as any,
         string: "extra_states.window_open",
       });
+      const summer = (stateObj.attributes as any).call_for_heat === false;
       let humidity = "";
       if (stateObj.attributes.current_humidity && !this._config.disable_humidity) {
         humidity = ` ⸱ ${this.hass.formatEntityAttributeValue(
@@ -191,7 +192,7 @@ export class BetterThermostatUISmallCard
           "current_humidity"
         )}`;
       }
-      stateDisplay += ` ⸱ ${window ? `(${windowOpen}) ` : ""}${temperature}${humidity}`;
+      stateDisplay += ` ⸱ ${window ? `(${windowOpen}) ` : summer ? `(Summer) ` : ""}${temperature}${humidity}`;
     }
     const rtl = computeRTL(this.hass);
 
@@ -212,8 +213,11 @@ export class BetterThermostatUISmallCard
       actionStyle["--rgb-state-climate-heat"] = pre_color;
     }
 
+    const summer = (this._stateObj.attributes as any).call_for_heat === false;
     if ((this._stateObj.attributes as any).window_open) {
         actionStyle["--action-color"] = `var(--info-color)`;
+    } else if (summer) {
+        actionStyle["--action-color"] = `#ffb300`;
     }
     if (hvac_action === "off") {
       actionStyle["--action-color"] = `rgba(0, 0, 0, 0)`;
@@ -325,6 +329,7 @@ export class BetterThermostatUISmallCard
   protected renderIcon(stateObj: ClimateEntity, icon?: string): TemplateResult {
     const available = isAvailable(stateObj);
     const window = (stateObj.attributes as any).window_open;
+    const summer = (stateObj.attributes as any).call_for_heat === false;
     const eco = (stateObj.attributes as any).eco_mode === true;
     const color = getHvacModeColor(stateObj.state as HvacMode);
     const iconStyle = {};
@@ -334,6 +339,9 @@ export class BetterThermostatUISmallCard
     if (window) {
       iconStyle["--icon-color"] = `var(--info-color)`;
       iconStyle["--shape-color"] = `rgba(0,0,0, 0.1)`;
+    } else if (summer) {
+      iconStyle["--icon-color"] = `#ffb300`;
+      iconStyle["--shape-color"] = `rgba(255, 179, 0, 0.2)`;
     } else if (eco) {
       iconStyle["--icon-color"] = `rgb(165, 214, 167)`;
       iconStyle["--shape-color"] = `rgba(165, 214, 167, 0.2)`;
@@ -362,17 +370,19 @@ export class BetterThermostatUISmallCard
 
     const lowBattery = this._getLowBattery(entity);
     const errorEntityId = this._getErrorEntityId(entity);
-    const degradedMode = !this._config?.disable_degraded_warning && (entity.attributes as any)?.degraded_mode === true;
+    const degradedMode = this._config?.debug_degraded || (!this._config?.disable_degraded_warning && (entity.attributes as any)?.degraded_mode === true);
     if (degradedMode) {
       return html`
         <mushroom-badge-icon
           slot="badge"
           .icon=${"mdi:alert"}
-          title=${localize({ hass: this.hass as any, string: "extra_states.degraded_mode" })}
+          title="Degraded Mode"
           @click=${(ev: Event) => { ev.stopPropagation(); ev.preventDefault(); this.dispatchEvent(new CustomEvent("hass-more-info", { detail: { entityId: entity.entity_id }, bubbles: true, composed: true })); }}
           style=${styleMap({
-            "--main-color": "var(--warning-color)",
-            "--icon-color": "black",
+            "--icon-color": "var(--warning-color, #ffc107)",
+            "--main-color": "#202020",
+            border: "1px solid var(--warning-color, #ffc107)",
+            borderRadius: "50%",
           })}
         ></mushroom-badge-icon>
       `;
@@ -382,10 +392,13 @@ export class BetterThermostatUISmallCard
         <mushroom-badge-icon
           slot="badge"
           .icon=${"mdi:wifi-strength-off-outline"}
-          title=${localize({ hass: this.hass as any, string: "extra_states.connection_lost", search: "{name}", replace: errorEntityId })}
+          title="Connection Lost"
           @click=${(ev: Event) => this._handleErrorClick(ev, errorEntityId)}
           style=${styleMap({
-            "--main-color": "var(--error-color)",
+            "--icon-color": "var(--error-color, #f44336)",
+            "--main-color": "#202020",
+            border: "1px solid var(--error-color, #f44336)",
+            borderRadius: "50%",
           })}
         ></mushroom-badge-icon>
       `;
@@ -396,10 +409,13 @@ export class BetterThermostatUISmallCard
         <mushroom-badge-icon
           slot="badge"
           .icon=${"mdi:battery-alert"}
-          title=${localize({ hass: this.hass as any, string: "extra_states.low_battery", search: "{name}", replace: lowBattery.name })}
+          title="Low Battery"
           @click=${(ev: Event) => this._handleLowBatteryClick(ev, lowBattery)}
           style=${styleMap({
-            "--main-color": "var(--error-color)",
+            "--icon-color": "var(--error-color, #f44336)",
+            "--main-color": "#202020",
+            border: "1px solid var(--error-color, #f44336)",
+            borderRadius: "50%",
           })}
         ></mushroom-badge-icon>
       `;
@@ -409,6 +425,7 @@ export class BetterThermostatUISmallCard
   }
 
   private _getLowBattery(entity: ClimateEntity) {
+    if (this._config?.debug_battery) return { name: "Debug Battery", battery: 5 };
     if (this._config?.disable_battery_warning) return undefined;
 
     const batteriesRaw = (entity.attributes as any)?.batteries;
@@ -438,6 +455,7 @@ export class BetterThermostatUISmallCard
   }
 
   private _getErrorEntityId(entity: ClimateEntity) {
+    if (this._config?.debug_connection) return "Debug Connection";
     if (this._config?.disable_connection_lost_warning) return undefined;
 
     const errorsRaw = (entity.attributes as any)?.errors;
@@ -495,23 +513,32 @@ export class BetterThermostatUISmallCard
   renderActionBadge(entity: ClimateEntity) {
     const hvac_action = entity.attributes.hvac_action;
     const windowOpen = (entity.attributes as any).window_open;
+    const summer = (entity.attributes as any).call_for_heat === false;
 
-    if (!hvac_action || (hvac_action === "off" && !windowOpen)) return nothing;
+    if (!hvac_action || (hvac_action === "off" && !windowOpen && !summer)) return nothing;
 
     const color = getHvacActionColor(hvac_action);
     let icon = getHvacActionIcon(hvac_action);
     if (windowOpen) {
       icon = "mdi:window-open-variant";
+    } else if (summer) {
+      icon = "mdi:white-balance-sunny";
     }
 
     if (!icon) return nothing;
+
+    let finalColor = `rgb(${color})`;
+    if (summer && !windowOpen) finalColor = "#ffb300";
 
     return html`
       <mushroom-badge-icon
         slot="badge"
         .icon=${icon}
         style=${styleMap({
-          "--main-color": `rgb(${color})`,
+          "--icon-color": windowOpen ? `var(--info-color)` : finalColor,
+          "--main-color": "#202020",
+          border: `1px solid ${windowOpen ? `var(--info-color)` : finalColor}`,
+          borderRadius: "50%",
         })}
       ></mushroom-badge-icon>
     `;

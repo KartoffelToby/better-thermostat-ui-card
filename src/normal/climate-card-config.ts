@@ -22,6 +22,9 @@ export type BetterThermostatUINormalCardConfig = LovelaceCardConfig &
     disable_connection_lost_warning?: boolean;
     disable_degraded_warning?: boolean;
     low_battery_threshold?: number;
+    debug_battery?: boolean;
+    debug_connection?: boolean;
+    debug_degraded?: boolean;
   };
 
 export const betterThermostatUINormalCardConfigStruct = assign(
@@ -41,5 +44,8 @@ export const betterThermostatUINormalCardConfigStruct = assign(
     disable_connection_lost_warning: optional(boolean()),
     disable_degraded_warning: optional(boolean()),
     low_battery_threshold: optional(number()),
+    debug_battery: optional(boolean()),
+    debug_connection: optional(boolean()),
+    debug_degraded: optional(boolean()),
   })
 );

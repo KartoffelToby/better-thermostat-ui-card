@@ -20,6 +20,7 @@ const CLIMATE_LABELS = [
   "disable_buttons", "disable_menu", "prevent_interaction_on_scroll",
   "disable_eco", "disable_humidity",
   "disable_battery_warning", "disable_connection_lost_warning", "disable_degraded_warning",
+  "debug_battery", "debug_connection", "debug_degraded",
   "low_battery_threshold",
   "section_display", "section_interaction", "section_features", "section_warnings",
 ] as string[];
@@ -94,6 +95,9 @@ const computeSchema = memoizeOne((): HaFormSchema[] => [
           { name: "disable_battery_warning", selector: { boolean: {} } },
           { name: "disable_connection_lost_warning", selector: { boolean: {} } },
           { name: "disable_degraded_warning", selector: { boolean: {} } },
+          { name: "debug_battery", selector: { boolean: {} } },
+          { name: "debug_connection", selector: { boolean: {} } },
+          { name: "debug_degraded", selector: { boolean: {} } },
         ],
       },
       { name: "low_battery_threshold", default: 10, selector: { number: { min: 0, max: 100, step: 1, mode: "box", unit_of_measurement: "%" } } },
