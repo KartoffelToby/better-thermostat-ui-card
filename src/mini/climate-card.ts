@@ -172,6 +172,7 @@ export class BetterThermostatUISmallCard
     const appearance = computeAppearance(this._config);
     const picture = computeEntityPicture(stateObj, appearance.icon_type);
     const window = isWindowOpen(this.hass, stateObj, this._config);
+    const summer = (stateObj.attributes as any).call_for_heat === false;
     let stateDisplay = this.hass.formatEntityState(stateObj);
     if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
       stateDisplay = this.hass.formatEntityAttributeValue(stateObj, "hvac_action");
@@ -185,7 +186,6 @@ export class BetterThermostatUISmallCard
         hass: this.hass as any,
         string: "extra_states.window_open",
       });
-      const summer = (stateObj.attributes as any).call_for_heat === false;
       const summerLabel =
         localize({
           hass: this.hass as any,
@@ -229,13 +229,11 @@ export class BetterThermostatUISmallCard
       actionStyle["--rgb-state-climate-heat"] = pre_color;
     }
 
-    const summer = (this._stateObj.attributes as any).call_for_heat === false;
     if (window) {
         actionStyle["--action-color"] = `var(--info-color)`;
     } else if (summer) {
         actionStyle["--action-color"] = `#ffb300`;
-    }
-    if (hvac_action === "off") {
+    } else if (hvac_action === "off") {
       actionStyle["--action-color"] = `rgba(0, 0, 0, 0)`;
     }
     const iconStyle = {};
