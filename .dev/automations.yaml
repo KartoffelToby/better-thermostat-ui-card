@@ -16,3 +16,48 @@
     data:
       temperature: 25
   mode: single
+- id: '1780667572396'
+  alias: New automation
+  description: ''
+  use_blueprint:
+    path: BT/night_mode.yaml
+    input:
+      night_times_schedule: schedule.test
+      thermostat_target:
+        device_id: e00114a5f4fe7685b4c1da69a13a73f3
+- id: '1780667599075'
+  alias: New automation
+  description: ''
+  use_blueprint:
+    path: BT/presence_away_preset.yaml
+    input:
+      thermostat_target:
+        device_id: e00114a5f4fe7685b4c1da69a13a73f3
+      presence_entities:
+      - person.tobias_haber
+      home_preset: home
+- id: '1780667628386'
+  alias: New automation
+  description: ''
+  use_blueprint:
+    path: BT/device_error_notify.yaml
+    input:
+      thermostat_device: e00114a5f4fe7685b4c1da69a13a73f3
+- id: '1780667648508'
+  alias: New automation
+  description: ''
+  use_blueprint:
+    path: BT/humidity_high_alert.yaml
+    input:
+      ventilation_switch: switch.demo_child_lock
+      thermostat_device: e00114a5f4fe7685b4c1da69a13a73f3
+- id: '1780667710231'
+  alias: New automation
+  description: ''
+  use_blueprint:
+    path: BT/weekly_heating_schedule.yaml
+    input:
+      presence_entity: binary_sensor.fenster_sensor
+      pause_switch: input_boolean.home_thermostat_heater
+      thermostat_target:
+        device_id: e00114a5f4fe7685b4c1da69a13a73f3

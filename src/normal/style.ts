@@ -48,30 +48,10 @@ export const ShadowStyles = css`
       --state-climate-heat-color: #f4636c !important;
     }
 
-    .bt-wrapper.container {
-      display: grid;
-      width: 100%;
-      justify-items: center;
-      overflow: hidden;
-      position: relative !important;
-      max-width: 100%;
-      box-sizing: border-box;
-      flex: 1;
-      align-items: start;
-      justify-content: center;
-      left: 50%;
-      transform: translateX(-50%);
-    }
+
 
     mushroom-climate-hvac-modes-control {
       justify-content: center !important;
-    }
-
-    .container:before {
-      content: "";
-      display: block;
-      padding-top: 100%;
-      grid-area: 1 / 1;
     }
 
     .more-info {
@@ -86,19 +66,15 @@ export const ShadowStyles = css`
       direction: var(--direction);
     }
 
-    hui-card-features {
+    cts-hui-card-features {
       width: 100%;
       flex: none;
       padding: 0 12px 12px 12px;
     }
 
     ha-control-circular-slider {
-        grid-area: 1 / 1;
-        width: 100% !important;
-        height: auto !important;
-        min-width: 0 !important;
-        position: relative;
-        /*flex: 0 0 auto;*/
+      width: 100%;
+      --control-circular-slider-color: var(--state-color, var(--disabled-color));
     }
 
     ha-control-circular-slider {
@@ -125,162 +101,198 @@ export const ShadowStyles = css`
 
 
     ha-control-circular-slider::after {
-        display: block;
-        content: "";
-        position: absolute;
-
-        right: -10%;
-        bottom: -10%;
-        background: radial-gradient(50% 50% at 50% 50%, var(--action-color, transparent) 0%, transparent 100%);
-        opacity: 0.3;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        left: 50% !important;
-        top: 45% !important;
-        width: 85%;
-        height: 85%;
-        z-index: -5;
+      display: block;
+      content: "";
+      position: absolute;
+      top: -10%;
+      left: -10%;
+      right: -10%;
+      bottom: -10%;
+      background: radial-gradient(
+        50% 50% at 50% 50%,
+        var(--action-color, transparent) 0%,
+        transparent 100%
+      );
+      opacity: 0.15;
+      pointer-events: none;
     }
 
-
-
-    .info {
-        position: absolute;
-        top: 0.2em;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: start;
-        pointer-events: none;
-        font-size: var(--ha-font-size-m);
-        line-height: var(--ha-line-height-normal);
-        letter-spacing: .1px;
-        gap: 5px;
-        --mdc-icon-size: 16px;
-        height: 100%;
-        width: 100%;
-    }
-
-    .info .label:first-child {
-      margin-top: 2.3rem;
-    }
-
-    .label {
+    .container {
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
+      max-width: 100%;
+      box-sizing: border-box;
+      flex: 1;
+    }
+
+    /* Like the HA core thermostat card: overflow hidden lets the flex item
+       shrink below its square :before placeholder, so the card never grows
+       past its grid cell. The wrapper is then capped to the measured
+       container height via the inline max-width set in render(). */
+    ha-card > .container {
+      overflow: hidden;
+    }
+
+    .container:before {
+      content: "";
+      display: block;
+      padding-top: 100%;
+    }
+
+    .container > .bt-wrapper {
+      width: 100%;
+      position: relative;
+      container-type: inline-size;
+      container-name: container;
+      box-sizing: border-box;
+      max-width: 320px;
+    }
+
+    .info {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      font-size: var(--ha-font-size-l);
       line-height: var(--ha-line-height-normal);
-      letter-spacing: .1px;
+      letter-spacing: 0.1px;
+      gap: var(--ha-space-2);
+      --mdc-icon-size: 16px;
+    }
+
+    .info * {
       margin: 0;
-      color: var(--secondary-text-color);
-      font-weight: 600;
+      pointer-events: auto;
+    }
+
+    .label {
+      width: 100%;
+      font-weight: var(--ha-font-weight-medium);
+      text-align: center;
+      color: var(--action-color, inherit);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: var(--ha-line-height-normal);
+      min-height: 1.5em;
+      white-space: nowrap;
+    }
+
+    .label span {
+      white-space: nowrap;
     }
 
     .label ha-svg-icon {
-            bottom: 5%;
+      bottom: 5%;
     }
 
-    .label.secondary {
-        font-size: var(--ha-font-size-m);
-        line-height: var(--ha-line-height-normal);
-        --mdc-icon-size: var(--ha-font-size-m);
+    .label.disabled {
+      color: var(--secondary-text-color);
     }
+
+    .primary-state {
+      font-size: 36px;
+    }
+
+
+
+    .label-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      gap: 6px;
+    }
+
+    .label-container .label {
+      width: auto !important;
+    }
+
 
     .label.humidity {
         color: #6fa3d6;
-        gap: 5px;
     }
 
     .buttons {
-        width: 100%;
-        gap: 24px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        padding-bottom: 12px;
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      gap: var(--ha-space-6, 24px);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
     }
-    /* merged duplicate .bt-wrapper.container rules */
-    .bt-wrapper.container ha-big-number {
-        font-size: var(--ha-font-size-4xl);
-    }
-
-    .bt-wrapper.container.sm ha-big-number {
-        font-size: var(--ha-font-size-4xl);
-    }
-
-    .bt-wrapper.container.md .label.hvac_action {
-      font-size: var(--ha-font-size-s);
-    }
-    .bt-wrapper.container.sm .label.hvac_action {
-      font-size: calc(8px * var(--ha-font-size-scale));
+    .buttons > * {
+      pointer-events: auto;
     }
 
-
-    .bt-wrapper.container.md ha-big-number {
-        font-size: 44px;
+    .container.md ha-big-number {
+      font-size: 44px;
+    }
+    .container.md .state {
+      font-size: var(--ha-font-size-3xl);
+    }
+    .container.md .info {
+      margin-top: 12px;
+      gap: 6px;
+    }
+    .container.md .buttons {
+      display: none;
+    }
+    .container.md ha-control-circular-slider {
+      margin-bottom: -16px;
     }
 
-    .bt-wrapper.container.lg ha-big-number {
-        font-size: 57px;
+    .container.sm ha-big-number {
+      font-size: var(--ha-font-size-4xl);
     }
-
-    .bt-wrapper.container.md .info {
+    .container.sm .state {
+      font-size: var(--ha-font-size-2xl);
+    }
+    .container.sm .info {
+      margin-top: 12px;
       font-size: var(--ha-font-size-m);
-      top: -1rem;
+      gap: 2px;
+      --mdc-icon-size: 14px;
+    }
+    .container.sm .buttons {
+      display: none;
+    }
+    .container.sm ha-control-circular-slider {
+      margin-bottom: -16px;
     }
 
-    .bt-wrapper.container.sm .info {
-      top: -1.5rem;
+    .container.xs ha-big-number {
+      font-size: var(--ha-font-size-4xl);
     }
-
-    .bt-wrapper.container.xs .info {
-      top: -2rem;
-    }
-
-    .bt-wrapper.container.lg .info {
+    .container.xs .state {
       font-size: var(--ha-font-size-l);
     }
-
-    .bt-wrapper.container.md .label {
-      font-size: var(--ha-font-size-m);
-      --mdc-icon-size: var(--ha-font-size-l);
+    .container.xs .info {
+      margin-top: 12px;
     }
-
-    .bt-wrapper.container.lg .label {
-      font-size: var(--ha-font-size-l);
-      --mdc-icon-size: var(--ha-font-size-xl);
+    .container.xs .buttons {
+      display: none;
     }
-
-    .bt-wrapper.container.md .label.window-label {
-      --mdc-icon-size: var(--ha-font-size-xl);
-      padding-top: 1rem;
+    .container.xs ha-control-circular-slider {
+      margin-bottom: -16px;
     }
-
-    .bt-wrapper.container.lg .label.window-label {
-      --mdc-icon-size: var(--ha-font-size-4xl);
-    }
-
-    .bt-wrapper.container.xl ha-big-number {
-      font-size: 70px;
-    }
-
-    .bt-wrapper.container.xl .info {
-      font-size: var(--ha-font-size-l);
-    }
-
-    .bt-wrapper.container.xl .label {
-      font-size: var(--ha-font-size-xl);
-      --mdc-icon-size: var(--ha-font-size-2xl);
-    }
-
-    .bt-wrapper.container.xl .label.window-label {
-      --ha-font-size-scale: 1.3 !important;
-      --mdc-icon-size: calc(40px * var(--ha-font-size-scale));
-      padding-bottom: 0.5em;
+    .container.xs .label {
+      display: none;
     }
 
 
@@ -288,8 +300,8 @@ export const ShadowStyles = css`
     .bt-buttons {
       display: flex;
       align-items: center;
-      gap: 0;
-      justify-content: space-around;
+      gap: 24px;
+      justify-content: center;
       padding: 1em 0;
       padding-top: 0;
     }
@@ -328,16 +340,25 @@ export const ShadowStyles = css`
 
     .label.hvac_action {
           color: var(--action-color, inherit) !important;
-          padding-top: 1.5rem;
     }
 
     .label.window-label {
           color: var(--info-color, inherit);
+          --mdc-icon-size: clamp(20px, 15cqmin, 75px);
+    }
+    
+    .label.summer-label {
+          color: #ffb300;
+          --mdc-icon-size: clamp(20px, 15cqmin, 75px);
+    }
+
+    .label.warning {
+      --mdc-icon-size: clamp(20px, 15cqmin, 75px);
     }
 
     .label.secondary:not(.label.humidity) {
           color: var(--action-color, inherit);
-          gap: 5px;
+          gap: clamp(2px, 1.8cqmin, 8px);
     }
 
 
@@ -351,17 +372,19 @@ export const ShadowStyles = css`
       backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
-      justify-content: space-evenly;
+      justify-content: center;
+      align-content: center;
       z-index: 10;
-      gap: 5px;
-      flex-direction: column;
+      gap: 12px;
+      flex-direction: row;
+      flex-wrap: wrap;
       max-height: 0%;
       overflow: hidden;
       transition: max-height 300ms ease-in-out, padding 300ms ease-in-out;
       z-index: -1;
-      overflow: scroll;
       box-sizing: border-box;
       background-color: rgba(var(--rgb-card-background-color), 0.6);
+      padding: 16px;
     }
     .preset-select.open {
       max-height: 100%;

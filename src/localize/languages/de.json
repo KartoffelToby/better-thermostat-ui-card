@@ -12,11 +12,13 @@
         "disable_window": "Fenster-offen-Anzeige deaktivieren",
         "disable_summer": "Sommer-Anzeige deaktivieren",
         "disable_eco": "Eco-Anzeige deaktivieren",
+        "disable_presets": "Presets-Button deaktivieren",
         "disable_heat": "Heiz-Anzeige deaktivieren",
         "disable_off": "Aus-Anzeige deaktivieren",
         "disable_menu": "Menü deaktivieren",
         "disable_battery_warning": "Batterie-Warnung deaktivieren",
         "disable_buttons": "Plus/Minus Buttons deaktivieren",
+        "disable_all_buttons": "Alle Buttons deaktivieren",
         "eco_temperature": "Eco Temperatur",
         "set_current_as_main": "Zieltemperatur mit aktueller Temperatur tauschen",
         "show_current_as_primary": "Aktuelle Temperatur als primär anzeigen",
@@ -27,11 +29,18 @@
         "collapsible_controls": "Einklappbare Steuerung",
         "disable_connection_lost_warning": "Verbindungsverlust-Warnung deaktivieren",
         "disable_degraded_warning": "Warnung für eingeschränkten Modus deaktivieren",
+        "debug_battery": "Debug: Batterie-Warnung anzeigen",
+        "debug_connection": "Debug: Verbindungsverlust-Warnung anzeigen",
+        "debug_degraded": "Debug: Warnung für eingeschränkten Modus anzeigen",
         "low_battery_threshold": "Schwellenwert Batteriewarnung (%)",
         "section_display": "Anzeige",
         "section_interaction": "Interaktion",
         "section_features": "Funktionen",
-        "section_warnings": "Warnungen"
+        "section_warnings": "Warnungen",
+        "section_sensors": "Externe Sensoren",
+        "window_sensor": "Fenstersensor",
+        "humidity_sensor": "Luftfeuchtigkeitssensor",
+        "not_bt_info": "Die ausgewählte Entität ist keine Better Thermostat Entität. Die Karte funktioniert trotzdem, aber für die Fenster-offen- und Luftfeuchtigkeitsanzeige müssen die passenden Sensoren im Abschnitt 'Externe Sensoren' ausgewählt werden."
       }
     }
   },
@@ -44,6 +53,9 @@
     "heating": "Heizen",
     "cooling_off": "Kühlung aus",
     "heating_off": "Heizung aus",
+    "degraded_mode": "Eingeschränkter Modus",
+    "connection_lost": "Verbindung verloren: {name}",
+    "low_battery": "Batterie schwach: {name}",
     "window_closed": "Fenster geschlossen"
   }
 }

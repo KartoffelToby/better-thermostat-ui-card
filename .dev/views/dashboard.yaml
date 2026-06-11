@@ -7,6 +7,7 @@ cards:
         cards:
           - type: custom:better-thermostat-normal-climate-card
             entity: climate.demo
+            disable_buttons: false
       - type: grid
         columns: 1
         square: false

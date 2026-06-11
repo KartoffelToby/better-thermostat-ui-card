@@ -20,13 +20,17 @@ import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { classMap } from "lit/directives/class-map.js";
 import { BetterThermostatUINormalCardConfig } from "./climate-card-config";
-import { mdiMinus, mdiPlus, mdiThermometer, mdiThermostat, mdiWindowOpenVariant, mdiDotsVertical, mdiFire, mdiWaterPercent, mdiBattery10, mdiAlert, mdiBatteryAlert, mdiWifiStrengthOffOutline } from "@mdi/js";
+import { mdiMinus, mdiPlus, mdiThermometer, mdiThermostat, mdiWindowOpenVariant, mdiDotsVertical, mdiFire, mdiWaterPercent, mdiBattery10, mdiAlert, mdiBatteryAlert, mdiWifiStrengthOffOutline, mdiWhiteBalanceSunny } from "@mdi/js";
 import { ShadowStyles } from './style';
 import { CLIMATE_HVAC_ACTION_TO_MODE, ClimateEntity, stateColorCss, stateActive, stateControlCircularSliderStyle } from "../shims/ha-frontend-shim";
 import setupMushroomLocalize from "mushroom-cards/src/localize";
 import setupCustomlocalize from "../localize/localize";
 import { getHvacModeColor, getHvacModeIcon } from "./utils";
+import { formatHumidity, isWindowOpen } from "../utils/bt";
+import "./features/hui-card-features";
+import type { LovelaceCardFeatureContext } from "./features/types";
 
+const UNAVAILABLE = "unavailable";
 
 interface BatteryState {
   battery: string;
@@ -64,6 +68,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   public preventInteractionOnScroll = false;
   @state() private _config?: BetterThermostatUINormalCardConfig;
   @state() private _stateObj?: ClimateEntity;
+  @state() private _featureContext?: LovelaceCardFeatureContext;
   @state() private _targetTemperature: Partial<Record<"value" | "low" | "high", number>> = {};
   // When the user is actively interacting (dragging) the slider, prevent
   // `willUpdate` from overwriting the in-progress value from the hass state
@@ -114,18 +119,14 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   private _sizeController = new ResizeController(this, {
     callback: (entries) => {
       const width = entries[0]?.contentRect.width;
-      const height = entries[0]?.contentRect.height;
-      const smaller = Math.min(width, height);
-      //console.log("Size changed:", smaller);
-      return smaller < 130
+      if (!width) return "lg";
+      return width < 130
         ? "xs"
-        : smaller < 155
+        : width < 190
           ? "sm"
-          : smaller < 200
+          : width < 250
             ? "md"
-            : smaller > 250
-              ? "xl"
-              : "lg";
+            : "lg";
     },
   });
 
@@ -140,8 +141,26 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     // (no-op; assigned when opening preset select)
   }
 
-  public getCardSize(): number { return 3; }
-  public getGridOptions(): LovelaceGridOptions { return { rows: 3, columns: 6, min_rows: 3 }; }
+  public getCardSize(): number { return 5; }
+  public getGridOptions(): LovelaceGridOptions {
+    const columns = 12;
+    let rows = 5;
+    let min_rows = 3;
+    const min_columns = 6;
+    // Like the HA core thermostat card: reserve extra rows for features so
+    // they don't eat into the dial's space.
+    if (this._config?.features?.length) {
+      const featureHeight = Math.ceil((this._config.features.length * 2) / 3);
+      rows += featureHeight;
+      min_rows += featureHeight;
+    }
+    return {
+      rows,
+      columns,
+      min_rows,
+      min_columns,
+    };
+  }
 
   public setConfig(config: BetterThermostatUINormalCardConfig): void {
     if (
@@ -153,8 +172,10 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       );
     }
   
-    this._config = config;
-
+    this._config = {
+      disable_buttons: true,
+      ...config,
+    };
   }
 
   private _handleMoreInfo() {
@@ -171,6 +192,9 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       if (this._config?.entity) {
         this._stateObj = this.hass.states[this._config.entity] as ClimateEntity;
         if (this._stateObj) {
+          if (!this._featureContext || this._featureContext.entity_id !== this._stateObj.entity_id) {
+            this._featureContext = { entity_id: this._stateObj.entity_id };
+          }
           // Only override local target values from the HA entity when
           // the user is not currently dragging the control. This avoids the
           // UI jumping back to the old value while the user is still
@@ -246,8 +270,36 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     this._isDragging = true;
     this._targetTemperature = { ...this._targetTemperature, value };
   }
+  private _lowChanged(ev: CustomEvent) {
+    const value = (ev.detail as any).value;
+    if (isNaN(value)) return;
+    this._isDragging = false;
+    this._lastInteraction = Date.now();
+    this._targetTemperature = { ...this._targetTemperature, low: value };
+    this._callService("low");
+  }
+  private _lowChanging(ev: CustomEvent) {
+    const value = (ev.detail as any).value;
+    if (isNaN(value)) return;
+    this._isDragging = true;
+    this._targetTemperature = { ...this._targetTemperature, low: value };
+  }
+  private _highChanged(ev: CustomEvent) {
+    const value = (ev.detail as any).value;
+    if (isNaN(value)) return;
+    this._isDragging = false;
+    this._lastInteraction = Date.now();
+    this._targetTemperature = { ...this._targetTemperature, high: value };
+    this._callService("high");
+  }
+  private _highChanging(ev: CustomEvent) {
+    const value = (ev.detail as any).value;
+    if (isNaN(value)) return;
+    this._isDragging = true;
+    this._targetTemperature = { ...this._targetTemperature, high: value };
+  }
 
-  private get _supportsTargetValue() { return !!this._stateObj?.attributes.temperature; }
+  private get _supportsTargetValue() { return this._stateObj?.attributes.temperature != null; }
   private get _supportsTargetRange() { return this._stateObj?.attributes.target_temp_low != null && this._stateObj?.attributes.target_temp_high != null; }
 
   protected render() {
@@ -264,7 +316,18 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     };
     const active = isActive(stateObj);
     const available = isAvailable(stateObj);
-    const sliderMode = SLIDER_MODES[(stateObj.state as HvacMode) || "off"] || "full";
+    let sliderMode = SLIDER_MODES[(stateObj.state as HvacMode) || "off"] || "full";
+    if (
+      sliderMode === "full" &&
+      ["off", "auto"].includes(stateObj.state) &&
+      !stateObj.attributes.hvac_modes?.includes("heat_cool")
+    ) {
+      if (stateObj.attributes.hvac_modes?.includes("heat")) {
+        sliderMode = "start";
+      } else if (stateObj.attributes.hvac_modes?.includes("cool")) {
+        sliderMode = "end";
+      }
+    }
     this.preventInteractionOnScroll = Boolean(this._config?.prevent_interaction_on_scroll);
 
     const showCurrentAsPrimary = this._config.show_current_as_primary;
@@ -272,7 +335,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
     const currentTemp = stateObj.attributes.current_temperature;
 
-    const window = (stateObj.attributes as any).window_open;
+    const window = isWindowOpen(this.hass, stateObj, this._config);
 
 
     const renderTarget = (temperature: number, big = false, hideUnit = false) => {
@@ -318,7 +381,10 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
       // --- Low battery detection ---
       let lowBatteryEntity: { name: string; battery: number } | undefined;
-      if ((stateObj.attributes as any)?.batteries !== undefined && !this?._config?.disable_battery_warning) {
+      if (this._config?.debug_battery) {
+        lowBatteryEntity = { name: "Debug Sensor", battery: 5 };
+        this.lowBattery = lowBatteryEntity;
+      } else if ((stateObj.attributes as any)?.batteries !== undefined && !this?._config?.disable_battery_warning) {
         try {
           const showLowBatteryWarningWhenPercentageLowerThan = this._config?.low_battery_threshold ?? 10;
           const batteries = Object.entries(JSON.parse((stateObj.attributes as any).batteries) as Record<string, BatteryState>);
@@ -335,7 +401,10 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
       // --- Connection error detection ---
       let errorEntityId: string | undefined;
-      if ((stateObj.attributes as any)?.errors !== undefined && !this?._config?.disable_connection_lost_warning) {
+      if (this._config?.debug_connection) {
+        errorEntityId = "Debug Sensor";
+        this.error = "Debug Sensor";
+      } else if ((stateObj.attributes as any)?.errors !== undefined && !this?._config?.disable_connection_lost_warning) {
         try {
           const errors = JSON.parse((stateObj.attributes as any).errors);
           if (Array.isArray(errors) && errors.length > 0) {
@@ -357,33 +426,41 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       }
 
       // --- Build warning icons ---
-      const degradedMode = !this?._config?.disable_degraded_warning && (stateObj.attributes as any)?.degraded_mode === true;
+      const degradedMode = this?._config?.debug_degraded || (!this?._config?.disable_degraded_warning && (stateObj.attributes as any)?.degraded_mode === true);
       const warningIcons = html`
         ${degradedMode ? html`
-          <p class="label degraded-label" title=${localize("extra_states.degraded_mode")} style="color: var(--warning-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, stateObj.entity_id); }}>
+          <span class="warning degraded-label label" title="Degraded Mode" style="color: var(--warning-color, #ffc107); cursor: pointer; pointer-events: auto; display: inline-flex !important;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, stateObj.entity_id); }}>
             <ha-svg-icon .path=${mdiAlert}></ha-svg-icon>
-          </p>
+          </span>
         ` : nothing}
         ${errorEntityId ? html`
-          <p class="label error-label" title=${localize("extra_states.connection_lost").replace("{name}", errorEntityId)} style="color: var(--error-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, errorEntityId!); }}>
+          <span class="warning error-label label" title="Connection Lost" style="color: var(--error-color, #f44336); cursor: pointer; pointer-events: auto; display: inline-flex !important;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, errorEntityId!); }}>
             <ha-svg-icon .path=${mdiWifiStrengthOffOutline}></ha-svg-icon>
-          </p>
+          </span>
         ` : nothing}
         ${lowBatteryEntity ? html`
-          <p class="label batteries-label" title=${localize("extra_states.low_battery").replace("{name}", lowBatteryEntity.name)} style="color: var(--error-color); cursor: pointer; pointer-events: auto;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, lowBatteryEntity!.name); }}>
+          <span class="warning batteries-label label" title="Low Battery" style="color: var(--error-color, #f44336); cursor: pointer; pointer-events: auto; display: inline-flex !important;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, lowBatteryEntity!.name); }}>
             <ha-svg-icon .path=${mdiBatteryAlert}></ha-svg-icon>
-          </p>
+          </span>
         ` : nothing}
       `;
 
-      const window = (stateObj.attributes as any).window_open;
+      const window = isWindowOpen(this.hass, stateObj, this._config);
+      const summer = (stateObj.attributes as any).call_for_heat === false;
+
+      if (stateObj.state === UNAVAILABLE) {
+        return html`<div class="label-container">${warningIcons}<p class="label hvac_action">${this.hass.formatEntityState(stateObj)}</p></div>`;
+      }
       if (window) {
-        return html`${warningIcons}<p class="label window-label"><ha-svg-icon .path=${mdiWindowOpenVariant}></ha-svg-icon></p>`;
+        return html`<div class="label-container">${warningIcons}<p class="label window-label"><ha-svg-icon .path=${mdiWindowOpenVariant}></ha-svg-icon></p></div>`;
+      }
+      if (summer) {
+        return html`<div class="label-container">${warningIcons}<p class="label summer-label"><ha-svg-icon .path=${mdiWhiteBalanceSunny}></ha-svg-icon></p></div>`;
       }
       if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
-        return html`${warningIcons}<p class="label hvac_action">${this.hass.formatEntityAttributeValue(stateObj, "hvac_action")}</p>`;
+        return html`<div class="label-container">${warningIcons}<p class="label hvac_action">${this.hass.formatEntityAttributeValue(stateObj, "hvac_action")}</p></div>`;
       }
-      return html`${warningIcons}<p class="label hvac_action">${this.hass.formatEntityState(stateObj)}</p>`;
+      return html`<div class="label-container">${warningIcons}<p class="label hvac_action">${this.hass.formatEntityState(stateObj)}</p></div>`;
     };
 
     const primary = () => {
@@ -410,20 +487,20 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     };
 
     const renderHumidity = () => {
-      const humidity = stateObj.attributes.current_humidity;
-      if (humidity == null || this._config?.disable_humidity) return nothing;
+      const humidityDisplay = formatHumidity(this.hass, stateObj, this._config);
+      if (!humidityDisplay) return nothing;
 
       return html`
         <p class="label secondary humidity">
           <ha-svg-icon .path=${mdiWaterPercent}></ha-svg-icon>
-          ${this.hass.formatEntityAttributeValue(stateObj, "current_humidity")}&nbsp;
+          ${humidityDisplay}&nbsp;
         </p>
       `;
     };
 
-    const buttons = (target: "value" | "low" | "high") => html`<div class="bt-buttons"><ha-outlined-icon-button .target=${target as any} .step=${-this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiMinus}></ha-svg-icon></ha-outlined-icon-button><ha-outlined-icon-button .target=${target as any} .step=${this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiPlus}></ha-svg-icon></ha-outlined-icon-button></div>`;
+    const buttons = (target: "value" | "low" | "high") => html`<div class="buttons"><ha-outlined-icon-button .target=${target as any} .step=${-this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiMinus}></ha-svg-icon></ha-outlined-icon-button><ha-outlined-icon-button .target=${target as any} .step=${this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiPlus}></ha-svg-icon></ha-outlined-icon-button></div>`;
 
-    if (this._supportsTargetValue && available) {
+    if ((this._supportsTargetValue || this._supportsTargetRange) && available) {
       const mode = this._stateObj.state;
       const action = this._stateObj.attributes.hvac_action;
       const active = stateActive(this._stateObj);
@@ -439,14 +516,15 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
         );
       }
       let stateColor = stateColorCss(this._stateObj);
+      const preset_mode = (this._stateObj.attributes as any).preset_mode;
       if (window) {
         actionColor = "var(--info-color)";
         stateColor = "var(--info-color)";
-      } else if ((this._stateObj.attributes as any).preset_mode !== 'none') {
-        const pre_color = getHvacModeColor((this._stateObj.attributes as any).preset_mode);
+      } else if (preset_mode != null && preset_mode !== 'none') {
+        const pre_color = getHvacModeColor(preset_mode);
         stateColor = `rgb(${pre_color})`;
         actionColor = `rgb(${pre_color})`;
-      };
+      }
 
       if (mode === "off") {
         stateColor = "var(--rgb-grey)";
@@ -456,8 +534,10 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
       const lowColor = stateColorCss(this._stateObj, active ? "heat" : "off");
       const highColor = stateColorCss(this._stateObj, active ? "cool" : "off");
+      // Cap the dial to the available container height (like the HA core
+      // thermostat card), so it shrinks instead of being cut off.
       const controlMaxWidth = this._resizeController.value
-      ? `${this._resizeController.value}px`
+      ? `${Math.min(this._resizeController.value, 320)}px`
       : undefined;
       const name = this._config.name || this._stateObj.attributes.friendly_name || "";
 
@@ -465,29 +545,55 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       iconStyle["--icon-color"] = `var(--rgb-grey)`;
       iconStyle["--bg-color"] = `rgba(var(--rgb-grey), 0.2)`;
 
-      const hvacModes: string[] = Array.isArray(this._stateObj.attributes.hvac_modes)
+      const rawHvacModes: string[] = Array.isArray(this._stateObj.attributes.hvac_modes)
         ? this._stateObj.attributes.hvac_modes
         : ["off", "heat", "cool"];
-      const presetsIndex = Math.max(hvacModes.length - 1, 0);
-      const buttonModes: string[] = [
-        ...hvacModes.slice(0, presetsIndex),
-        "presets",
-        ...hvacModes.slice(presetsIndex),
+      // Always render the "off" mode last in the button row, regardless of the
+      // order the integration reports hvac_modes in.
+      const hvacModes: string[] = [
+        ...rawHvacModes.filter((mode) => mode !== "off"),
+        ...(rawHvacModes.includes("off") ? ["off"] : []),
       ];
+      const presetsIndex = Math.max(hvacModes.length - 1, 0);
+      const buttonModes: string[] = this._config.disable_presets
+        ? hvacModes
+        : [
+            ...hvacModes.slice(0, presetsIndex),
+            "presets",
+            ...hvacModes.slice(presetsIndex),
+          ];
 
-      return html`
-      <ha-card>
-        <p class="title">${name}</p>
-        <div
-          class="bt-wrapper container${containerSizeClass}"
-            style=${styleMap({
-            "--low-color": lowColor,
-            "--high-color": highColor,
-            "--state-color": stateColor ?? "var(--primary-text-color)",
-            "--action-color": actionColor ?? "",
-            maxWidth: controlMaxWidth,
-          })}
-        >
+      // disable_all_buttons hides the whole row, except the presets button
+      // as long as presets aren't disabled themselves.
+      const hasPresets =
+        (this._stateObj.attributes.preset_modes?.filter((p: string) => p !== "none") ?? [])
+          .length > 0;
+      const presetOnly =
+        !!this._config.disable_all_buttons &&
+        !this._config.disable_presets &&
+        hasPresets;
+      const showActions = !this._config.disable_all_buttons || presetOnly;
+
+      const circularSlider = this._supportsTargetRange
+        ? html`
+            <ha-control-circular-slider
+              .preventInteractionOnScroll=${this.preventInteractionOnScroll}
+              .inactive=${!active}
+              dual
+              .low=${this._targetTemperature.low}
+              .high=${this._targetTemperature.high}
+              .min=${this._min}
+              .max=${this._max}
+              .step=${this._step}
+              .current=${this._stateObj.attributes.current_temperature}
+              @low-changed=${this._lowChanged}
+              @low-changing=${this._lowChanging}
+              @high-changed=${this._highChanged}
+              @high-changing=${this._highChanging}
+            >
+            </ha-control-circular-slider>
+          `
+        : html`
             <ha-control-circular-slider
               .preventInteractionOnScroll=${this.preventInteractionOnScroll}
               .inactive=${!active}
@@ -501,8 +607,29 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
               @value-changing=${this._valueChanging}
             >
             </ha-control-circular-slider>
+          `;
+
+
+
+      return html`
+      <ha-card>
+        <p class="title">${name}</p>
+        <div class="container">
+          <div
+            class="bt-wrapper container${containerSizeClass}"
+            style=${styleMap({
+              "--low-color": lowColor,
+              "--high-color": highColor,
+              "--state-color": stateColor ?? "var(--primary-text-color)",
+              "--action-color": actionColor ?? "",
+              maxWidth: controlMaxWidth,
+            })}
+          >
+            ${circularSlider}
             <div class="info">${renderLabel()}${primary()}${secondary()}${renderHumidity()}</div>
+            ${!this._config.disable_buttons ? buttons(this._supportsTargetRange ? this._selectTarget : "value") : nothing}
           </div>
+        </div>
         ${!this._config.disable_menu ? html`<ha-icon-button
           class="more-info"
           .label=${localize("ui.panel.lovelace.cards.show_more_info")}
@@ -515,8 +642,8 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
         ></ha-icon-button>` : nothing}
 
 
+        ${showActions ? html`
         <div class="actions">
-          ${!this._config.disable_buttons ? buttons("value") : nothing}
 
 
             <div class=${classMap({ 'preset-select': true, open: this._presetOpen })}>
@@ -533,12 +660,26 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           `)}
         </div>
 
-        <mushroom-button-group .fill=${true} ?rtl=${false}>
-          ${(buttonModes).map((mode) => this.renderModeButton(mode))}
-        </mushroom-button-group>
+        ${presetOnly ? html`
+          <mushroom-button-group .fill=${true} ?rtl=${false}>
+            ${this.renderModeButton("presets")}
+          </mushroom-button-group>
+        ` : this._config.features?.length ? html`
+          <cts-hui-card-features
+            .hass=${this.hass}
+            .context=${this._featureContext}
+            .features=${this._config.features}
+            color=${stateColorCss(stateObj)}
+          ></cts-hui-card-features>
+        ` : html`
+          <mushroom-button-group .fill=${true} ?rtl=${false}>
+            ${(buttonModes).map((mode) => this.renderModeButton(mode))}
+          </mushroom-button-group>
+        `}
 
-          
+
         </div>
+        ` : nothing}
       </ha-card>
 
     `;
