@@ -207,15 +207,27 @@ export class ClimateCardEditor
 
     // Non Better Thermostat entities don't provide window/humidity data via
     // attributes — offer external sensor pickers instead and hide BT-only
-    // options. Without a resolvable entity, fall back to the full BT form.
+    // options. An unresolvable entity is treated as non-BT so typos or
+    // unloaded entities don't accidentally show the BT-only form.
     const stateObj = this._config.entity
       ? this.hass.states[this._config.entity]
       : undefined;
-    const isBt = !stateObj || isBtEntity(stateObj);
+    const isBt = stateObj ? isBtEntity(stateObj) : false;
+    const entityMissing = !stateObj && !!this._config.entity;
     const schema = computeSchema(isBt);
 
     return html`
-      ${!isBt
+      ${entityMissing
+        ? html`
+            <ha-alert alert-type="warning">
+              ${this.hass.localize(
+                "ui.panel.lovelace.warning.entity_not_found",
+                { entity: this._config.entity }
+              )}
+            </ha-alert>
+          `
+        : nothing}
+      ${stateObj && !isBt
         ? html`
             <ha-alert alert-type="info">
               ${this._localize("editor.card.climate.not_bt_info")}

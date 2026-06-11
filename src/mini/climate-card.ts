@@ -186,12 +186,17 @@ export class BetterThermostatUISmallCard
         string: "extra_states.window_open",
       });
       const summer = (stateObj.attributes as any).call_for_heat === false;
+      const summerLabel =
+        localize({
+          hass: this.hass as any,
+          string: "extra_states.summer",
+        }) || "Summer";
       let humidity = "";
       const humidityDisplay = formatHumidity(this.hass, stateObj, this._config);
       if (humidityDisplay) {
         humidity = ` ⸱ ${humidityDisplay}`;
       }
-      stateDisplay += ` ⸱ ${window ? `(${windowOpen}) ` : summer ? `(Summer) ` : ""}${temperature}${humidity}`;
+      stateDisplay += ` ⸱ ${window ? `(${windowOpen}) ` : summer ? `(${summerLabel}) ` : ""}${temperature}${humidity}`;
     }
     const rtl = computeRTL(this.hass);
 
@@ -399,7 +404,7 @@ export class BetterThermostatUISmallCard
         <mushroom-badge-icon
           slot="badge"
           .icon=${"mdi:alert"}
-          title="Degraded Mode"
+          title=${localize({ hass: this.hass as any, string: "extra_states.degraded_mode" })}
           @click=${(ev: Event) => { ev.stopPropagation(); ev.preventDefault(); this.dispatchEvent(new CustomEvent("hass-more-info", { detail: { entityId: entity.entity_id }, bubbles: true, composed: true })); }}
           style=${styleMap({
             "--icon-color": "var(--warning-color, #ffc107)",
@@ -415,7 +420,14 @@ export class BetterThermostatUISmallCard
         <mushroom-badge-icon
           slot="badge"
           .icon=${"mdi:wifi-strength-off-outline"}
-          title="Connection Lost"
+          title=${localize({
+            hass: this.hass as any,
+            string: "extra_states.connection_lost",
+            search: "{name}",
+            replace:
+              this.hass?.states?.[errorEntityId]?.attributes?.friendly_name ??
+              errorEntityId,
+          })}
           @click=${(ev: Event) => this._handleErrorClick(ev, errorEntityId)}
           style=${styleMap({
             "--icon-color": "var(--error-color, #f44336)",
@@ -432,7 +444,12 @@ export class BetterThermostatUISmallCard
         <mushroom-badge-icon
           slot="badge"
           .icon=${"mdi:battery-alert"}
-          title="Low Battery"
+          title=${localize({
+            hass: this.hass as any,
+            string: "extra_states.low_battery",
+            search: "{name}",
+            replace: lowBattery.name,
+          })}
           @click=${(ev: Event) => this._handleLowBatteryClick(ev, lowBattery)}
           style=${styleMap({
             "--icon-color": "var(--error-color, #f44336)",

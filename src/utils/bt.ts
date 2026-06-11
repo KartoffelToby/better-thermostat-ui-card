@@ -20,7 +20,14 @@ export function isWindowOpen(
   config?: ExternalSensorsConfig
 ): boolean {
   if (isBtEntity(stateObj)) {
-    return Boolean((stateObj.attributes as any).window_open);
+    // Only an actual boolean true or an explicit "true"-like string counts;
+    // Boolean() would treat strings such as "false" as open.
+    const windowOpen = (stateObj.attributes as any).window_open;
+    return (
+      windowOpen === true ||
+      (typeof windowOpen === "string" &&
+        SENSOR_OPEN_STATES.includes(windowOpen.toLowerCase()))
+    );
   }
   const sensorId = config?.window_sensor;
   if (!sensorId) return false;

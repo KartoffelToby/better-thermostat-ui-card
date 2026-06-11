@@ -299,7 +299,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     this._targetTemperature = { ...this._targetTemperature, high: value };
   }
 
-  private get _supportsTargetValue() { return !!this._stateObj?.attributes.temperature; }
+  private get _supportsTargetValue() { return this._stateObj?.attributes.temperature != null; }
   private get _supportsTargetRange() { return this._stateObj?.attributes.target_temp_low != null && this._stateObj?.attributes.target_temp_high != null; }
 
   protected render() {
@@ -664,7 +664,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           <mushroom-button-group .fill=${true} ?rtl=${false}>
             ${this.renderModeButton("presets")}
           </mushroom-button-group>
-        ` : this._config.features ? html`
+        ` : this._config.features?.length ? html`
           <cts-hui-card-features
             .hass=${this.hass}
             .context=${this._featureContext}

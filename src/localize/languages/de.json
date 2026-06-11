@@ -29,6 +29,9 @@
         "collapsible_controls": "Einklappbare Steuerung",
         "disable_connection_lost_warning": "Verbindungsverlust-Warnung deaktivieren",
         "disable_degraded_warning": "Warnung für eingeschränkten Modus deaktivieren",
+        "debug_battery": "Debug: Batterie-Warnung anzeigen",
+        "debug_connection": "Debug: Verbindungsverlust-Warnung anzeigen",
+        "debug_degraded": "Debug: Warnung für eingeschränkten Modus anzeigen",
         "low_battery_threshold": "Schwellenwert Batteriewarnung (%)",
         "section_display": "Anzeige",
         "section_interaction": "Interaktion",
@@ -50,6 +53,9 @@
     "heating": "Heizen",
     "cooling_off": "Kühlung aus",
     "heating_off": "Heizung aus",
+    "degraded_mode": "Eingeschränkter Modus",
+    "connection_lost": "Verbindung verloren: {name}",
+    "low_battery": "Batterie schwach: {name}",
     "window_closed": "Fenster geschlossen"
   }
 }
