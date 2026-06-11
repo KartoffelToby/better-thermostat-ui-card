@@ -127,6 +127,14 @@ export const ShadowStyles = css`
       flex: 1;
     }
 
+    /* Like the HA core thermostat card: overflow hidden lets the flex item
+       shrink below its square :before placeholder, so the card never grows
+       past its grid cell. The wrapper is then capped to the measured
+       container height via the inline max-width set in render(). */
+    ha-card > .container {
+      overflow: hidden;
+    }
+
     .container:before {
       content: "";
       display: block;
@@ -139,7 +147,7 @@ export const ShadowStyles = css`
       container-type: inline-size;
       container-name: container;
       box-sizing: border-box;
-      max-width: 320px !important;
+      max-width: 320px;
     }
 
     .info {

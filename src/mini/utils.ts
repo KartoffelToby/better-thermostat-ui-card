@@ -8,7 +8,7 @@ export const CLIMATE_HVAC_MODE_COLORS: Partial<Record<ClimateMode, string>> = {
   dry: "var(--rgb-state-climate-dry)",
   fan_only: "var(--rgb-state-climate-fan-only)",
   heat: "var(--rgb-state-climate-heat)",
-  heat_cool: "var(--rgb-state-climate-heat-cool)",
+  heat_cool: "212, 183, 255",
   off: "var(--rgb-state-climate-off)",
   eco: "var(--bt-state-eco)",
   away: "var(--bt-state-away)",

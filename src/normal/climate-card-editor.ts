@@ -1,5 +1,6 @@
 import { css, CSSResultGroup, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import memoizeOne from "memoize-one";
 import { LovelaceCardEditor } from "mushroom-cards/src/ha";
 import setupMushroomLocalize from "mushroom-cards/src/localize";
 import setupCustomlocalize from "../localize/localize";
@@ -8,20 +9,44 @@ import { MushroomBaseElement } from "mushroom-cards/src/utils/base-element";
 import { HaFormSchema } from "mushroom-cards/src/utils/form/ha-form";
 import { BetterThermostatUINormalCardConfig } from "./climate-card-config";
 import { CLIMATE_CARD_EDITOR_NAME, CLIMATE_ENTITY_DOMAINS } from "./const";
-import { mdiEye, mdiGestureTap, mdiTune, mdiAlert } from "@mdi/js";
+import { isBtEntity } from "../utils/bt";
+import { mdiEye, mdiGestureTap, mdiTune, mdiAlert, mdiWindowOpenVariant } from "@mdi/js";
 
 const CLIMATE_LABELS = [
   "show_current_as_primary", "show_secondary",
-  "disable_buttons", "disable_menu", "prevent_interaction_on_scroll",
-  "disable_eco", "disable_humidity",
+  "disable_buttons", "disable_all_buttons", "disable_menu", "prevent_interaction_on_scroll",
+  "disable_eco", "disable_humidity", "disable_presets",
   "disable_battery_warning", "disable_connection_lost_warning", "disable_degraded_warning",
   "low_battery_threshold",
+  "window_sensor", "humidity_sensor",
   "section_display", "section_interaction", "section_features", "section_warnings",
+  "section_sensors",
 ] as string[];
 
-const SCHEMA: HaFormSchema[] = [
+const computeSchema = memoizeOne((isBt: boolean): HaFormSchema[] => [
   { name: "entity", selector: { entity: { domain: CLIMATE_ENTITY_DOMAINS } } },
   { name: "name", selector: { text: {} } },
+  ...(!isBt
+    ? [
+        {
+          name: "section_sensors",
+          type: "expandable",
+          flatten: true,
+          expanded: true,
+          iconPath: mdiWindowOpenVariant,
+          schema: [
+            {
+              name: "window_sensor",
+              selector: { entity: { domain: ["binary_sensor", "input_boolean"] } },
+            },
+            {
+              name: "humidity_sensor",
+              selector: { entity: { domain: ["sensor"], device_class: "humidity" } },
+            },
+          ],
+        } as any,
+      ]
+    : []),
   {
     name: "section_display",
     type: "expandable",
@@ -50,6 +75,7 @@ const SCHEMA: HaFormSchema[] = [
         name: "",
         schema: [
           { name: "disable_buttons", selector: { boolean: {} } },
+          { name: "disable_all_buttons", selector: { boolean: {} } },
           { name: "disable_menu", selector: { boolean: {} } },
           { name: "prevent_interaction_on_scroll", selector: { boolean: {} } },
         ],
@@ -68,29 +94,35 @@ const SCHEMA: HaFormSchema[] = [
         schema: [
           { name: "disable_eco", selector: { boolean: {} } },
           { name: "disable_humidity", selector: { boolean: {} } },
+          { name: "disable_presets", selector: { boolean: {} } },
         ],
       },
     ],
   } as any,
-  {
-    name: "section_warnings",
-    type: "expandable",
-    flatten: true,
-    iconPath: mdiAlert,
-    schema: [
-      {
-        type: "grid",
-        name: "",
-        schema: [
-          { name: "disable_battery_warning", selector: { boolean: {} } },
-          { name: "disable_connection_lost_warning", selector: { boolean: {} } },
-          { name: "disable_degraded_warning", selector: { boolean: {} } },
-        ],
-      },
-      { name: "low_battery_threshold", default: 10, selector: { number: { min: 0, max: 100, step: 1, mode: "box", unit_of_measurement: "%" } } },
-    ],
-  } as any,
-];
+  // Warnings rely on BT-only attributes (batteries, errors, degraded_mode)
+  ...(isBt
+    ? [
+        {
+          name: "section_warnings",
+          type: "expandable",
+          flatten: true,
+          iconPath: mdiAlert,
+          schema: [
+            {
+              type: "grid",
+              name: "",
+              schema: [
+                { name: "disable_battery_warning", selector: { boolean: {} } },
+                { name: "disable_connection_lost_warning", selector: { boolean: {} } },
+                { name: "disable_degraded_warning", selector: { boolean: {} } },
+              ],
+            },
+            { name: "low_battery_threshold", default: 10, selector: { number: { min: 0, max: 100, step: 1, mode: "box", unit_of_measurement: "%" } } },
+          ],
+        } as any,
+      ]
+    : []),
+]);
 
 @customElement(CLIMATE_CARD_EDITOR_NAME)
 export class NormalClimateCardEditor extends MushroomBaseElement implements LovelaceCardEditor {
@@ -105,6 +137,10 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
         :host {
           display: block;
           padding-bottom: 16px;
+        }
+        ha-alert {
+          display: block;
+          margin-bottom: 16px;
         }
       `,
     ];
@@ -126,11 +162,27 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
       return this.hass!.localize(key);
     };
 
+    // Non Better Thermostat entities don't provide window/humidity data via
+    // attributes — offer external sensor pickers instead and hide BT-only
+    // options. Without a resolvable entity, fall back to the full BT form.
+    const stateObj = this._config?.entity
+      ? this.hass.states[this._config.entity]
+      : undefined;
+    const isBt = !stateObj || isBtEntity(stateObj);
+    const schema = computeSchema(isBt);
+
     return html`
+      ${!isBt
+        ? html`
+            <ha-alert alert-type="info">
+              ${localize("editor.card.climate.not_bt_info")}
+            </ha-alert>
+          `
+        : ""}
       <ha-form
         .hass=${this.hass as any}
         .data=${{ ...this._config, low_battery_threshold: this._config?.low_battery_threshold ?? 10 } as any}
-        .schema=${SCHEMA as any}
+        .schema=${schema as any}
         .computeLabel=${(schema: HaFormSchema) => {
           if (schema.name === "entity") {
             // Use the same localize chain to ensure the generic translation

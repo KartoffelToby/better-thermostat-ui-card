@@ -10,11 +10,13 @@
         "disable_humidity": "Turn off the humidity display",
         "disable_summer": "Turn off the summer indicator",
         "disable_eco": "Turn off the eco button",
+        "disable_presets": "Turn off the presets button",
         "disable_heat": "Turn off the on/heat button",
         "disable_off": "Turn off the off button",
         "disable_menu": "Disable menu",
         "disable_battery_warning": "Turn off the battery warning",
         "disable_buttons": "Turn off the plus/minus buttons",
+        "disable_all_buttons": "Turn off all buttons",
         "eco_temperature": "Target temp for night/away/eco mode triggerd by ui button",
         "set_current_as_main": "Swap target and current temperature positions",
         "show_temperature_control": "Show temperature control",
@@ -28,7 +30,11 @@
         "section_display": "Display",
         "section_interaction": "Interaction",
         "section_features": "Features",
-        "section_warnings": "Warnings"
+        "section_warnings": "Warnings",
+        "section_sensors": "External sensors",
+        "window_sensor": "Window sensor",
+        "humidity_sensor": "Humidity sensor",
+        "not_bt_info": "The selected entity is not a Better Thermostat entity. The card still works with it, but to show the window open and humidity states you need to select the matching sensors in the 'External sensors' section."
       }
     }
   },

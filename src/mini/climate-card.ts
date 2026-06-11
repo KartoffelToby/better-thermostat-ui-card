@@ -46,6 +46,7 @@ import {
   getHvacModeColor,
   getHvacModeIcon,
 } from "./utils";
+import { formatHumidity, isWindowOpen } from "../utils/bt";
 import { localize } from "../localize/localize";
 
 type ClimateCardControl = "temperature_control" | "hvac_mode_control";
@@ -170,7 +171,7 @@ export class BetterThermostatUISmallCard
     const icon = this._config.icon;
     const appearance = computeAppearance(this._config);
     const picture = computeEntityPicture(stateObj, appearance.icon_type);
-    const window = (stateObj.attributes as any).window_open;
+    const window = isWindowOpen(this.hass, stateObj, this._config);
     let stateDisplay = this.hass.formatEntityState(stateObj);
     if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
       stateDisplay = this.hass.formatEntityAttributeValue(stateObj, "hvac_action");
@@ -186,19 +187,29 @@ export class BetterThermostatUISmallCard
       });
       const summer = (stateObj.attributes as any).call_for_heat === false;
       let humidity = "";
-      if (stateObj.attributes.current_humidity && !this._config.disable_humidity) {
-        humidity = ` ⸱ ${this.hass.formatEntityAttributeValue(
-          stateObj,
-          "current_humidity"
-        )}`;
+      const humidityDisplay = formatHumidity(this.hass, stateObj, this._config);
+      if (humidityDisplay) {
+        humidity = ` ⸱ ${humidityDisplay}`;
       }
       stateDisplay += ` ⸱ ${window ? `(${windowOpen}) ` : summer ? `(Summer) ` : ""}${temperature}${humidity}`;
     }
     const rtl = computeRTL(this.hass);
 
     const isControlVisible =
+      !this._config.disable_all_buttons &&
       (!this._config.collapsible_controls || isActive(stateObj)) &&
       this._controls.length;
+
+    // disable_all_buttons hides the whole controls row, except the presets
+    // button as long as presets aren't disabled themselves.
+    const hasPresets =
+      (stateObj.attributes.preset_modes?.filter((p: string) => p !== "none") ?? [])
+        .length > 0;
+    const isPresetOnlyVisible =
+      !!this._config.disable_all_buttons &&
+      !this._config.disable_presets &&
+      hasPresets &&
+      (!this._config.collapsible_controls || isActive(stateObj));
 
     const hvac_action:any = stateObj.attributes.hvac_action || "off";
 
@@ -214,7 +225,7 @@ export class BetterThermostatUISmallCard
     }
 
     const summer = (this._stateObj.attributes as any).call_for_heat === false;
-    if ((this._stateObj.attributes as any).window_open) {
+    if (window) {
         actionStyle["--action-color"] = `var(--info-color)`;
     } else if (summer) {
         actionStyle["--action-color"] = `#ffb300`;
@@ -253,7 +264,13 @@ export class BetterThermostatUISmallCard
                   ${this.renderOtherControls()}
                 </div>
               `
-            : nothing}
+            : isPresetOnlyVisible
+              ? html`
+                  <div class="actions" ?rtl=${rtl}>
+                    ${this.renderPresetFeature(stateObj)}
+                  </div>
+                `
+              : nothing}
 
   
               <div class=${classMap({ 'preset-select': true, open: this._presetOpen })}>
@@ -328,10 +345,16 @@ export class BetterThermostatUISmallCard
 
   protected renderIcon(stateObj: ClimateEntity, icon?: string): TemplateResult {
     const available = isAvailable(stateObj);
-    const window = (stateObj.attributes as any).window_open;
+    const window = isWindowOpen(this.hass, stateObj, this._config);
     const summer = (stateObj.attributes as any).call_for_heat === false;
     const eco = (stateObj.attributes as any).eco_mode === true;
-    const color = getHvacModeColor(stateObj.state as HvacMode);
+    const hvacAction = stateObj.attributes.hvac_action;
+    // On dual (heat/cool) devices the mode color (heat_cool) hides what the
+    // device is actually doing — prefer the active action color when set.
+    const color =
+      hvacAction && hvacAction !== "idle" && hvacAction !== "off"
+        ? getHvacActionColor(hvacAction)
+        : getHvacModeColor(stateObj.state as HvacMode);
     const iconStyle = {};
     iconStyle["--icon-color"] = `rgb(${color})`;
     iconStyle["--shape-color"] = `rgba(${color}, 0.2)`;
@@ -512,13 +535,16 @@ export class BetterThermostatUISmallCard
 
   renderActionBadge(entity: ClimateEntity) {
     const hvac_action = entity.attributes.hvac_action;
-    const windowOpen = (entity.attributes as any).window_open;
+    const windowOpen = isWindowOpen(this.hass, entity, this._config);
     const summer = (entity.attributes as any).call_for_heat === false;
 
-    if (!hvac_action || (hvac_action === "off" && !windowOpen && !summer)) return nothing;
+    // Non BT entities may not report hvac_action at all — still show the
+    // badge when the configured window sensor reports open.
+    if ((!hvac_action || hvac_action === "off") && !windowOpen && !summer)
+      return nothing;
 
-    const color = getHvacActionColor(hvac_action);
-    let icon = getHvacActionIcon(hvac_action);
+    const color = getHvacActionColor(hvac_action || "off");
+    let icon = getHvacActionIcon(hvac_action || "off");
     if (windowOpen) {
       icon = "mdi:window-open-variant";
     } else if (summer) {
@@ -561,6 +587,7 @@ export class BetterThermostatUISmallCard
   }
 
   private renderPresetFeature(entity: ClimateEntity) {
+          if (this._config?.disable_presets) return nothing;
           const presetMode = entity.attributes.preset_mode;
           const mode = (presetMode != null && presetMode !== 'none') ? presetMode : "none";
           const iconStyle = {};

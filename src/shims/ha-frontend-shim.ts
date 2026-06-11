@@ -3,11 +3,14 @@ import { css } from "lit";
 export type ClimateEntity = any;
 
 export const CLIMATE_HVAC_ACTION_TO_MODE: Record<string, string> = {
-  heat: "heat",
-  cool: "cool",
-  idle: "off",
-  heat_cool: "heat_cool",
+  cooling: "cool",
+  defrosting: "heat",
+  drying: "dry",
   fan: "fan_only",
+  heating: "heat",
+  idle: "off",
+  off: "off",
+  preheating: "heat",
 };
 
 // Minimal helpers copied/derived from ha-frontend implementation to avoid

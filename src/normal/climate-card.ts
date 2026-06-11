@@ -26,6 +26,7 @@ import { CLIMATE_HVAC_ACTION_TO_MODE, ClimateEntity, stateColorCss, stateActive,
 import setupMushroomLocalize from "mushroom-cards/src/localize";
 import setupCustomlocalize from "../localize/localize";
 import { getHvacModeColor, getHvacModeIcon } from "./utils";
+import { formatHumidity, isWindowOpen } from "../utils/bt";
 import "./features/hui-card-features";
 import type { LovelaceCardFeatureContext } from "./features/types";
 
@@ -142,11 +143,22 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
   public getCardSize(): number { return 5; }
   public getGridOptions(): LovelaceGridOptions {
+    const columns = 12;
+    let rows = 5;
+    let min_rows = 3;
+    const min_columns = 6;
+    // Like the HA core thermostat card: reserve extra rows for features so
+    // they don't eat into the dial's space.
+    if (this._config?.features?.length) {
+      const featureHeight = Math.ceil((this._config.features.length * 2) / 3);
+      rows += featureHeight;
+      min_rows += featureHeight;
+    }
     return {
-      rows: 5,
-      columns: 12,
-      min_rows: 3,
-      min_columns: 6,
+      rows,
+      columns,
+      min_rows,
+      min_columns,
     };
   }
 
@@ -323,7 +335,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
     const currentTemp = stateObj.attributes.current_temperature;
 
-    const window = (stateObj.attributes as any).window_open;
+    const window = isWindowOpen(this.hass, stateObj, this._config);
 
 
     const renderTarget = (temperature: number, big = false, hideUnit = false) => {
@@ -433,7 +445,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
         ` : nothing}
       `;
 
-      const window = (stateObj.attributes as any).window_open;
+      const window = isWindowOpen(this.hass, stateObj, this._config);
       const summer = (stateObj.attributes as any).call_for_heat === false;
 
       if (stateObj.state === UNAVAILABLE) {
@@ -475,20 +487,20 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     };
 
     const renderHumidity = () => {
-      const humidity = stateObj.attributes.current_humidity;
-      if (humidity == null || this._config?.disable_humidity) return nothing;
+      const humidityDisplay = formatHumidity(this.hass, stateObj, this._config);
+      if (!humidityDisplay) return nothing;
 
       return html`
         <p class="label secondary humidity">
           <ha-svg-icon .path=${mdiWaterPercent}></ha-svg-icon>
-          ${this.hass.formatEntityAttributeValue(stateObj, "current_humidity")}&nbsp;
+          ${humidityDisplay}&nbsp;
         </p>
       `;
     };
 
     const buttons = (target: "value" | "low" | "high") => html`<div class="buttons"><ha-outlined-icon-button .target=${target as any} .step=${-this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiMinus}></ha-svg-icon></ha-outlined-icon-button><ha-outlined-icon-button .target=${target as any} .step=${this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiPlus}></ha-svg-icon></ha-outlined-icon-button></div>`;
 
-    if (this._supportsTargetValue && available) {
+    if ((this._supportsTargetValue || this._supportsTargetRange) && available) {
       const mode = this._stateObj.state;
       const action = this._stateObj.attributes.hvac_action;
       const active = stateActive(this._stateObj);
@@ -504,14 +516,15 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
         );
       }
       let stateColor = stateColorCss(this._stateObj);
+      const preset_mode = (this._stateObj.attributes as any).preset_mode;
       if (window) {
         actionColor = "var(--info-color)";
         stateColor = "var(--info-color)";
-      } else if ((this._stateObj.attributes as any).preset_mode !== 'none') {
-        const pre_color = getHvacModeColor((this._stateObj.attributes as any).preset_mode);
+      } else if (preset_mode != null && preset_mode !== 'none') {
+        const pre_color = getHvacModeColor(preset_mode);
         stateColor = `rgb(${pre_color})`;
         actionColor = `rgb(${pre_color})`;
-      };
+      }
 
       if (mode === "off") {
         stateColor = "var(--rgb-grey)";
@@ -521,8 +534,10 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
       const lowColor = stateColorCss(this._stateObj, active ? "heat" : "off");
       const highColor = stateColorCss(this._stateObj, active ? "cool" : "off");
+      // Cap the dial to the available container height (like the HA core
+      // thermostat card), so it shrinks instead of being cut off.
       const controlMaxWidth = this._resizeController.value
-      ? `${this._resizeController.value}px`
+      ? `${Math.min(this._resizeController.value, 320)}px`
       : undefined;
       const name = this._config.name || this._stateObj.attributes.friendly_name || "";
 
@@ -530,15 +545,34 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       iconStyle["--icon-color"] = `var(--rgb-grey)`;
       iconStyle["--bg-color"] = `rgba(var(--rgb-grey), 0.2)`;
 
-      const hvacModes: string[] = Array.isArray(this._stateObj.attributes.hvac_modes)
+      const rawHvacModes: string[] = Array.isArray(this._stateObj.attributes.hvac_modes)
         ? this._stateObj.attributes.hvac_modes
         : ["off", "heat", "cool"];
-      const presetsIndex = Math.max(hvacModes.length - 1, 0);
-      const buttonModes: string[] = [
-        ...hvacModes.slice(0, presetsIndex),
-        "presets",
-        ...hvacModes.slice(presetsIndex),
+      // Always render the "off" mode last in the button row, regardless of the
+      // order the integration reports hvac_modes in.
+      const hvacModes: string[] = [
+        ...rawHvacModes.filter((mode) => mode !== "off"),
+        ...(rawHvacModes.includes("off") ? ["off"] : []),
       ];
+      const presetsIndex = Math.max(hvacModes.length - 1, 0);
+      const buttonModes: string[] = this._config.disable_presets
+        ? hvacModes
+        : [
+            ...hvacModes.slice(0, presetsIndex),
+            "presets",
+            ...hvacModes.slice(presetsIndex),
+          ];
+
+      // disable_all_buttons hides the whole row, except the presets button
+      // as long as presets aren't disabled themselves.
+      const hasPresets =
+        (this._stateObj.attributes.preset_modes?.filter((p: string) => p !== "none") ?? [])
+          .length > 0;
+      const presetOnly =
+        !!this._config.disable_all_buttons &&
+        !this._config.disable_presets &&
+        hasPresets;
+      const showActions = !this._config.disable_all_buttons || presetOnly;
 
       const circularSlider = this._supportsTargetRange
         ? html`
@@ -608,6 +642,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
         ></ha-icon-button>` : nothing}
 
 
+        ${showActions ? html`
         <div class="actions">
 
 
@@ -625,7 +660,11 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           `)}
         </div>
 
-        ${this._config.features ? html`
+        ${presetOnly ? html`
+          <mushroom-button-group .fill=${true} ?rtl=${false}>
+            ${this.renderModeButton("presets")}
+          </mushroom-button-group>
+        ` : this._config.features ? html`
           <cts-hui-card-features
             .hass=${this.hass}
             .context=${this._featureContext}
@@ -638,8 +677,9 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           </mushroom-button-group>
         `}
 
-          
+
         </div>
+        ` : nothing}
       </ha-card>
 
     `;

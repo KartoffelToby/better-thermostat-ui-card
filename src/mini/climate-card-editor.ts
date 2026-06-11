@@ -12,24 +12,48 @@ import { HaFormSchema } from "mushroom-cards/src/utils/form/ha-form";
 import { loadHaComponents } from "mushroom-cards/src/utils/loader";
 import { BetterThermostatUISmallCardConfig } from "./climate-card-config";
 import { CLIMATE_CARD_EDITOR_NAME, CLIMATE_ENTITY_DOMAINS } from "./const";
-import { mdiEye, mdiGestureTap, mdiTune, mdiAlert } from "@mdi/js";
+import { isBtEntity } from "../utils/bt";
+import { mdiEye, mdiGestureTap, mdiTune, mdiAlert, mdiWindowOpenVariant } from "@mdi/js";
 
 const CLIMATE_LABELS = [
   "show_temperature_control", "collapsible_controls",
   "show_current_as_primary", "show_secondary",
-  "disable_buttons", "disable_menu", "prevent_interaction_on_scroll",
-  "disable_eco", "disable_humidity",
+  "disable_buttons", "disable_all_buttons", "disable_menu", "prevent_interaction_on_scroll",
+  "disable_eco", "disable_humidity", "disable_presets",
   "disable_battery_warning", "disable_connection_lost_warning", "disable_degraded_warning",
   "debug_battery", "debug_connection", "debug_degraded",
   "low_battery_threshold",
+  "window_sensor", "humidity_sensor",
   "section_display", "section_interaction", "section_features", "section_warnings",
+  "section_sensors",
 ] as string[];
 
-const computeSchema = memoizeOne((): HaFormSchema[] => [
+const computeSchema = memoizeOne((isBt: boolean): HaFormSchema[] => [
   { name: "entity", selector: { entity: { domain: CLIMATE_ENTITY_DOMAINS } } },
   { name: "name", selector: { text: {} } },
   { name: "icon", selector: { icon: {} }, context: { icon_entity: "entity" } },
   ...APPEARANCE_FORM_SCHEMA,
+  ...(!isBt
+    ? [
+        {
+          name: "section_sensors",
+          type: "expandable",
+          flatten: true,
+          expanded: true,
+          iconPath: mdiWindowOpenVariant,
+          schema: [
+            {
+              name: "window_sensor",
+              selector: { entity: { domain: ["binary_sensor", "input_boolean"] } },
+            },
+            {
+              name: "humidity_sensor",
+              selector: { entity: { domain: ["sensor"], device_class: "humidity" } },
+            },
+          ],
+        } as any,
+      ]
+    : []),
   {
     name: "section_display",
     type: "expandable",
@@ -60,6 +84,7 @@ const computeSchema = memoizeOne((): HaFormSchema[] => [
         name: "",
         schema: [
           { name: "disable_buttons", selector: { boolean: {} } },
+          { name: "disable_all_buttons", selector: { boolean: {} } },
           { name: "disable_menu", selector: { boolean: {} } },
           { name: "prevent_interaction_on_scroll", selector: { boolean: {} } },
         ],
@@ -78,31 +103,37 @@ const computeSchema = memoizeOne((): HaFormSchema[] => [
         schema: [
           { name: "disable_eco", selector: { boolean: {} } },
           { name: "disable_humidity", selector: { boolean: {} } },
+          { name: "disable_presets", selector: { boolean: {} } },
         ],
       },
     ],
   } as any,
-  {
-    name: "section_warnings",
-    type: "expandable",
-    flatten: true,
-    iconPath: mdiAlert,
-    schema: [
-      {
-        type: "grid",
-        name: "",
-        schema: [
-          { name: "disable_battery_warning", selector: { boolean: {} } },
-          { name: "disable_connection_lost_warning", selector: { boolean: {} } },
-          { name: "disable_degraded_warning", selector: { boolean: {} } },
-          { name: "debug_battery", selector: { boolean: {} } },
-          { name: "debug_connection", selector: { boolean: {} } },
-          { name: "debug_degraded", selector: { boolean: {} } },
-        ],
-      },
-      { name: "low_battery_threshold", default: 10, selector: { number: { min: 0, max: 100, step: 1, mode: "box", unit_of_measurement: "%" } } },
-    ],
-  } as any,
+  // Warnings rely on BT-only attributes (batteries, errors, degraded_mode)
+  ...(isBt
+    ? [
+        {
+          name: "section_warnings",
+          type: "expandable",
+          flatten: true,
+          iconPath: mdiAlert,
+          schema: [
+            {
+              type: "grid",
+              name: "",
+              schema: [
+                { name: "disable_battery_warning", selector: { boolean: {} } },
+                { name: "disable_connection_lost_warning", selector: { boolean: {} } },
+                { name: "disable_degraded_warning", selector: { boolean: {} } },
+                { name: "debug_battery", selector: { boolean: {} } },
+                { name: "debug_connection", selector: { boolean: {} } },
+                { name: "debug_degraded", selector: { boolean: {} } },
+              ],
+            },
+            { name: "low_battery_threshold", default: 10, selector: { number: { min: 0, max: 100, step: 1, mode: "box", unit_of_measurement: "%" } } },
+          ],
+        } as any,
+      ]
+    : []),
   ...computeActionsFormSchema(),
 ]);
 
@@ -124,6 +155,10 @@ export class ClimateCardEditor
         :host {
           display: block;
           padding-bottom: 16px;
+        }
+        ha-alert {
+          display: block;
+          margin-bottom: 16px;
         }
       `,
     ];
@@ -170,9 +205,23 @@ export class ClimateCardEditor
       return nothing;
     }
 
-    const schema = computeSchema();
+    // Non Better Thermostat entities don't provide window/humidity data via
+    // attributes — offer external sensor pickers instead and hide BT-only
+    // options. Without a resolvable entity, fall back to the full BT form.
+    const stateObj = this._config.entity
+      ? this.hass.states[this._config.entity]
+      : undefined;
+    const isBt = !stateObj || isBtEntity(stateObj);
+    const schema = computeSchema(isBt);
 
     return html`
+      ${!isBt
+        ? html`
+            <ha-alert alert-type="info">
+              ${this._localize("editor.card.climate.not_bt_info")}
+            </ha-alert>
+          `
+        : nothing}
       <ha-form
         .hass=${this.hass as any}
         .data=${{ low_battery_threshold: 10, ...this._config } as any}
