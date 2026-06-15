@@ -10,6 +10,7 @@
     "card": {
       "climate": {
         "disable_window": "Deaktiver vindu-åpen visning",
+        "disable_humidity": "Deaktiver fuktighetsvisning",
         "disable_summer": "Deaktiver sommer visning",
         "disable_eco": "Deaktiver eco visning",
         "disable_heat": "Deaktiver varme visning",
@@ -19,12 +20,11 @@
         "disable_buttons": "Deaktiver pluss/minus knapper",
         "eco_temperature": "Eco temperatur",
         "set_current_as_main": "Bytt måltemperatur med nåværende temperatur",
+        "show_temperature_control": "Vis temperaturkontroll",
+        "collapsible_controls": "Sammenleggbare kontroller",
         "show_current_as_primary": "Vis nåværende temperatur som primær",
         "show_secondary": "Vis sekundær informasjon",
         "prevent_interaction_on_scroll": "Forhindre interaksjon ved rulling",
-        "disable_humidity": "Deaktiver fuktighetsvisning",
-        "show_temperature_control": "Vis temperaturkontroll",
-        "collapsible_controls": "Sammenleggbare kontroller",
         "disable_connection_lost_warning": "Deaktiver advarsel om tapt tilkobling",
         "disable_degraded_warning": "Deaktiver advarsel om degradert modus",
         "low_battery_threshold": "Terskel for advarsel om lavt batteri (%)",

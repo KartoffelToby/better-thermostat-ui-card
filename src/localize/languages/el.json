@@ -10,6 +10,7 @@
     "card": {
       "climate": {
         "disable_window": "Απενεργοποίηση ένδειξης ανοιχτού παραθύρου",
+        "disable_humidity": "Απενεργοποίηση εμφάνισης υγρασίας",
         "disable_summer": "Απενεργοποίηση καλοκαιρινής ένδειξης",
         "disable_eco": "Απενεργοποίηση ένδειξης Eco",
         "disable_heat": "Απενεργοποίηση ένδειξης θέρμανσης",
@@ -19,12 +20,11 @@
         "disable_buttons": "Απενεργοποίηση κουμπιών Plus/Minus",
         "eco_temperature": "Θερμοκρασία Eco",
         "set_current_as_main": "Αντικατάσταση της επιθυμητής θερμοκρασίας με την τρέχουσα θερμοκρασία",
+        "show_temperature_control": "Εμφάνιση ελέγχου θερμοκρασίας",
+        "collapsible_controls": "Πτυσσόμενα στοιχεία ελέγχου",
         "show_current_as_primary": "Εμφάνιση τρέχουσας θερμοκρασίας ως κύρια",
         "show_secondary": "Εμφάνιση δευτερευουσών πληροφοριών",
         "prevent_interaction_on_scroll": "Αποτροπή αλληλεπίδρασης κατά την κύλιση",
-        "disable_humidity": "Απενεργοποίηση εμφάνισης υγρασίας",
-        "show_temperature_control": "Εμφάνιση ελέγχου θερμοκρασίας",
-        "collapsible_controls": "Πτυσσόμενα στοιχεία ελέγχου",
         "disable_connection_lost_warning": "Απενεργοποίηση προειδοποίησης απώλειας σύνδεσης",
         "disable_degraded_warning": "Απενεργοποίηση προειδοποίησης υποβαθμισμένης λειτουργίας",
         "low_battery_threshold": "Όριο προειδοποίησης χαμηλής μπαταρίας (%)",

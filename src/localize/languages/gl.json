@@ -7,6 +7,7 @@
     "card": {
       "climate": {
         "disable_window": "Desactivar fiestra",
+        "disable_humidity": "Desactivar visualización de humidade",
         "disable_summer": "Desactivar verán",
         "disable_eco": "Desactivar eco",
         "disable_heat": "Desactivar calor",
@@ -14,7 +15,6 @@
         "disable_menu": "Desactivar menú",
         "disable_battery_warning": "Desactivar alerta de batería",
         "disable_buttons": "Desactivar botóns máis/menos",
-        "disable_humidity": "Desactivar visualización de humidade",
         "eco_temperature": "Temperatura Eco",
         "set_current_as_main": "Establecer temperatura obxectivo como temperatura actual",
         "show_temperature_control": "Mostrar control de temperatura",
