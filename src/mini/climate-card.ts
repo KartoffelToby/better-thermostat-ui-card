@@ -282,9 +282,15 @@ export class BetterThermostatUISmallCard
                   style=${styleMap(iconStyle)}
                   .mode=${mode}
                   .disabled=${!isAvailable(stateObj)}
-                    @click=${this.triggerModeChange.bind(this, mode)}
                     .actionHandler=${actionHandler({ hasHold: true })}
-                    @action=${(e: ActionHandlerEvent) => { if (e.detail.action === "hold") { e.stopPropagation(); this._openPresetSelect(true); } }}
+                    @action=${(e: ActionHandlerEvent) => {
+                      e.stopPropagation();
+                      if (e.detail.action === "hold") {
+                        this._openPresetSelect(true);
+                      } else if (e.detail.action === "tap") {
+                        this.triggerModeChange(mode);
+                      }
+                    }}
                 >
                   <ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>
                 </mushroom-button>
@@ -621,8 +627,14 @@ export class BetterThermostatUISmallCard
                   style=${styleMap(iconStyle)}
                   .mode=${selectedMode}
                   .actionHandler=${actionHandler({ hasHold: true })}
-                  @click=${this.triggerModeChange.bind(this, presets[0])}
-                  @action=${(e: ActionHandlerEvent) => { if (e.detail.action === 'hold') { e.stopPropagation(); this._openPresetSelect(true); } }}
+                  @action=${(e: ActionHandlerEvent) => {
+                    e.stopPropagation();
+                    if (e.detail.action === 'hold') {
+                      this._openPresetSelect(true);
+                    } else if (e.detail.action === 'tap') {
+                      this.triggerModeChange(presets[0]);
+                    }
+                  }}
                 >
                   <ha-icon .icon=${getHvacModeIcon(presets[0] as HvacMode)}></ha-icon>
                 </mushroom-button>
@@ -633,8 +645,10 @@ export class BetterThermostatUISmallCard
                 style=${styleMap(iconStyle)}
                 .mode=${selectedMode}
                 .actionHandler=${actionHandler({ hasHold: true })}
-                @click=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
-                @action=${(e: ActionHandlerEvent) => { if (e.detail.action === 'hold') { e.stopPropagation(); this._openPresetSelect(true); } }}
+                @action=${(e: ActionHandlerEvent) => {
+                  e.stopPropagation();
+                  this._openPresetSelect(true);
+                }}
               >
                 <ha-icon .icon=${icon}></ha-icon>
               </mushroom-button>
@@ -776,10 +790,14 @@ export class BetterThermostatUISmallCard
           padding: 0 1em 0em 1em;
           box-sizing: border-box;
           background-color: rgba(var(--rgb-card-background-color), 0.3);
+          visibility: collapse;
+          backface-visibility: hidden;
         }
         .preset-select.open {
           max-height: 100%;
           z-index: 10;
+          visibility: visible;
+          backface-visibility: visible;
         }
       `,
     ];
