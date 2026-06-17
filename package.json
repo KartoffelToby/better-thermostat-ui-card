@@ -31,7 +31,7 @@
     "superstruct": "^2.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
+    "@babel/core": "^7.29.6",
     "@rollup/plugin-alias": "^5.1.1",
     "@babel/preset-env": "^7.29.7",
     "@babel/preset-typescript": "^7.29.7",
