@@ -200,10 +200,12 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           // UI jumping back to the old value while the user is still
           // interacting with the slider.
           if (!this._isDragging && Date.now() - this._lastInteraction > 3000) {
+            const min = this._stateObj.attributes.min_temp ?? 0;
+            const max = this._stateObj.attributes.max_temp ?? 100;
             this._targetTemperature = {
-              value: this._stateObj.attributes.temperature,
-              low: this._stateObj.attributes.target_temp_low,
-              high: this._stateObj.attributes.target_temp_high,
+              value: this._stateObj.attributes.temperature ?? min,
+              low: this._stateObj.attributes.target_temp_low ?? min,
+              high: this._stateObj.attributes.target_temp_high ?? max,
             };
           }
         }
@@ -227,7 +229,11 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     const step = this._step;
     if (!step || step <= 0) return Math.min(Math.max(value, min), max);
     let snapped = min + Math.round((value - min) / step) * step;
-    const digits = step.toString().split(".")?.[1]?.length ?? 0;
+    const digits = Math.max(
+      step.toString().split(".")?.[1]?.length ?? 0,
+      min.toString().split(".")?.[1]?.length ?? 0,
+      max.toString().split(".")?.[1]?.length ?? 0
+    );
     snapped = parseFloat(snapped.toFixed(digits));
     return Math.min(Math.max(snapped, min), max);
   }
@@ -316,8 +322,8 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     this._targetTemperature = { ...this._targetTemperature, high: value };
   }
 
-  private get _supportsTargetValue() { return this._stateObj?.attributes.temperature != null; }
-  private get _supportsTargetRange() { return this._stateObj?.attributes.target_temp_low != null && this._stateObj?.attributes.target_temp_high != null; }
+  private get _supportsTargetValue() { return this._stateObj != null && "temperature" in this._stateObj.attributes; }
+  private get _supportsTargetRange() { return this._stateObj != null && "target_temp_low" in this._stateObj.attributes && "target_temp_high" in this._stateObj.attributes; }
 
   protected render() {
     if (!this._config || !this._stateObj) return nothing;
