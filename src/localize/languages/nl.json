@@ -10,6 +10,7 @@
     "card": {
       "climate": {
         "disable_window": "Venster-open-weergave uitschakelen",
+        "disable_humidity": "Vochtigheidsweergave uitschakelen",
         "disable_summer": "Zomerweergave uitschakelen",
         "disable_eco": "Eco-weergave uitschakelen",
         "disable_heat": "Verwarmingsweergave uitschakelen",
@@ -19,12 +20,11 @@
         "disable_buttons": "Plus/min-knoppen uitschakelen",
         "eco_temperature": "Eco temperatuur",
         "set_current_as_main": "Doeltemperatuur verwisselen met huidige temperatuur",
+        "show_temperature_control": "Temperatuurregeling tonen",
+        "collapsible_controls": "Inklapbare bedieningselementen",
         "show_current_as_primary": "Toon huidige temperatuur als primair",
         "show_secondary": "Toon secundaire informatie",
         "prevent_interaction_on_scroll": "Voorkom interactie tijdens scrollen",
-        "disable_humidity": "Vochtigheidsweergave uitschakelen",
-        "show_temperature_control": "Temperatuurregeling tonen",
-        "collapsible_controls": "Inklapbare bedieningselementen",
         "disable_connection_lost_warning": "Waarschuwing verbinding verbroken uitschakelen",
         "disable_degraded_warning": "Waarschuwing verminderde modus uitschakelen",
         "low_battery_threshold": "Drempel batterijwaarschuwing (%)",

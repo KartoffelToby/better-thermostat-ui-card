@@ -10,6 +10,7 @@
     "card": {
       "climate": {
         "disable_window": "Deshabilitar ventana",
+        "disable_humidity": "Desactivar la visualización de humedad",
         "disable_summer": "Deshabilitar verano",
         "disable_eco": "Deshabilitar eco",
         "disable_heat": "Deshabilitar calor",
@@ -19,12 +20,11 @@
         "disable_buttons": "Deshabilitar botones más/menos",
         "eco_temperature": "Temperatura Eco",
         "set_current_as_main": "Fijar temperatura objetivo a temperatura actual",
+        "show_temperature_control": "Mostrar control de temperatura",
+        "collapsible_controls": "Controles plegables",
         "show_current_as_primary": "Mostrar temperatura actual como principal",
         "show_secondary": "Mostrar información secundaria",
         "prevent_interaction_on_scroll": "Evitar interacción al desplazarse",
-        "disable_humidity": "Desactivar la visualización de humedad",
-        "show_temperature_control": "Mostrar control de temperatura",
-        "collapsible_controls": "Controles plegables",
         "disable_connection_lost_warning": "Desactivar aviso de pérdida de conexión",
         "disable_degraded_warning": "Desactivar aviso de modo degradado",
         "low_battery_threshold": "Umbral de aviso de batería baja (%)",

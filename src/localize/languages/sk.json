@@ -10,6 +10,7 @@
     "card": {
       "climate": {
         "disable_window": "Zakázať okno",
+        "disable_humidity": "Vypnúť zobrazenie vlhkosti",
         "disable_summer": "Zakázať leto",
         "disable_eco": "Zakázať eco",
         "disable_heat": "Zakázať kúrenie",
@@ -19,12 +20,11 @@
         "disable_buttons": "Zakázať plus/mínus tlačidlá",
         "eco_temperature": "Eco teplota",
         "set_current_as_main": "Vymeňte cieľ za miesta s aktuálnou teplotou",
+        "show_temperature_control": "Zobraziť ovládanie teploty",
+        "collapsible_controls": "Skladateľné ovládanie",
         "show_current_as_primary": "Zobraziť aktuálnu teplotu ako hlavnú",
         "show_secondary": "Zobraziť sekundárne informácie",
         "prevent_interaction_on_scroll": "Zabrániť interakcii pri posúvaní",
-        "disable_humidity": "Vypnúť zobrazenie vlhkosti",
-        "show_temperature_control": "Zobraziť ovládanie teploty",
-        "collapsible_controls": "Skladateľné ovládanie",
         "disable_connection_lost_warning": "Vypnúť upozornenie na stratu spojenia",
         "disable_degraded_warning": "Vypnúť upozornenie na zhoršený režim",
         "low_battery_threshold": "Prah varovania o nízkej batérii (%)",

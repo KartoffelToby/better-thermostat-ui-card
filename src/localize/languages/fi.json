@@ -10,6 +10,7 @@
     "card": {
       "climate": {
         "disable_window": "Poista ikkuna auki -ilmoitus käytöstä",
+        "disable_humidity": "Poista kosteusnäyttö käytöstä",
         "disable_summer": "Poista kesä -ilmoitus käytöstä",
         "disable_eco": "Poista Eco -ilmoitus käytöstä",
         "disable_heat": "Poista lämmitys -ilmoitus käytöstä",
@@ -19,12 +20,11 @@
         "disable_buttons": "Poista plus/miinus -painikkeet käytöstä",
         "eco_temperature": "Eco lämpötila",
         "set_current_as_main": "Vaihda tavoitelämpötila nykyiseen lämpötilaan",
+        "show_temperature_control": "Näytä lämpötilan säätö",
+        "collapsible_controls": "Kokoon taittuvat säätimet",
         "show_current_as_primary": "Näytä nykyinen lämpötila ensisijaisena",
         "show_secondary": "Näytä toissijaiset tiedot",
         "prevent_interaction_on_scroll": "Estä vuorovaikutus vieritettäessä",
-        "disable_humidity": "Poista kosteusnäyttö käytöstä",
-        "show_temperature_control": "Näytä lämpötilan säätö",
-        "collapsible_controls": "Kokoon taittuvat säätimet",
         "disable_connection_lost_warning": "Poista yhteyden katkeamisen varoitus käytöstä",
         "disable_degraded_warning": "Poista heikentyneen tilan varoitus käytöstä",
         "low_battery_threshold": "Alhaisen akun varoituskynnys (%)",
