@@ -11,9 +11,9 @@ import {
 import { ensureElementLoaded } from "../../utils/ensure-element-loaded";
 
 export const isTemperatureControlVisible = (entity: ClimateEntity) =>
-  entity.attributes.temperature != null ||
-  (entity.attributes.target_temp_low != null &&
-    entity.attributes.target_temp_high != null);
+  "temperature" in entity.attributes ||
+  ("target_temp_low" in entity.attributes &&
+    "target_temp_high" in entity.attributes);
 
 @customElement("mushroom-climate-temperature-control")
 export class ClimateTemperatureControl extends LitElement {
@@ -61,6 +61,16 @@ export class ClimateTemperatureControl extends LitElement {
 
     const available = isAvailable(this.entity);
 
+    const min = this.entity.attributes.min_temp ?? 0;
+    const max = this.entity.attributes.max_temp ?? 100;
+    const supportsValue = "temperature" in this.entity.attributes;
+    const supportsRange =
+      "target_temp_low" in this.entity.attributes &&
+      "target_temp_high" in this.entity.attributes;
+    const value = this.entity.attributes.temperature ?? min;
+    const low = this.entity.attributes.target_temp_low ?? min;
+    const high = this.entity.attributes.target_temp_high ?? max;
+
     const formatOptions: Intl.NumberFormatOptions =
       this._stepSize === 1
         ? {
@@ -79,30 +89,29 @@ export class ClimateTemperatureControl extends LitElement {
 
     return html`
       <mushroom-button-group .fill=${this.fill} ?rtl=${rtl}>
-        ${this.entity.attributes.temperature != null
+        ${supportsValue
           ? html`
               <mushroom-input-number
                 .locale=${this.hass.locale}
-                .value=${this.entity.attributes.temperature}
+                .value=${value}
                 .step=${this._stepSize}
-                .min=${this.entity.attributes.min_temp}
-                .max=${this.entity.attributes.max_temp}
+                .min=${min}
+                .max=${max}
                 .disabled=${!available}
                 .formatOptions=${formatOptions}
                 @change=${this.onValueChange}
               ></mushroom-input-number>
             `
           : nothing}
-        ${this.entity.attributes.target_temp_low != null &&
-        this.entity.attributes.target_temp_high != null
+        ${supportsRange
           ? html`
               <mushroom-input-number
                 style=${styleMap(modeStyle("heat"))}
                 .locale=${this.hass.locale}
-                .value=${this.entity.attributes.target_temp_low}
+                .value=${low}
                 .step=${this._stepSize}
-                .min=${this.entity.attributes.min_temp}
-                .max=${this.entity.attributes.max_temp}
+                .min=${min}
+                .max=${max}
                 .disabled=${!available}
                 .formatOptions=${formatOptions}
                 @change=${this.onLowValueChange}
@@ -110,10 +119,10 @@ export class ClimateTemperatureControl extends LitElement {
               ><mushroom-input-number
                 style=${styleMap(modeStyle("cool"))}
                 .locale=${this.hass.locale}
-                .value=${this.entity.attributes.target_temp_high}
+                .value=${high}
                 .step=${this._stepSize}
-                .min=${this.entity.attributes.min_temp}
-                .max=${this.entity.attributes.max_temp}
+                .min=${min}
+                .max=${max}
                 .disabled=${!available}
                 .formatOptions=${formatOptions}
                 @change=${this.onHighValueChange}
