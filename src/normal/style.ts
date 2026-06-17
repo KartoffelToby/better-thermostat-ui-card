@@ -385,10 +385,13 @@ export const ShadowStyles = css`
       box-sizing: border-box;
       background-color: rgba(var(--rgb-card-background-color), 0.6);
       padding: 16px;
+      visibility: collapse;
+      backface-visibility: hidden;
     }
     .preset-select.open {
       max-height: 100%;
       z-index: 10;
+      visibility: visible;
     }
 
 `;
