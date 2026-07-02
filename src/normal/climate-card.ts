@@ -1,13 +1,11 @@
 import { CSSResultGroup, html, nothing, PropertyValues } from "lit";
-import { ResizeController } from "@lit-labs/observers/resize-controller";
+import { ResizeController } from "@lit-labs/observers/resize-controller.js";
 
 import {
-  ActionHandlerEvent,
   HvacMode,
   HomeAssistant,
   LovelaceCard,
   LovelaceCardEditor,
-  isActive,
   isAvailable,
   formatNumber,
   fireEvent,
@@ -15,26 +13,38 @@ import {
 import { LovelaceGridOptions } from "mushroom-cards/src/ha";
 import { MushroomBaseElement } from "mushroom-cards/src/utils/base-element";
 import { registerCustomCard } from "mushroom-cards/src/utils/custom-cards";
-import { CLIMATE_CARD_EDITOR_NAME, CLIMATE_CARD_NAME, CLIMATE_ENTITY_DOMAINS } from "./const";
+import { CLIMATE_CARD_EDITOR_NAME, CLIMATE_CARD_NAME } from "./const";
 import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
+import type { StyleInfo } from "lit/directives/style-map.js";
 import { classMap } from "lit/directives/class-map.js";
 import { BetterThermostatUINormalCardConfig } from "./climate-card-config";
-import { mdiMinus, mdiPlus, mdiThermometer, mdiThermostat, mdiWindowOpenVariant, mdiDotsVertical, mdiFire, mdiWaterPercent, mdiBattery10, mdiAlert, mdiBatteryAlert, mdiWifiStrengthOffOutline, mdiWhiteBalanceSunny } from "@mdi/js";
+import { mdiMinus, mdiPlus, mdiThermometer, mdiThermostat, mdiWindowOpenVariant, mdiDotsVertical, mdiWaterPercent, mdiAlert, mdiBatteryAlert, mdiWifiStrengthOffOutline, mdiWhiteBalanceSunny } from "@mdi/js";
 import { ShadowStyles } from './style';
-import { CLIMATE_HVAC_ACTION_TO_MODE, ClimateEntity, stateColorCss, stateActive, stateControlCircularSliderStyle } from "../shims/ha-frontend-shim";
-import setupMushroomLocalize from "mushroom-cards/src/localize";
-import setupCustomlocalize from "../localize/localize";
-import { getHvacModeColor, getHvacModeIcon } from "./utils";
-import { formatHumidity, isWindowOpen } from "../utils/bt";
+import {
+  BtClimateEntity,
+  ClimateEntityFeature,
+  UNAVAILABLE,
+  setClimateMode,
+  supportsFeature,
+} from "../shared/climate";
+import { stateActive, stateColorCss } from "../shared/state-color";
+import {
+  CLIMATE_HVAC_ACTION_TO_MODE,
+  climateColor,
+  climateColorDefaultStyles,
+  climateColorOverrides,
+  getHvacModeIcon,
+} from "../shared/climate-colors";
+import { alphaColor } from "../shared/color";
+import { findBtStubEntity, formatHumidity, isWindowOpen } from "../shared/bt";
+import { getErrorEntityId, getLowBattery, isDegraded } from "../shared/bt-status";
+import { shouldUpdateForHass } from "../shared/has-changed";
+import { createChainedLocalize } from "../shared/localize";
+import { PresetOverlayController, presetOverlayStyle } from "../shared/preset-overlay";
+import { btStateColorsStyle } from "../shared/styles";
 import "./features/hui-card-features";
 import type { LovelaceCardFeatureContext } from "./features/types";
-
-const UNAVAILABLE = "unavailable";
-
-interface BatteryState {
-  battery: string;
-}
 
 const SLIDER_MODES: Record<HvacMode, string> = {
   auto: "full",
@@ -45,6 +55,13 @@ const SLIDER_MODES: Record<HvacMode, string> = {
   heat_cool: "full",
   off: "full",
 };
+
+// While the user interacts, incoming hass updates must not clobber the local
+// setpoint: the debounced service call fires after 1000 ms and Better
+// Thermostat's round-trip (service → TRV ack → state update) can take a
+// couple of seconds more. Could be released early on the entity's next state
+// echo, but a fixed window is simpler and safe.
+const INTERACTION_HOLDOFF_MS = 3000;
 
 function simpleDebounce<T extends (...args: any[]) => void>(fn: T, timeout = 300) {
   let handle: number | undefined;
@@ -67,7 +84,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   @property({ type: Boolean, attribute: "prevent-interaction-on-scroll" })
   public preventInteractionOnScroll = false;
   @state() private _config?: BetterThermostatUINormalCardConfig;
-  @state() private _stateObj?: ClimateEntity;
+  @state() private _stateObj?: BtClimateEntity;
   @state() private _featureContext?: LovelaceCardFeatureContext;
   @state() private _targetTemperature: Partial<Record<"value" | "low" | "high", number>> = {};
   // When the user is actively interacting (dragging) the slider, prevent
@@ -76,15 +93,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   private _isDragging = false;
   private _lastInteraction = 0;
   @state() private _selectTarget: "value" | "low" | "high" = "low";
-  @state() private _presetOpen: boolean = false;
-  @property({ type: Boolean }) public window: boolean = false;
-  @property({ type: Boolean }) public summer: boolean = false;
-  @property({ type: String }) public status: string = "loading";
-  @property({ type: String }) public mode: string = "off";
-  @property({ type: Number }) public current: number = 0;
-  @property({ type: Number }) public current_humidity: number = 0;
-  private lowBattery: { name: string; battery: number } | undefined;
-  private error: any = [];
+  private _presetOverlay = new PresetOverlayController(this);
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./climate-card-editor");
@@ -94,26 +103,17 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
   public static async getStubConfig(
     hass: HomeAssistant
   ): Promise<BetterThermostatUINormalCardConfig> {
-    const entities = Object.keys(hass.states);
-    const climates = entities.filter((e) =>
-      CLIMATE_ENTITY_DOMAINS.includes(e.split(".")[0])
-    );
-    const btEntity = climates.find(
-      (e) => (hass.states[e]?.attributes as any)?.call_for_heat !== undefined
-    );
     return {
       type: `custom:${CLIMATE_CARD_NAME}`,
-      entity: btEntity ?? climates[0],
+      entity: findBtStubEntity(hass),
     };
   }
 
+  // Measures the dial container's height so render() can cap the wrapper to
+  // it. Rewired to observe the actual `.container` element in firstUpdated —
+  // the default target (the host) only reports its own resize.
   private _resizeController = new ResizeController(this, {
-    callback: (entries) => {
-      const container = entries[0]?.target.shadowRoot?.querySelector(
-        ".container"
-      ) as HTMLElement | undefined;
-      return container?.clientHeight;
-    },
+    callback: (entries) => entries[0]?.contentRect.height,
   });
 
   private _sizeController = new ResizeController(this, {
@@ -137,8 +137,25 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       this._sizeController.unobserve(this);
       this._sizeController.observe(wrapper);
     }
-    // Ensure overlay/pointerdown handler is cleaned up when component is removed
-    // (no-op; assigned when opening preset select)
+    const container = this.shadowRoot?.querySelector("ha-card > .container");
+    if (container) {
+      this._resizeController.unobserve(this);
+      this._resizeController.observe(container);
+    }
+  }
+
+  // hass is replaced on every state tick of ANY entity — only re-render for
+  // changes the card actually displays.
+  protected shouldUpdate(changed: PropertyValues): boolean {
+    if (changed.size === 1 && changed.has("hass")) {
+      const oldHass = changed.get("hass") as HomeAssistant | undefined;
+      return shouldUpdateForHass(oldHass, this.hass, [
+        this._config?.entity,
+        this._config?.window_sensor,
+        this._config?.humidity_sensor,
+      ]);
+    }
+    return true;
   }
 
   public getCardSize(): number { return 5; }
@@ -182,15 +199,15 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     // Dispatch the event on this element so the local more-info mixin
     // listener catches it. Also, ensure the entity id gets passed to the
     // more-info dialog.
-    fireEvent(this as any, "hass-more-info" as any, {
-      entityId: this._config!.entity ?? null,
+    fireEvent(this, "hass-more-info", {
+      entityId: this._config?.entity ?? null,
     });
   }
 
   protected willUpdate(changed: PropertyValues) {
     if (changed.has("hass") || changed.has("_config")) {
       if (this._config?.entity) {
-        this._stateObj = this.hass.states[this._config.entity] as ClimateEntity;
+        this._stateObj = this.hass.states[this._config.entity] as BtClimateEntity;
         if (this._stateObj) {
           if (!this._featureContext || this._featureContext.entity_id !== this._stateObj.entity_id) {
             this._featureContext = { entity_id: this._stateObj.entity_id };
@@ -199,13 +216,15 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           // the user is not currently dragging the control. This avoids the
           // UI jumping back to the old value while the user is still
           // interacting with the slider.
-          if (!this._isDragging && Date.now() - this._lastInteraction > 3000) {
-            const min = this._stateObj.attributes.min_temp ?? 0;
-            const max = this._stateObj.attributes.max_temp ?? 100;
+          if (!this._isDragging && Date.now() - this._lastInteraction > INTERACTION_HOLDOFF_MS) {
+            // Don't invent setpoints from min/max: integrations may report
+            // null or missing temperatures (e.g. daikin_onecta in
+            // fan_only/dry) — the dial then falls back to a readonly
+            // current-temperature display instead.
             this._targetTemperature = {
-              value: this._stateObj.attributes.temperature ?? min,
-              low: this._stateObj.attributes.target_temp_low ?? min,
-              high: this._stateObj.attributes.target_temp_high ?? max,
+              value: this._stateObj.attributes.temperature ?? undefined,
+              low: this._stateObj.attributes.target_temp_low ?? undefined,
+              high: this._stateObj.attributes.target_temp_high ?? undefined,
             };
           }
         }
@@ -258,9 +277,12 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
   private _handleButton(ev: Event) {
     this._lastInteraction = Date.now();
-    const btn = ev.currentTarget as any;
-    const target = btn.target as "value" | "low" | "high";
-    const step = btn.step as number;
+    const btn = ev.currentTarget as HTMLElement & {
+      target: "value" | "low" | "high";
+      step: number;
+    };
+    const target = btn.target;
+    const step = btn.step;
     const defaultValue = target === "high" ? this._max : this._min;
     let temp = this._targetTemperature[target] ?? defaultValue;
     temp += step;
@@ -271,10 +293,13 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     this._debouncedCallService(target);
   }
 
-  private _handleSelect(ev: Event) { const btn = ev.currentTarget as any; this._selectTarget = btn.target; }
+  private _handleSelect(ev: Event) {
+    const btn = ev.currentTarget as HTMLElement & { target: "low" | "high" };
+    this._selectTarget = btn.target;
+  }
 
-  private _valueChanged(ev: CustomEvent) {
-    const value = (ev.detail as any).value;
+  private _valueChanged(ev: CustomEvent<{ value: number }>) {
+    const value = ev.detail.value;
     if (isNaN(value)) return;
     // User finished dragging — commit value and stop ignoring hass updates.
     this._isDragging = false;
@@ -283,16 +308,16 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     this._targetTemperature = { ...this._targetTemperature, value: snapped };
     this._callService("value");
   }
-  private _valueChanging(ev: CustomEvent) {
-    const value = (ev.detail as any).value;
+  private _valueChanging(ev: CustomEvent<{ value: number }>) {
+    const value = ev.detail.value;
     if (isNaN(value)) return;
     // User is actively dragging; set flag so willUpdate doesn't reset
     // _targetTemperature from hass state updates while the user drags.
     this._isDragging = true;
     this._targetTemperature = { ...this._targetTemperature, value };
   }
-  private _lowChanged(ev: CustomEvent) {
-    const value = (ev.detail as any).value;
+  private _lowChanged(ev: CustomEvent<{ value: number }>) {
+    const value = ev.detail.value;
     if (isNaN(value)) return;
     this._isDragging = false;
     this._lastInteraction = Date.now();
@@ -300,14 +325,14 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     this._targetTemperature = { ...this._targetTemperature, low: snapped };
     this._callService("low");
   }
-  private _lowChanging(ev: CustomEvent) {
-    const value = (ev.detail as any).value;
+  private _lowChanging(ev: CustomEvent<{ value: number }>) {
+    const value = ev.detail.value;
     if (isNaN(value)) return;
     this._isDragging = true;
     this._targetTemperature = { ...this._targetTemperature, low: value };
   }
-  private _highChanged(ev: CustomEvent) {
-    const value = (ev.detail as any).value;
+  private _highChanged(ev: CustomEvent<{ value: number }>) {
+    const value = ev.detail.value;
     if (isNaN(value)) return;
     this._isDragging = false;
     this._lastInteraction = Date.now();
@@ -315,366 +340,86 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     this._targetTemperature = { ...this._targetTemperature, high: snapped };
     this._callService("high");
   }
-  private _highChanging(ev: CustomEvent) {
-    const value = (ev.detail as any).value;
+  private _highChanging(ev: CustomEvent<{ value: number }>) {
+    const value = ev.detail.value;
     if (isNaN(value)) return;
     this._isDragging = true;
     this._targetTemperature = { ...this._targetTemperature, high: value };
   }
 
-  private get _supportsTargetValue() { return this._stateObj != null && "temperature" in this._stateObj.attributes; }
-  private get _supportsTargetRange() { return this._stateObj != null && "target_temp_low" in this._stateObj.attributes && "target_temp_high" in this._stateObj.attributes; }
+  // HA core's 3-way guard: the feature bit AND a non-null value. Checking the
+  // local _targetTemperature (not the raw attribute) keeps the dial stable
+  // mid-drag, same as core's ha-state-control-climate-temperature.
+  private get _supportsTargetValue() {
+    return (
+      this._stateObj != null &&
+      supportsFeature(this._stateObj, ClimateEntityFeature.TARGET_TEMPERATURE) &&
+      this._targetTemperature.value != null
+    );
+  }
+  private get _supportsTargetRange() {
+    return (
+      this._stateObj != null &&
+      supportsFeature(this._stateObj, ClimateEntityFeature.TARGET_TEMPERATURE_RANGE) &&
+      this._targetTemperature.low != null &&
+      this._targetTemperature.high != null
+    );
+  }
 
   protected render() {
     if (!this._config || !this._stateObj) return nothing;
     const stateObj = this._stateObj;
-    const config = this._config;
-    const customLocalize = setupCustomlocalize(this.hass as any);
-    const mushroomLocalize = setupMushroomLocalize(this.hass!);
-    const localize = (key: string) => {
-      const custom = customLocalize(key);
-      if (custom && custom !== key) return custom;
-      const mush = mushroomLocalize(key);
-      if (mush && mush !== key) return mush;
-      return this.hass!.localize(key);
-    };
-    const active = isActive(stateObj);
-    const available = isAvailable(stateObj);
-    let sliderMode = SLIDER_MODES[(stateObj.state as HvacMode) || "off"] || "full";
-    if (
-      sliderMode === "full" &&
-      ["off", "auto"].includes(stateObj.state) &&
-      !stateObj.attributes.hvac_modes?.includes("heat_cool")
-    ) {
-      if (stateObj.attributes.hvac_modes?.includes("heat")) {
-        sliderMode = "start";
-      } else if (stateObj.attributes.hvac_modes?.includes("cool")) {
-        sliderMode = "end";
-      }
+    const localize = createChainedLocalize(this.hass);
+    this.preventInteractionOnScroll = Boolean(this._config.prevent_interaction_on_scroll);
+
+    const windowOpen = isWindowOpen(this.hass, stateObj, this._config);
+    // Show the current temperature as the big number when configured, or when
+    // there is no adjustable setpoint (readonly dial fallback, like HA core's
+    // thermostat card) — the state text is then shown by _renderLabel() only.
+    const showCurrentAsBig =
+      stateObj.attributes.current_temperature != null &&
+      (this._config.show_current_as_primary ||
+        (!this._supportsTargetValue && !this._supportsTargetRange));
+
+    const action = stateObj.attributes.hvac_action;
+    const active = stateActive(stateObj);
+
+    const containerSizeClass = this._sizeController.value
+      ? ` ${this._sizeController.value}`
+      : "";
+    let actionColor: string | undefined;
+    if (action && action !== "idle" && action !== "off" && active) {
+      actionColor = stateColorCss(stateObj, CLIMATE_HVAC_ACTION_TO_MODE[action]);
     }
-    this.preventInteractionOnScroll = Boolean(this._config?.prevent_interaction_on_scroll);
+    let stateColor = stateColorCss(stateObj);
+    const preset_mode = stateObj.attributes.preset_mode;
+    if (windowOpen) {
+      actionColor = "var(--info-color)";
+      stateColor = "var(--info-color)";
+    } else if (preset_mode != null && preset_mode !== 'none') {
+      const presetColor = climateColor(preset_mode);
+      stateColor = presetColor;
+      actionColor = presetColor;
+    }
 
-    const showCurrentAsPrimary = this._config.show_current_as_primary;
-    const showSecondary = this._config.show_secondary;
+    if (stateObj.state === "off") {
+      // Previously assigned the invalid triplet var(--rgb-grey) as a color —
+      // the off dial is now genuinely grey (documented visual fix).
+      stateColor = "var(--bt-color-grey)";
+      actionColor = "var(--bt-color-grey)";
+    }
 
-    const currentTemp = stateObj.attributes.current_temperature;
-
-    const window = isWindowOpen(this.hass, stateObj, this._config);
-
-
-    const renderTarget = (temperature: number, big = false, hideUnit = false) => {
-      const digits = this._step.toString().split(".")?.[1]?.length ?? 0;
-      const formatOptions: Intl.NumberFormatOptions = { maximumFractionDigits: digits, minimumFractionDigits: digits };
-      const unit = hideUnit ? "" : this.hass.config.unit_system.temperature;
-      const formatted = formatNumber(temperature, this.hass.locale, formatOptions);
-      if (big) {
-        return html`
-          <ha-big-number
-            .value=${temperature}
-            .unit=${this.hass.config.unit_system.temperature}
-              .hass=${this.hass as any}
-            .formatOptions=${formatOptions}
-          ></ha-big-number>
-        `;
-      }
-      return html`${formatted} ${unit}`;
-    };
-
-    const renderCurrent = (temperature: number, big = false) => {
-      const formatted = this.hass.formatEntityAttributeValue(stateObj, "current_temperature", temperature);
-      if (big) {
-        return html`
-          <ha-big-number
-            .value=${temperature}
-            .unit=${this.hass.config.unit_system.temperature}
-            .hass=${this.hass as any}
-          ></ha-big-number>
-        `;
-      }
-
-      return html`
-        ${this.hass.formatEntityAttributeValue(
-          stateObj,
-          "current_temperature",
-          temperature
-        )}
-      `;
-    };
-
-    const renderLabel = () => {
-
-      // --- Low battery detection ---
-      let lowBatteryEntity: { name: string; battery: number } | undefined;
-      if (this._config?.debug_battery) {
-        lowBatteryEntity = { name: "Debug Sensor", battery: 5 };
-        this.lowBattery = lowBatteryEntity;
-      } else if ((stateObj.attributes as any)?.batteries !== undefined && !this?._config?.disable_battery_warning) {
-        try {
-          const showLowBatteryWarningWhenPercentageLowerThan = this._config?.low_battery_threshold ?? 10;
-          const batteries = Object.entries(JSON.parse((stateObj.attributes as any).batteries) as Record<string, BatteryState>);
-          const parsedBatteries = batteries.map((data) => ({ "name": data[0], "battery": data[1].battery === "on" ? showLowBatteryWarningWhenPercentageLowerThan - 1 : data[1].battery === "off" ? 100 : parseFloat(data[1].battery) }));
-          const lowBatteries = parsedBatteries.filter((entity) => entity.battery < showLowBatteryWarningWhenPercentageLowerThan);
-          lowBatteryEntity = lowBatteries[0];
-          this.lowBattery = lowBatteryEntity;
-        } catch (_e) {
-          this.lowBattery = undefined;
-        }
-      } else {
-        this.lowBattery = undefined;
-      }
-
-      // --- Connection error detection ---
-      let errorEntityId: string | undefined;
-      if (this._config?.debug_connection) {
-        errorEntityId = "Debug Sensor";
-        this.error = "Debug Sensor";
-      } else if ((stateObj.attributes as any)?.errors !== undefined && !this?._config?.disable_connection_lost_warning) {
-        try {
-          const errors = JSON.parse((stateObj.attributes as any).errors);
-          if (Array.isArray(errors) && errors.length > 0) {
-            const first = errors[0];
-            this.error = first;
-            if (typeof first === "string") {
-              errorEntityId = first;
-            } else if (typeof first === "object" && first !== null) {
-              errorEntityId = first.entity_id || first.entity || first.name;
-            }
-          } else {
-            this.error = [];
-          }
-        } catch (_e) {
-          this.error = [];
-        }
-      } else {
-        this.error = [];
-      }
-
-      // --- Build warning icons ---
-      const degradedMode = this?._config?.debug_degraded || (!this?._config?.disable_degraded_warning && (stateObj.attributes as any)?.degraded_mode === true);
-      const warningIcons = html`
-        ${degradedMode ? html`
-          <span class="warning degraded-label label" title="Degraded Mode" style="color: var(--warning-color, #ffc107); cursor: pointer; pointer-events: auto; display: inline-flex !important;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, stateObj.entity_id); }}>
-            <ha-svg-icon .path=${mdiAlert}></ha-svg-icon>
-          </span>
-        ` : nothing}
-        ${errorEntityId ? html`
-          <span class="warning error-label label" title="Connection Lost" style="color: var(--error-color, #f44336); cursor: pointer; pointer-events: auto; display: inline-flex !important;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, errorEntityId!); }}>
-            <ha-svg-icon .path=${mdiWifiStrengthOffOutline}></ha-svg-icon>
-          </span>
-        ` : nothing}
-        ${lowBatteryEntity ? html`
-          <span class="warning batteries-label label" title="Low Battery" style="color: var(--error-color, #f44336); cursor: pointer; pointer-events: auto; display: inline-flex !important;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, lowBatteryEntity!.name); }}>
-            <ha-svg-icon .path=${mdiBatteryAlert}></ha-svg-icon>
-          </span>
-        ` : nothing}
-      `;
-
-      const window = isWindowOpen(this.hass, stateObj, this._config);
-      const summer = (stateObj.attributes as any).call_for_heat === false;
-
-      if (stateObj.state === UNAVAILABLE) {
-        return html`<div class="label-container">${warningIcons}<p class="label hvac_action">${this.hass.formatEntityState(stateObj)}</p></div>`;
-      }
-      if (window) {
-        return html`<div class="label-container">${warningIcons}<p class="label window-label"><ha-svg-icon .path=${mdiWindowOpenVariant}></ha-svg-icon></p></div>`;
-      }
-      if (summer) {
-        return html`<div class="label-container">${warningIcons}<p class="label summer-label"><ha-svg-icon .path=${mdiWhiteBalanceSunny}></ha-svg-icon></p></div>`;
-      }
-      if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
-        return html`<div class="label-container">${warningIcons}<p class="label hvac_action">${this.hass.formatEntityAttributeValue(stateObj, "hvac_action")}</p></div>`;
-      }
-      return html`<div class="label-container">${warningIcons}<p class="label hvac_action">${this.hass.formatEntityState(stateObj)}</p></div>`;
-    };
-
-    const primary = () => {
-      if (currentTemp != null && showCurrentAsPrimary) return renderCurrent(currentTemp, true);
-      if (this._supportsTargetValue && !showCurrentAsPrimary) return renderTarget(this._targetTemperature.value!, true);
-      if (this._supportsTargetRange && !showCurrentAsPrimary) {
-        return html`<div class="dual"> <button @click=${this._handleSelect} .target=${"low"} class="target-button ${classMap({ selected: this._selectTarget === "low" })}">${renderTarget(this._targetTemperature.low!, true)}</button><button @click=${this._handleSelect} .target=${"high"} class="target-button ${classMap({ selected: this._selectTarget === "high" })}">${renderTarget(this._targetTemperature.high!, true)}</button></div>`;
-      }
-      return html`<p class="primary-state">${this.hass.formatEntityState(stateObj)}</p>`;
-    };
-
-    const secondary = () => {
-      if (!showSecondary) return html`<p class="label secondary"></p>`;
-      if (currentTemp != null && !showCurrentAsPrimary) {
-        return html`<p class="label secondary"><ha-svg-icon .path=${mdiThermometer}></ha-svg-icon> ${renderCurrent(currentTemp)}</p>`;
-      }
-      if (this._supportsTargetValue && showCurrentAsPrimary) {
-        return html`<p class="label secondary"><ha-svg-icon .path=${mdiThermostat}></ha-svg-icon>${renderTarget(this._targetTemperature.value!)}</p>`;
-      }
-      if (this._supportsTargetRange && showCurrentAsPrimary) {
-        return html`<p class="label secondary"><ha-svg-icon .path=${mdiThermostat}></ha-svg-icon><button @click=${this._handleSelect} .target=${"low"} class="target-button ${classMap({ selected: this._selectTarget === "low" })}">${renderTarget(this._targetTemperature.low!, false, true)}</button><span>·</span><button @click=${this._handleSelect} .target=${"high"} class="target-button ${classMap({ selected: this._selectTarget === "high" })}">${renderTarget(this._targetTemperature.high!, false, true)}</button></p>`;
-      }
-      return html`<p class="label secondary"></p>`;
-    };
-
-    const renderHumidity = () => {
-      const humidityDisplay = formatHumidity(this.hass, stateObj, this._config);
-      if (!humidityDisplay) return nothing;
-
-      return html`
-        <p class="label secondary humidity">
-          <ha-svg-icon .path=${mdiWaterPercent}></ha-svg-icon>
-          ${humidityDisplay}&nbsp;
-        </p>
-      `;
-    };
-
-    const buttons = (target: "value" | "low" | "high") => html`<div class="buttons"><ha-outlined-icon-button .target=${target as any} .step=${-this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiMinus}></ha-svg-icon></ha-outlined-icon-button><ha-outlined-icon-button .target=${target as any} .step=${this._step} @click=${this._handleButton}><ha-svg-icon .path=${mdiPlus}></ha-svg-icon></ha-outlined-icon-button></div>`;
-
-    const actionsSection = () => {
-      const iconStyle = {};
-      iconStyle["--icon-color"] = `var(--rgb-grey)`;
-      iconStyle["--bg-color"] = `rgba(var(--rgb-grey), 0.2)`;
-
-      const rawHvacModes: string[] = Array.isArray(stateObj.attributes.hvac_modes)
-        ? stateObj.attributes.hvac_modes
-        : ["off", "heat", "cool"];
-      // Always render the "off" mode last in the button row, regardless of the
-      // order the integration reports hvac_modes in.
-      const hvacModes: string[] = [
-        ...rawHvacModes.filter((mode) => mode !== "off"),
-        ...(rawHvacModes.includes("off") ? ["off"] : []),
-      ];
-      const presetsIndex = Math.max(hvacModes.length - 1, 0);
-      const buttonModes: string[] = config.disable_presets
-        ? hvacModes
-        : [
-            ...hvacModes.slice(0, presetsIndex),
-            "presets",
-            ...hvacModes.slice(presetsIndex),
-          ];
-
-      // disable_all_buttons hides the whole row, except the presets button
-      // as long as presets aren't disabled themselves.
-      const hasPresets =
-        (stateObj.attributes.preset_modes?.filter((p: string) => p !== "none") ?? [])
-          .length > 0;
-      const presetOnly =
-        !!config.disable_all_buttons &&
-        !config.disable_presets &&
-        hasPresets;
-      const showActions = !config.disable_all_buttons || presetOnly;
-      if (!showActions) return nothing;
-
-      return html`
-        <div class="actions">
-          <div class=${classMap({ 'preset-select': true, open: this._presetOpen })}>
-            ${(stateObj.attributes.preset_modes ?? []).map((mode: any) => html`
-              <mushroom-button
-                style=${styleMap(iconStyle)}
-                .mode=${mode}
-                .disabled=${!isAvailable(stateObj)}
-                  @click=${this.triggerModeChange.bind(this, mode)}
-                  @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
-              >
-                <ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>
-              </mushroom-button>
-            `)}
-          </div>
-
-          ${presetOnly ? html`
-            <mushroom-button-group .fill=${true} ?rtl=${false}>
-              ${this.renderModeButton("presets")}
-            </mushroom-button-group>
-          ` : config.features?.length ? html`
-            <cts-hui-card-features
-              .hass=${this.hass}
-              .context=${this._featureContext}
-              .features=${config.features}
-              color=${stateColorCss(stateObj)}
-            ></cts-hui-card-features>
-          ` : html`
-            <mushroom-button-group .fill=${true} ?rtl=${false}>
-              ${buttonModes.map((mode) => this.renderModeButton(mode))}
-            </mushroom-button-group>
-          `}
-        </div>
-      `;
-    };
-
-    if ((this._supportsTargetValue || this._supportsTargetRange) && available) {
-      const mode = this._stateObj.state;
-      const action = this._stateObj.attributes.hvac_action;
-      const active = stateActive(this._stateObj);
-
-      const containerSizeClass = this._sizeController.value
-        ? ` ${this._sizeController.value}`
-        : "";
-      let actionColor: string | undefined;
-      if (action && action !== "idle" && action !== "off" && active) {
-        actionColor = stateColorCss(
-          this._stateObj,
-          CLIMATE_HVAC_ACTION_TO_MODE[action]
-        );
-      }
-      let stateColor = stateColorCss(this._stateObj);
-      const preset_mode = (this._stateObj.attributes as any).preset_mode;
-      if (window) {
-        actionColor = "var(--info-color)";
-        stateColor = "var(--info-color)";
-      } else if (preset_mode != null && preset_mode !== 'none') {
-        const pre_color = getHvacModeColor(preset_mode);
-        stateColor = `rgb(${pre_color})`;
-        actionColor = `rgb(${pre_color})`;
-      }
-
-      if (mode === "off") {
-        stateColor = "var(--rgb-grey)";
-        actionColor = "var(--rgb-grey)";
-      }
-
-
-      const lowColor = stateColorCss(this._stateObj, active ? "heat" : "off");
-      const highColor = stateColorCss(this._stateObj, active ? "cool" : "off");
-      // Cap the dial to the available container height (like the HA core
-      // thermostat card), so it shrinks instead of being cut off.
-      const controlMaxWidth = this._resizeController.value
+    const lowColor = stateColorCss(stateObj, active ? "heat" : "off");
+    const highColor = stateColorCss(stateObj, active ? "cool" : "off");
+    // Cap the dial to the available container height (like the HA core
+    // thermostat card), so it shrinks instead of being cut off.
+    const controlMaxWidth = this._resizeController.value
       ? `${Math.min(this._resizeController.value, 320)}px`
       : undefined;
-      const name = this._config.name || this._stateObj.attributes.friendly_name || "";
+    const name = this._config.name || stateObj.attributes.friendly_name || "";
 
-      const circularSlider = this._supportsTargetRange
-        ? html`
-            <ha-control-circular-slider
-              .preventInteractionOnScroll=${this.preventInteractionOnScroll}
-              .inactive=${!active}
-              dual
-              .low=${this._targetTemperature.low}
-              .high=${this._targetTemperature.high}
-              .min=${this._min}
-              .max=${this._max}
-              .step=${this._step}
-              .current=${this._stateObj.attributes.current_temperature}
-              @low-changed=${this._lowChanged}
-              @low-changing=${this._lowChanging}
-              @high-changed=${this._highChanged}
-              @high-changing=${this._highChanging}
-            >
-            </ha-control-circular-slider>
-          `
-        : html`
-            <ha-control-circular-slider
-              .preventInteractionOnScroll=${this.preventInteractionOnScroll}
-              .inactive=${!active}
-              .mode=${sliderMode as any}
-              .value=${this._targetTemperature.value}
-              .min=${this._min}
-              .max=${this._max}
-              .step=${this._step}
-              .current=${this._stateObj.attributes.current_temperature}
-              @value-changed=${this._valueChanged}
-              @value-changing=${this._valueChanging}
-            >
-            </ha-control-circular-slider>
-          `;
-
-
-
-      return html`
-      <ha-card>
+    return html`
+      <ha-card style=${styleMap(climateColorOverrides(this._config.colors))}>
         <p class="title">${name}</p>
         <div class="container">
           <div
@@ -687,9 +432,11 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
               maxWidth: controlMaxWidth,
             })}
           >
-            ${circularSlider}
-            <div class="info">${renderLabel()}${primary()}${secondary()}${renderHumidity()}</div>
-            ${!this._config.disable_buttons ? buttons(this._supportsTargetRange ? this._selectTarget : "value") : nothing}
+            ${this._renderCircularSlider(active)}
+            <div class="info">${this._renderLabel(windowOpen)}${this._renderPrimary(showCurrentAsBig)}${this._renderSecondary(showCurrentAsBig)}${this._renderHumidity()}</div>
+            ${!this._config.disable_buttons && (this._supportsTargetValue || this._supportsTargetRange)
+              ? this._renderButtons(this._supportsTargetRange ? this._selectTarget : "value")
+              : nothing}
           </div>
         </div>
         ${!this._config.disable_menu ? html`<ha-icon-button
@@ -702,18 +449,279 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           }}
           tabindex="0"
         ></ha-icon-button>` : nothing}
-
-
-        ${actionsSection()}
+        ${this._renderActionsSection()}
       </ha-card>
-
     `;
   }
 
-    return html`<ha-card><div class="container" style=${styleMap({})}>
-      <div class="info">${renderLabel()}${primary()}${secondary()}${renderHumidity()}</div>
-      ${available ? actionsSection() : nothing}
-    </div></ha-card>`;
+  // Three slider variants, mirroring HA core: dual range, single setpoint,
+  // and a readonly current-temperature dial when the entity has no
+  // adjustable target (fan_only/dry, or a transient null setpoint).
+  private _renderCircularSlider(active: boolean) {
+    const stateObj = this._stateObj!;
+    let sliderMode = SLIDER_MODES[(stateObj.state as HvacMode) || "off"] || "full";
+    if (
+      sliderMode === "full" &&
+      ["off", "auto"].includes(stateObj.state) &&
+      !stateObj.attributes.hvac_modes?.includes("heat_cool")
+    ) {
+      if (stateObj.attributes.hvac_modes?.includes("heat")) {
+        sliderMode = "start";
+      } else if (stateObj.attributes.hvac_modes?.includes("cool")) {
+        sliderMode = "end";
+      }
+    }
+
+    if (this._supportsTargetRange) {
+      return html`
+        <ha-control-circular-slider
+          .preventInteractionOnScroll=${this.preventInteractionOnScroll}
+          .inactive=${!active}
+          dual
+          .low=${this._targetTemperature.low}
+          .high=${this._targetTemperature.high}
+          .min=${this._min}
+          .max=${this._max}
+          .step=${this._step}
+          .current=${stateObj.attributes.current_temperature}
+          @low-changed=${this._lowChanged}
+          @low-changing=${this._lowChanging}
+          @high-changed=${this._highChanged}
+          @high-changing=${this._highChanging}
+        >
+        </ha-control-circular-slider>
+      `;
+    }
+    if (this._supportsTargetValue) {
+      return html`
+        <ha-control-circular-slider
+          .preventInteractionOnScroll=${this.preventInteractionOnScroll}
+          .inactive=${!active}
+          .mode=${sliderMode}
+          .value=${this._targetTemperature.value}
+          .min=${this._min}
+          .max=${this._max}
+          .step=${this._step}
+          .current=${stateObj.attributes.current_temperature}
+          @value-changed=${this._valueChanged}
+          @value-changing=${this._valueChanging}
+        >
+        </ha-control-circular-slider>
+      `;
+    }
+    return html`
+      <ha-control-circular-slider
+        .preventInteractionOnScroll=${this.preventInteractionOnScroll}
+        .inactive=${!active}
+        mode="full"
+        readonly
+        .current=${stateObj.attributes.current_temperature}
+        .min=${this._min}
+        .max=${this._max}
+        .step=${this._step}
+        .disabled=${!active}
+      >
+      </ha-control-circular-slider>
+    `;
+  }
+
+  private _renderTarget(temperature: number, big = false, hideUnit = false) {
+    const digits = this._step.toString().split(".")?.[1]?.length ?? 0;
+    const formatOptions: Intl.NumberFormatOptions = { maximumFractionDigits: digits, minimumFractionDigits: digits };
+    const unit = hideUnit ? "" : this.hass.config.unit_system.temperature;
+    const formatted = formatNumber(temperature, this.hass.locale, formatOptions);
+    if (big) {
+      return html`
+        <ha-big-number
+          .value=${temperature}
+          .unit=${this.hass.config.unit_system.temperature}
+          .hass=${this.hass}
+          .formatOptions=${formatOptions}
+        ></ha-big-number>
+      `;
+    }
+    return html`${formatted} ${unit}`;
+  }
+
+  private _renderCurrent(temperature: number, big = false) {
+    if (big) {
+      return html`
+        <ha-big-number
+          .value=${temperature}
+          .unit=${this.hass.config.unit_system.temperature}
+          .hass=${this.hass}
+        ></ha-big-number>
+      `;
+    }
+    return html`
+      ${this.hass.formatEntityAttributeValue(
+        this._stateObj!,
+        "current_temperature",
+        temperature
+      )}
+    `;
+  }
+
+  private _renderLabel(windowOpen: boolean) {
+    const stateObj = this._stateObj!;
+    const lowBatteryEntity = getLowBattery(stateObj, this._config);
+    const errorEntityId = getErrorEntityId(stateObj, this._config);
+    const degradedMode = isDegraded(stateObj, this._config);
+
+    const warningIcons = html`
+      ${degradedMode ? html`
+        <span class="warning degraded-label label" title="Degraded Mode" style="color: var(--warning-color, #ffc107); cursor: pointer; pointer-events: auto; display: inline-flex !important;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, stateObj.entity_id); }}>
+          <ha-svg-icon .path=${mdiAlert}></ha-svg-icon>
+        </span>
+      ` : nothing}
+      ${errorEntityId ? html`
+        <span class="warning error-label label" title="Connection Lost" style="color: var(--error-color, #f44336); cursor: pointer; pointer-events: auto; display: inline-flex !important;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, errorEntityId!); }}>
+          <ha-svg-icon .path=${mdiWifiStrengthOffOutline}></ha-svg-icon>
+        </span>
+      ` : nothing}
+      ${lowBatteryEntity ? html`
+        <span class="warning batteries-label label" title="Low Battery" style="color: var(--error-color, #f44336); cursor: pointer; pointer-events: auto; display: inline-flex !important;" @click=${(ev: Event) => { ev.stopPropagation(); this._openMoreInfo(ev, lowBatteryEntity!.name); }}>
+          <ha-svg-icon .path=${mdiBatteryAlert}></ha-svg-icon>
+        </span>
+      ` : nothing}
+    `;
+
+    const summer = stateObj.attributes.call_for_heat === false;
+
+    if (stateObj.state === UNAVAILABLE) {
+      return html`<div class="label-container">${warningIcons}<p class="label hvac_action">${this.hass.formatEntityState(stateObj)}</p></div>`;
+    }
+    if (windowOpen) {
+      return html`<div class="label-container">${warningIcons}<p class="label window-label"><ha-svg-icon .path=${mdiWindowOpenVariant}></ha-svg-icon></p></div>`;
+    }
+    if (summer) {
+      return html`<div class="label-container">${warningIcons}<p class="label summer-label"><ha-svg-icon .path=${mdiWhiteBalanceSunny}></ha-svg-icon></p></div>`;
+    }
+    if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
+      return html`<div class="label-container">${warningIcons}<p class="label hvac_action">${this.hass.formatEntityAttributeValue(stateObj, "hvac_action")}</p></div>`;
+    }
+    return html`<div class="label-container">${warningIcons}<p class="label hvac_action">${this.hass.formatEntityState(stateObj)}</p></div>`;
+  }
+
+  private _renderPrimary(showCurrentAsBig: boolean) {
+    const stateObj = this._stateObj!;
+    if (stateObj.state === UNAVAILABLE) return nothing;
+    if (showCurrentAsBig) return this._renderCurrent(stateObj.attributes.current_temperature!, true);
+    if (this._supportsTargetValue) return this._renderTarget(this._targetTemperature.value!, true);
+    if (this._supportsTargetRange) {
+      return html`<div class="dual"> <button @click=${this._handleSelect} .target=${"low"} class="target-button ${classMap({ selected: this._selectTarget === "low" })}">${this._renderTarget(this._targetTemperature.low!, true)}</button><button @click=${this._handleSelect} .target=${"high"} class="target-button ${classMap({ selected: this._selectTarget === "high" })}">${this._renderTarget(this._targetTemperature.high!, true)}</button></div>`;
+    }
+    // No setpoint and no current temperature: _renderLabel() already shows
+    // the state text — don't duplicate it here.
+    return nothing;
+  }
+
+  private _renderSecondary(showCurrentAsBig: boolean) {
+    const stateObj = this._stateObj!;
+    const config = this._config!;
+    const currentTemp = stateObj.attributes.current_temperature;
+    if (!config.show_secondary) return html`<p class="label secondary"></p>`;
+    if (currentTemp != null && !showCurrentAsBig) {
+      return html`<p class="label secondary"><ha-svg-icon .path=${mdiThermometer}></ha-svg-icon> ${this._renderCurrent(currentTemp)}</p>`;
+    }
+    if (this._supportsTargetValue && config.show_current_as_primary) {
+      return html`<p class="label secondary"><ha-svg-icon .path=${mdiThermostat}></ha-svg-icon>${this._renderTarget(this._targetTemperature.value!)}</p>`;
+    }
+    if (this._supportsTargetRange && config.show_current_as_primary) {
+      return html`<p class="label secondary"><ha-svg-icon .path=${mdiThermostat}></ha-svg-icon><button @click=${this._handleSelect} .target=${"low"} class="target-button ${classMap({ selected: this._selectTarget === "low" })}">${this._renderTarget(this._targetTemperature.low!, false, true)}</button><span>·</span><button @click=${this._handleSelect} .target=${"high"} class="target-button ${classMap({ selected: this._selectTarget === "high" })}">${this._renderTarget(this._targetTemperature.high!, false, true)}</button></p>`;
+    }
+    return html`<p class="label secondary"></p>`;
+  }
+
+  private _renderHumidity() {
+    const humidityDisplay = formatHumidity(this.hass, this._stateObj!, this._config);
+    if (!humidityDisplay) return nothing;
+
+    return html`
+      <p class="label secondary humidity">
+        <ha-svg-icon .path=${mdiWaterPercent}></ha-svg-icon>
+        ${humidityDisplay}&nbsp;
+      </p>
+    `;
+  }
+
+  private _renderButtons(target: "value" | "low" | "high") {
+    const unavailable = this._stateObj!.state === UNAVAILABLE;
+    return html`<div class="buttons"><ha-outlined-icon-button .target=${target} .step=${-this._step} .disabled=${unavailable} @click=${this._handleButton}><ha-svg-icon .path=${mdiMinus}></ha-svg-icon></ha-outlined-icon-button><ha-outlined-icon-button .target=${target} .step=${this._step} .disabled=${unavailable} @click=${this._handleButton}><ha-svg-icon .path=${mdiPlus}></ha-svg-icon></ha-outlined-icon-button></div>`;
+  }
+
+  private _renderActionsSection() {
+    const stateObj = this._stateObj!;
+    const config = this._config!;
+    const iconStyle: StyleInfo = {
+      "--icon-color": "var(--bt-color-grey)",
+      "--bg-color": alphaColor("var(--bt-color-grey)", 0.2),
+    };
+
+    const rawHvacModes: string[] = Array.isArray(stateObj.attributes.hvac_modes)
+      ? stateObj.attributes.hvac_modes
+      : ["off", "heat", "cool"];
+    // Always render the "off" mode last in the button row, regardless of the
+    // order the integration reports hvac_modes in.
+    const hvacModes: string[] = [
+      ...rawHvacModes.filter((mode) => mode !== "off"),
+      ...(rawHvacModes.includes("off") ? ["off"] : []),
+    ];
+    const presetsIndex = Math.max(hvacModes.length - 1, 0);
+    const buttonModes: string[] = config.disable_presets
+      ? hvacModes
+      : [
+          ...hvacModes.slice(0, presetsIndex),
+          "presets",
+          ...hvacModes.slice(presetsIndex),
+        ];
+
+    // disable_all_buttons hides the whole row, except the presets button
+    // as long as presets aren't disabled themselves.
+    const hasPresets =
+      (stateObj.attributes.preset_modes?.filter((p: string) => p !== "none") ?? [])
+        .length > 0;
+    const presetOnly =
+      !!config.disable_all_buttons &&
+      !config.disable_presets &&
+      hasPresets;
+    const showActions = !config.disable_all_buttons || presetOnly;
+    if (!showActions) return nothing;
+
+    return html`
+      <div class="actions">
+        <div class=${classMap({ 'preset-select': true, open: this._presetOverlay.open })}>
+          ${(stateObj.attributes.preset_modes ?? []).map((mode: any) => html`
+            <mushroom-button
+              style=${styleMap(iconStyle)}
+              .mode=${mode}
+              .disabled=${!isAvailable(stateObj)}
+                @click=${this.triggerModeChange.bind(this, mode)}
+                @longpress=${(e: Event) => { e.stopPropagation(); this._presetOverlay.setOpen(true); }}
+            >
+              <ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>
+            </mushroom-button>
+          `)}
+        </div>
+
+        ${presetOnly ? html`
+          <mushroom-button-group .fill=${true} ?rtl=${false}>
+            ${this.renderModeButton("presets")}
+          </mushroom-button-group>
+        ` : config.features?.length ? html`
+          <cts-hui-card-features
+            .hass=${this.hass}
+            .context=${this._featureContext}
+            .features=${config.features}
+            color=${stateColorCss(stateObj)}
+          ></cts-hui-card-features>
+        ` : html`
+          <mushroom-button-group .fill=${true} ?rtl=${false}>
+            ${buttonModes.map((mode) => this.renderModeButton(mode))}
+          </mushroom-button-group>
+        `}
+      </div>
+    `;
   }
 
   private renderModeButton(mode: string) {
@@ -723,12 +731,12 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
 
     if(mode === "presets") {
           const presetMode = this._stateObj?.attributes?.preset_mode;
-          const iconStyle = {};
+          const iconStyle: StyleInfo = {};
           const selectedMode = (presetMode != null && presetMode !== 'none') ? presetMode : "none";
-          const color = getHvacModeColor(selectedMode as HvacMode);
+          const color = climateColor(selectedMode);
           if (presetMode != null && presetMode !== 'none') {
-            iconStyle["--icon-color"] = `rgb(${color})`;
-            iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
+            iconStyle["--icon-color"] = color;
+            iconStyle["--bg-color"] = alphaColor(color, 0.2);
           }
           const icon = getHvacModeIcon(selectedMode as HvacMode);
           const presets = (this._stateObj?.attributes?.preset_modes?.filter(p => p != "none") || []) as HvacMode[];
@@ -740,7 +748,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
                   style=${styleMap(iconStyle)}
                   .mode=${selectedMode}
                     @click=${this.triggerModeChange.bind(this, presets[0])}
-                    @longpress=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+                    @longpress=${(e: Event) => { e.stopPropagation(); this._presetOverlay.setOpen(true); }}
                 >
                   <ha-icon .icon=${getHvacModeIcon(presets[0] as HvacMode)}></ha-icon>
                 </mushroom-button>
@@ -751,7 +759,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
               style=${styleMap(iconStyle)}
               .mode=${selectedMode}
               .disabled=${!isAvailable(this._stateObj)}
-              @click=${(e: Event) => { e.stopPropagation(); this._openPresetSelect(true); }}
+              @click=${(e: Event) => { e.stopPropagation(); this._presetOverlay.setOpen(true); }}
             >
               <ha-icon .icon=${icon}></ha-icon>
             </mushroom-button>
@@ -761,11 +769,11 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
           }
     }
 
-    const iconStyle = {};
-    const color = mode === "off" ? "var(--rgb-grey)" : getHvacModeColor(mode as HvacMode);
+    const iconStyle: StyleInfo = {};
+    const color = mode === "off" ? "var(--bt-color-grey)" : climateColor(mode);
     if (mode === this._stateObj.state) {
-      iconStyle["--icon-color"] = `rgb(${color})`;
-      iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
+      iconStyle["--icon-color"] = color;
+      iconStyle["--bg-color"] = alphaColor(color, 0.2);
     }
 
     return html`
@@ -780,41 +788,10 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     `;
   }
 
-  private _openPresetSelect(open = true) {
-    this._presetOpen = open;
-    if (open) {
-      window.addEventListener("pointerdown", this._onDocumentPointerDown);
-    } else {
-      window.removeEventListener("pointerdown", this._onDocumentPointerDown);
-    }
-  }
-
-  private _onDocumentPointerDown = (ev: PointerEvent) => {
-    const path = ev.composedPath();
-    const presetEl = this.shadowRoot?.querySelector('.preset-select');
-    if (!presetEl) return;
-    // If the click is outside the preset-select element, close the menu
-    if (!path.includes(presetEl as EventTarget)) {
-      this._openPresetSelect(false);
-    }
-  };
-
-  private triggerModeChange(mode: any) {
-    if (Array.isArray(this._stateObj?.attributes?.hvac_modes) && this._stateObj.attributes.hvac_modes.includes(mode)) {
-      this.hass.callService("climate", "set_hvac_mode", {
-        entity_id: this._stateObj?.entity_id,
-        hvac_mode: mode,
-      });
-      this._openPresetSelect(false);
-      return;
-    } else if (this._stateObj?.attributes.preset_modes && this._stateObj.attributes.preset_modes.includes(mode)) {
-      if (mode === this._stateObj.attributes.preset_mode) mode = "none";
-      this.hass.callService("climate", "set_preset_mode", {
-        entity_id: this._stateObj?.entity_id,
-        preset_mode: mode,
-      });
-      this._openPresetSelect(false);
-      return;
+  private triggerModeChange(mode: string) {
+    if (!this._stateObj) return;
+    if (setClimateMode(this.hass, this._stateObj, mode)) {
+      this._presetOverlay.setOpen(false);
     }
   }
 
@@ -822,23 +799,18 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     ev.stopPropagation();
     ev.preventDefault();
     if (!entityId) return;
-    fireEvent(this as any, "hass-more-info" as any, {
+    fireEvent(this, "hass-more-info", {
       entityId,
     });
   }
 
-  disconnectedCallback() {
-    window.removeEventListener("pointerdown", this._onDocumentPointerDown);
-    super.disconnectedCallback();
-  }
-
-  private _handleAction(_ev: ActionHandlerEvent) { /* placeholder for future actions */ }
-
   static get styles(): CSSResultGroup {
     return [
       super.styles,
+      btStateColorsStyle,
+      climateColorDefaultStyles,
+      presetOverlayStyle,
       ShadowStyles,
-      stateControlCircularSliderStyle,
     ];
   }
 }

@@ -9,16 +9,10 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Deaktiver vindue-åben indikator",
-        "disable_summer": "Deaktiver sommer indikator",
         "disable_eco": "Deaktiver Eco indikator",
-        "disable_heat": "Deaktiver varme indikator",
-        "disable_off": "Deaktiver slukket indikator",
         "disable_menu": "Deaktiver menu",
         "disable_battery_warning": "Deaktiver batteriadvarsel",
         "disable_buttons": "Deaktiver plus/minus knapper",
-        "eco_temperature": "Eco temperatur",
-        "set_current_as_main": "Erstat målt temperatur med nuværende temperatur",
         "show_current_as_primary": "Vis nuværende temperatur som primær",
         "show_secondary": "Vis sekundær information",
         "prevent_interaction_on_scroll": "Forhindre interaktion ved scrolling",
@@ -37,7 +31,6 @@
   },
   "extra_states": {
     "window_open": "Vindue åbent",
-    "night_mode": "Nattetilstand",
     "eco": "Eco",
     "summer": "Sommer",
     "cooling": "Køling",

@@ -9,16 +9,10 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Venster-open-weergave uitschakelen",
-        "disable_summer": "Zomerweergave uitschakelen",
         "disable_eco": "Eco-weergave uitschakelen",
-        "disable_heat": "Verwarmingsweergave uitschakelen",
-        "disable_off": "Uit-weergave uitschakelen",
         "disable_menu": "Menu uitschakelen",
         "disable_battery_warning": "Batterijwaarschuwing uitschakelen",
         "disable_buttons": "Plus/min-knoppen uitschakelen",
-        "eco_temperature": "Eco temperatuur",
-        "set_current_as_main": "Doeltemperatuur verwisselen met huidige temperatuur",
         "show_current_as_primary": "Toon huidige temperatuur als primair",
         "show_secondary": "Toon secundaire informatie",
         "prevent_interaction_on_scroll": "Voorkom interactie tijdens scrollen",
@@ -37,7 +31,6 @@
   },
   "extra_states": {
     "window_open": "Venster open",
-    "night_mode": "Nachtmodus",
     "eco": "Eco",
     "summer": "Zomer",
     "cooling": "Koeling",

@@ -1,4 +1,4 @@
-[![Version - 3.1.0](https://img.shields.io/badge/Version-3.1.0-009688?style=for-the-badge)](https://github.com/KartoffelToby/better-thermostat-ui-card)
+[![Release](https://img.shields.io/github/v/release/KartoffelToby/better-thermostat-ui-card?style=for-the-badge&color=009688)](https://github.com/KartoffelToby/better-thermostat-ui-card/releases)
 [![Discord](https://img.shields.io/discord/925725316540923914.svg?style=for-the-badge)](https://discord.gg/9BUegWTG3K)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
@@ -33,7 +33,24 @@ You can configure the cards as you like, we use the latest HA UI Configuration t
 ![](/assets/3_15.png)
 ![](/assets/3_16.png)
 ![](/assets/3_17.png)
- 
+
+## Custom colors
+
+Both cards accept a `colors:` option to recolor HVAC modes and Better Thermostat presets. Use the color pickers in the visual editor ("Colors" section — only the modes/presets your entity supports are shown), or set it in YAML. Values are HA theme color tokens (`red`, `deep-orange`, `light-green`, …) or any raw CSS color as escape hatch:
+
+```yaml
+type: custom:better-thermostat-normal-climate-card
+entity: climate.living_room
+colors:
+  heat: deep-orange
+  eco: light-green
+  boost: "#ff00ff"
+```
+
+Available keys: `auto`, `cool`, `dry`, `fan_only`, `heat`, `heat_cool`, `off`, `eco`, `away`, `boost`, `sleep`, `comfort`, `activity`, `home`.
+
+Themes can override the same colors globally via the `--bt-color-<key>` CSS variables (underscores become dashes, e.g. `--bt-color-fan-only`); the legacy `--bt-state-*` RGB-triplet theme variables keep working as defaults.
+
 ## Goals
 
 - [X] Add better_thermostat support for showing the extra status

@@ -1,18 +1,20 @@
 import { html, LitElement, TemplateResult, nothing, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
+import type { StyleInfo } from "lit/directives/style-map.js";
 import {
-  ClimateEntity,
   compareClimateHvacModes,
   computeRTL,
   HomeAssistant,
   HvacMode,
   isAvailable,
 } from "mushroom-cards/src/ha";
-import { ensureElementLoaded } from "../../utils/ensure-element-loaded";
-import { getHvacModeColor, getHvacModeIcon } from "../utils";
+import { ensureElementLoaded } from "../../shared/ensure-element-loaded";
+import { BtClimateEntity } from "../../shared/climate";
+import { climateColor, getHvacModeIcon } from "../../shared/climate-colors";
+import { alphaColor } from "../../shared/color";
 
-export const isHvacModesVisible = (entity: ClimateEntity, modes?: HvacMode[]) =>
+export const isHvacModesVisible = (entity: BtClimateEntity, modes?: HvacMode[]) =>
   modes === undefined
     ? (entity.attributes.hvac_modes || []).length > 0
     : (entity.attributes.hvac_modes || []).some((mode) =>
@@ -23,7 +25,7 @@ export const isHvacModesVisible = (entity: ClimateEntity, modes?: HvacMode[]) =>
 export class ClimateHvacModesControl extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  @property({ attribute: false }) public entity!: ClimateEntity;
+  @property({ attribute: false }) public entity!: BtClimateEntity;
 
   @property({ attribute: false }) public modes!: HvacMode[];
 
@@ -37,7 +39,7 @@ export class ClimateHvacModesControl extends LitElement {
 
   private callService(e: CustomEvent) {
     e.stopPropagation();
-    const mode = (e.currentTarget! as any).mode as HvacMode;
+    const mode = (e.currentTarget as HTMLElement & { mode: HvacMode }).mode;
     this.hass.callService("climate", "set_hvac_mode", {
       entity_id: this.entity!.entity_id,
       hvac_mode: mode,
@@ -48,9 +50,9 @@ export class ClimateHvacModesControl extends LitElement {
     e.stopPropagation();
     // Prefer the preset-based flow introduced in better_thermostat >= 1.8.0.
     // Toggle the 'eco' preset if available, otherwise fall back to legacy flag.
-    const presetMode = (this.entity.attributes as any).preset_mode;
-    const hasEcoPreset = (this.entity.attributes as any).preset_modes?.includes("eco");
-    const isEco = presetMode === "eco" || (this.entity.attributes as any).eco_mode === true;
+    const presetMode = this.entity.attributes.preset_mode;
+    const hasEcoPreset = this.entity.attributes.preset_modes?.includes("eco");
+    const isEco = presetMode === "eco" || this.entity.attributes.eco_mode === true;
 
     if (hasEcoPreset) {
       const newMode = isEco ? "none" : "eco";
@@ -68,11 +70,11 @@ export class ClimateHvacModesControl extends LitElement {
   }
 
   private renderEcoButton() {
-    const isEco = (this.entity.attributes as any).eco_mode === true;
-    const iconStyle = {};
+    const isEco = this.entity.attributes.eco_mode === true;
+    const iconStyle: StyleInfo = {};
     if (isEco) {
-      iconStyle["--icon-color"] = `rgb(var(--bt-state-eco))`;
-      iconStyle["--bg-color"] = `rgba(var(--bt-state-eco), 0.2)`;
+      iconStyle["--icon-color"] = `var(--bt-color-eco)`;
+      iconStyle["--bg-color"] = alphaColor("var(--bt-color-eco)", 0.2);
     }
 
     return html`
@@ -94,7 +96,7 @@ export class ClimateHvacModesControl extends LitElement {
       .sort(compareClimateHvacModes);
 
     const presetModes = this.entity.attributes.preset_modes || [];
-    const hasEco = (presetModes.includes("eco") || (this.entity.attributes as any).eco_mode === true) && !this.disableEco;
+    const hasEco = (presetModes.includes("eco") || this.entity.attributes.eco_mode === true) && !this.disableEco;
 
     return html`
       <mushroom-button-group .fill=${this.fill} ?rtl=${rtl}>
@@ -110,11 +112,11 @@ export class ClimateHvacModesControl extends LitElement {
   }
 
   private renderModeButton(mode: HvacMode) {
-    const iconStyle = {};
-    const color = mode === "off" ? "var(--rgb-grey)" : getHvacModeColor(mode);
+    const iconStyle: StyleInfo = {};
+    const color = mode === "off" ? "var(--bt-color-grey)" : climateColor(mode);
     if (mode === this.entity.state) {
-      iconStyle["--icon-color"] = `rgb(${color})`;
-      iconStyle["--bg-color"] = `rgba(${color}, 0.2)`;
+      iconStyle["--icon-color"] = color;
+      iconStyle["--bg-color"] = alphaColor(color, 0.2);
     }
 
     return html`
@@ -133,8 +135,8 @@ export class ClimateHvacModesControl extends LitElement {
     super.firstUpdated(changedProperties);
 
     await Promise.all([
-      ensureElementLoaded("mushroom-button", "mushroom-cards/src/shared/button"),
-      ensureElementLoaded("mushroom-button-group", "mushroom-cards/src/shared/button-group"),
+      ensureElementLoaded("mushroom-button", () => import("mushroom-cards/src/shared/button")),
+      ensureElementLoaded("mushroom-button-group", () => import("mushroom-cards/src/shared/button-group")),
     ]);
     this.requestUpdate();
   }

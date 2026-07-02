@@ -8,5 +8,5 @@
     "declaration": false
   },
   "include": ["src/**/*.ts"],
-    "exclude": ["node_modules", "ha-frontend/test/**", "ha-frontend/demo/**", "ha-frontend/gallery/**", "ha-frontend/cast/**", "ha-frontend/hassio/**", "test/**"]
+  "exclude": ["node_modules", "test/**"]
 }

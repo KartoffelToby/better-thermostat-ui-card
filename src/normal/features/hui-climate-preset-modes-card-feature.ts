@@ -4,18 +4,20 @@ import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import "../components/cts-ha-control-select";
 import type { ControlSelectOption } from "../components/cts-ha-control-select";
-import { stateColorCss } from "../../shims/ha-frontend-shim";
-import type { ClimateEntity } from "../../shims/ha-frontend-shim";
+import { stateColorCss } from "../../shared/state-color";
+import {
+  BtClimateEntity,
+  ClimateEntityFeature,
+  UNAVAILABLE,
+  supportsFeature,
+} from "../../shared/climate";
 import { HomeAssistant } from "mushroom-cards/src/ha";
-import { getHvacModeIcon } from "../utils";
+import { getHvacModeIcon } from "../../shared/climate-colors";
 import type {
   ClimatePresetModesCardFeatureConfig,
   LovelaceCardFeature,
   LovelaceCardFeatureContext,
 } from "./types";
-
-const UNAVAILABLE = "unavailable";
-const PRESET_MODE_FEATURE = 16;
 
 export const supportsClimatePresetModesCardFeature = (
   hass: HomeAssistant,
@@ -29,7 +31,7 @@ export const supportsClimatePresetModesCardFeature = (
   }
   return (
     stateObj.entity_id.startsWith("climate.") &&
-    ((stateObj.attributes.supported_features || 0) & PRESET_MODE_FEATURE) !== 0
+    supportsFeature(stateObj, ClimateEntityFeature.PRESET_MODE)
   );
 };
 
@@ -68,11 +70,11 @@ export class HuiClimatePresetModesCardFeature
     this._config = config;
   }
 
-  private get _stateObj(): ClimateEntity | undefined {
+  private get _stateObj(): BtClimateEntity | undefined {
     if (!this.hass || !this.context?.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id] as ClimateEntity | undefined;
+    return this.hass.states[this.context.entity_id] as BtClimateEntity | undefined;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
@@ -82,7 +84,7 @@ export class HuiClimatePresetModesCardFeature
     ) {
       const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
       const oldStateObj = this.context?.entity_id
-        ? (oldHass?.states[this.context.entity_id] as ClimateEntity | undefined)
+        ? (oldHass?.states[this.context.entity_id] as BtClimateEntity | undefined)
         : undefined;
       if (oldStateObj !== this._stateObj) {
         this._currentPresetMode = this._stateObj.attributes.preset_mode;
@@ -127,7 +129,7 @@ export class HuiClimatePresetModesCardFeature
     ).map((mode) => ({
       value: mode,
       label: this.hass!.formatEntityAttributeValue(stateObj, "preset_mode", mode),
-      icon: html`<ha-icon .icon=${getHvacModeIcon(mode as any)}></ha-icon>`,
+      icon: html`<ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>`,
     }));
 
     return html`

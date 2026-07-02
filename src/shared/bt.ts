@@ -9,7 +9,16 @@ export interface ExternalSensorsConfig {
 // Better Thermostat entities always expose `call_for_heat`; anything else is
 // treated as a plain climate entity that may rely on user-configured sensors.
 export function isBtEntity(stateObj: any): boolean {
-  return (stateObj?.attributes as any)?.call_for_heat !== undefined;
+  return stateObj?.attributes?.call_for_heat !== undefined;
+}
+
+// Stub entity for the card picker preview: prefer a Better Thermostat entity,
+// fall back to the first climate entity.
+export function findBtStubEntity(hass: HomeAssistant): string | undefined {
+  const climates = Object.keys(hass.states).filter(
+    (e) => e.split(".")[0] === "climate"
+  );
+  return climates.find((e) => isBtEntity(hass.states[e])) ?? climates[0];
 }
 
 const SENSOR_OPEN_STATES = ["on", "open", "true"];
@@ -22,7 +31,7 @@ export function isWindowOpen(
   if (isBtEntity(stateObj)) {
     // Only an actual boolean true or an explicit "true"-like string counts;
     // Boolean() would treat strings such as "false" as open.
-    const windowOpen = (stateObj.attributes as any).window_open;
+    const windowOpen = stateObj.attributes?.window_open;
     return (
       windowOpen === true ||
       (typeof windowOpen === "string" &&

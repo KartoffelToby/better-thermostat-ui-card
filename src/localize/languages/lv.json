@@ -9,16 +9,10 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Atspējot logu indikatoru",
-        "disable_summer": "Atspējot vasaras režīmu",
         "disable_eco": "Atspējot ekonomisko režīmu",
-        "disable_heat": "Atspējot sildīšanas režīmu",
-        "disable_off": "Atspējot izslēgšanu",
         "disable_menu": "Atspējot izvēlni",
         "disable_battery_warning": "Atspējot baterijas brīdinājumu",
         "disable_buttons": "Atspējot plus/mīnus pogas",
-        "eco_temperature": "Eko režīma temperatūra",
-        "set_current_as_main": "Apmainīt pašreizējo un mērķa temperatūru vietām",
         "show_current_as_primary": "Rādīt pašreizējo temperatūru kā galveno",
         "show_secondary": "Rādīt sekundāro informāciju",
         "prevent_interaction_on_scroll": "Novērst mijiedarbību ritinot",
@@ -37,7 +31,6 @@
   },
   "extra_states": {
     "window_open": "Logs atvērts",
-    "night_mode": "Nakts režīms",
     "eco": "Eko režīms",
     "summer": "Vasaras režīms",
     "cooling": "Dzesēšana",

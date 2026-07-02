@@ -8,13 +8,6 @@ export const ShadowStyles = css`
       width: 100% !important;
       box-sizing: border-box;
       overflow: visible;
-      --bt-state-eco: 165, 214, 167;
-      --bt-state-away: 176, 190, 197;
-      --bt-state-boost: 239, 83, 80;
-      --bt-state-sleep: 63, 81, 181;
-      --bt-state-comfort: 121, 85, 72;
-      --bt-state-activity: 230, 74, 25;
-      --bt-state-home: 76, 175, 80;
       --default-deep-orange: 244, 99, 108 !important;
     }
     ha-card {
@@ -220,7 +213,7 @@ export const ShadowStyles = css`
 
 
     .label.humidity {
-        color: #6fa3d6;
+        color: var(--bt-color-humidity);
     }
 
     .buttons {
@@ -348,7 +341,7 @@ export const ShadowStyles = css`
     }
     
     .label.summer-label {
-          color: #ffb300;
+          color: var(--bt-color-summer);
           --mdc-icon-size: clamp(20px, 15cqmin, 75px);
     }
 
@@ -363,35 +356,14 @@ export const ShadowStyles = css`
 
 
 
+    /* Base overlay skeleton comes from the shared presetOverlayStyle. */
     .preset-select {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
       justify-content: center;
       align-content: center;
-      z-index: 10;
       gap: 12px;
-      flex-direction: row;
       flex-wrap: wrap;
-      max-height: 0%;
-      overflow: hidden;
-      transition: max-height 300ms ease-in-out, padding 300ms ease-in-out;
-      z-index: -1;
-      box-sizing: border-box;
       background-color: rgba(var(--rgb-card-background-color), 0.6);
       padding: 16px;
-      visibility: collapse;
-      backface-visibility: hidden;
-    }
-    .preset-select.open {
-      max-height: 100%;
-      z-index: 10;
-      visibility: visible;
     }
 
 `;

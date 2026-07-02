@@ -1,5 +1,6 @@
 node_modules
 dist
+.serena/
 .dev/*
 !.dev/configuration.yaml
 !.dev/lovelace.yaml

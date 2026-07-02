@@ -4,38 +4,15 @@ import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import "../components/cts-ha-control-select";
 import type { ControlSelectOption } from "../components/cts-ha-control-select";
-import { stateColorCss } from "../../shims/ha-frontend-shim";
-import type { ClimateEntity } from "../../shims/ha-frontend-shim";
-import { HomeAssistant } from "mushroom-cards/src/ha";
-import { getHvacModeIcon } from "../utils";
+import { stateColorCss } from "../../shared/state-color";
+import { BtClimateEntity, UNAVAILABLE } from "../../shared/climate";
+import { compareClimateHvacModes, HomeAssistant } from "mushroom-cards/src/ha";
+import { getHvacModeIcon } from "../../shared/climate-colors";
 import type {
   ClimateHvacModesCardFeatureConfig,
   LovelaceCardFeature,
   LovelaceCardFeatureContext,
 } from "./types";
-
-const UNAVAILABLE = "unavailable";
-
-const HVAC_MODES = [
-  "auto",
-  "heat_cool",
-  "heat",
-  "cool",
-  "dry",
-  "fan_only",
-  "off",
-] as const;
-
-const hvacModeOrdering = HVAC_MODES.reduce(
-  (order, mode, index) => {
-    order[mode] = index;
-    return order;
-  },
-  {} as Record<string, number>
-);
-
-const compareClimateHvacModes = (mode1: string, mode2: string) =>
-  hvacModeOrdering[mode1] - hvacModeOrdering[mode2];
 
 export const supportsClimateHvacModesCardFeature = (
   hass: HomeAssistant,
@@ -85,11 +62,11 @@ export class HuiClimateHvacModesCardFeature
     this._config = config;
   }
 
-  private get _stateObj(): ClimateEntity | undefined {
+  private get _stateObj(): BtClimateEntity | undefined {
     if (!this.hass || !this.context?.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id] as ClimateEntity | undefined;
+    return this.hass.states[this.context.entity_id] as BtClimateEntity | undefined;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
@@ -99,7 +76,7 @@ export class HuiClimateHvacModesCardFeature
     ) {
       const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
       const oldStateObj = this.context?.entity_id
-        ? (oldHass?.states[this.context.entity_id] as ClimateEntity | undefined)
+        ? (oldHass?.states[this.context.entity_id] as BtClimateEntity | undefined)
         : undefined;
       if (oldStateObj !== this._stateObj) {
         this._currentHvacMode = this._stateObj.state;
@@ -149,8 +126,8 @@ export class HuiClimateHvacModesCardFeature
     ).map((mode) => ({
       value: mode,
       label: this.hass!.formatEntityState(stateObj, mode),
-      path: getHvacModeIcon(mode as any).replace("mdi:", ""), // fallback if path doesn't work directly
-      icon: html`<ha-icon .icon=${getHvacModeIcon(mode as any)}></ha-icon>`,
+      path: getHvacModeIcon(mode).replace("mdi:", ""), // fallback if path doesn't work directly
+      icon: html`<ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>`,
     }));
 
     return html`

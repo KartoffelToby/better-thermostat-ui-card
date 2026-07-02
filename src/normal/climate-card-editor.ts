@@ -2,127 +2,40 @@ import { css, CSSResultGroup, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import memoizeOne from "memoize-one";
 import { LovelaceCardEditor } from "mushroom-cards/src/ha";
-import setupMushroomLocalize from "mushroom-cards/src/localize";
-import setupCustomlocalize from "../localize/localize";
 import { GENERIC_LABELS } from "mushroom-cards/src/utils/form/generic-fields";
 import { MushroomBaseElement } from "mushroom-cards/src/utils/base-element";
 import { HaFormSchema } from "mushroom-cards/src/utils/form/ha-form";
+import { loadHaComponents } from "mushroom-cards/src/utils/loader";
 import { BetterThermostatUINormalCardConfig } from "./climate-card-config";
 import { CLIMATE_CARD_EDITOR_NAME, CLIMATE_ENTITY_DOMAINS } from "./const";
-import { isBtEntity } from "../utils/bt";
-import { mdiEye, mdiGestureTap, mdiTune, mdiAlert, mdiWindowOpenVariant } from "@mdi/js";
+import { isBtEntity } from "../shared/bt";
+import { createChainedLocalize } from "../shared/localize";
+import {
+  computeColorLabel,
+  computeColorsSchema,
+  computeDisplaySection,
+  computeFeaturesSection,
+  computeInteractionSection,
+  computeSensorsSection,
+  computeWarningsSection,
+} from "../shared/editor-schema";
 
-const CLIMATE_LABELS = [
-  "show_current_as_primary", "show_secondary",
-  "disable_buttons", "disable_all_buttons", "disable_menu", "prevent_interaction_on_scroll",
-  "disable_eco", "disable_humidity", "disable_presets",
-  "disable_battery_warning", "disable_connection_lost_warning", "disable_degraded_warning",
-  "low_battery_threshold",
-  "window_sensor", "humidity_sensor",
-  "section_display", "section_interaction", "section_features", "section_warnings",
-  "section_sensors",
-] as string[];
-
-const computeSchema = memoizeOne((isBt: boolean): HaFormSchema[] => [
-  { name: "entity", selector: { entity: { domain: CLIMATE_ENTITY_DOMAINS } } },
-  { name: "name", selector: { text: {} } },
-  ...(!isBt
-    ? [
-        {
-          name: "section_sensors",
-          type: "expandable",
-          flatten: true,
-          expanded: true,
-          iconPath: mdiWindowOpenVariant,
-          schema: [
-            {
-              name: "window_sensor",
-              selector: { entity: { domain: ["binary_sensor", "input_boolean"] } },
-            },
-            {
-              name: "humidity_sensor",
-              selector: { entity: { domain: ["sensor"], device_class: "humidity" } },
-            },
-          ],
-        } as any,
-      ]
-    : []),
-  {
-    name: "section_display",
-    type: "expandable",
-    flatten: true,
-    expanded: true,
-    iconPath: mdiEye,
-    schema: [
-      {
-        type: "grid",
-        name: "",
-        schema: [
-          { name: "show_current_as_primary", selector: { boolean: {} } },
-          { name: "show_secondary", selector: { boolean: {} } },
-        ],
-      },
-    ],
-  } as any,
-  {
-    name: "section_interaction",
-    type: "expandable",
-    flatten: true,
-    iconPath: mdiGestureTap,
-    schema: [
-      {
-        type: "grid",
-        name: "",
-        schema: [
-          { name: "disable_buttons", selector: { boolean: {} } },
-          { name: "disable_all_buttons", selector: { boolean: {} } },
-          { name: "disable_menu", selector: { boolean: {} } },
-          { name: "prevent_interaction_on_scroll", selector: { boolean: {} } },
-        ],
-      },
-    ],
-  } as any,
-  {
-    name: "section_features",
-    type: "expandable",
-    flatten: true,
-    iconPath: mdiTune,
-    schema: [
-      {
-        type: "grid",
-        name: "",
-        schema: [
-          { name: "disable_eco", selector: { boolean: {} } },
-          { name: "disable_humidity", selector: { boolean: {} } },
-          { name: "disable_presets", selector: { boolean: {} } },
-        ],
-      },
-    ],
-  } as any,
-  // Warnings rely on BT-only attributes (batteries, errors, degraded_mode)
-  ...(isBt
-    ? [
-        {
-          name: "section_warnings",
-          type: "expandable",
-          flatten: true,
-          iconPath: mdiAlert,
-          schema: [
-            {
-              type: "grid",
-              name: "",
-              schema: [
-                { name: "disable_battery_warning", selector: { boolean: {} } },
-                { name: "disable_connection_lost_warning", selector: { boolean: {} } },
-                { name: "disable_degraded_warning", selector: { boolean: {} } },
-              ],
-            },
-            { name: "low_battery_threshold", default: 10, selector: { number: { min: 0, max: 100, step: 1, mode: "box", unit_of_measurement: "%" } } },
-          ],
-        } as any,
-      ]
-    : []),
-]);
+const computeSchema = memoizeOne(
+  (isBt: boolean, hvacModes?: string, presetModes?: string): HaFormSchema[] => [
+    { name: "entity", selector: { entity: { domain: CLIMATE_ENTITY_DOMAINS } } },
+    { name: "name", selector: { text: {} } },
+    ...(!isBt ? [computeSensorsSection()] : []),
+    computeDisplaySection([
+      { name: "show_current_as_primary" },
+      { name: "show_secondary" },
+    ]),
+    computeColorsSchema(hvacModes, presetModes),
+    computeInteractionSection(),
+    computeFeaturesSection(),
+    // Warnings rely on BT-only attributes (batteries, errors, degraded_mode)
+    ...(isBt ? [computeWarningsSection(true)] : []),
+  ]
+);
 
 @customElement(CLIMATE_CARD_EDITOR_NAME)
 export class NormalClimateCardEditor extends MushroomBaseElement implements LovelaceCardEditor {
@@ -146,21 +59,18 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
     ];
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    void loadHaComponents();
+  }
+
   public setConfig(config: BetterThermostatUINormalCardConfig): void {
     this._config = config;
   }
 
   protected render() {
     if (!this.hass) return html``;
-    const customLocalize = setupCustomlocalize(this.hass as any);
-    const mushroomLocalize = setupMushroomLocalize(this.hass!);
-    const localize = (key: string) => {
-      const custom = customLocalize(key);
-      if (custom && custom !== key) return custom;
-      const mush = mushroomLocalize(key);
-      if (mush && mush !== key) return mush;
-      return this.hass!.localize(key);
-    };
+    const localize = createChainedLocalize(this.hass);
 
     // Non Better Thermostat entities don't provide window/humidity data via
     // attributes — offer external sensor pickers instead and hide BT-only
@@ -169,7 +79,11 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
       ? this.hass.states[this._config.entity]
       : undefined;
     const isBt = !stateObj || isBtEntity(stateObj);
-    const schema = computeSchema(isBt);
+    const schema = computeSchema(
+      isBt,
+      stateObj ? (stateObj.attributes.hvac_modes ?? []).join(",") : undefined,
+      stateObj ? (stateObj.attributes.preset_modes ?? []).join(",") : undefined
+    );
 
     return html`
       ${!isBt
@@ -180,19 +94,28 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
           `
         : ""}
       <ha-form
-        .hass=${this.hass as any}
-        .data=${{ ...this._config, low_battery_threshold: this._config?.low_battery_threshold ?? 10 } as any}
-        .schema=${schema as any}
+        .hass=${this.hass}
+        .data=${{ ...this._config, low_battery_threshold: this._config?.low_battery_threshold ?? 10 }}
+        .schema=${schema}
         .computeLabel=${(schema: HaFormSchema) => {
           if (schema.name === "entity") {
             // Use the same localize chain to ensure the generic translation
             return localize("ui.panel.lovelace.editor.card.generic.entity") || schema.name;
           }
+          if (schema.name === "colors") {
+            return localize("editor.card.climate.section_colors") || schema.name;
+          }
+          const colorLabel = computeColorLabel(this.hass!, stateObj, schema.name, localize);
+          if (colorLabel !== undefined) return colorLabel;
           if (GENERIC_LABELS.includes(schema.name)) {
             return localize(`editor.card.generic.${schema.name}`) || schema.name;
           }
           return localize(`editor.card.climate.${schema.name}`) || schema.name;
         }}
+        .computeHelper=${(schema: HaFormSchema) =>
+          schema.name === "colors"
+            ? localize("editor.card.climate.section_colors_helper")
+            : undefined}
         @value-changed=${this._valueChanged}
       ></ha-form>
     `;
@@ -200,7 +123,19 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
 
   private _valueChanged(ev: CustomEvent) {
     ev.stopPropagation();
-    const value = ev.detail.value as BetterThermostatUINormalCardConfig;
+    const value = { ...(ev.detail.value as BetterThermostatUINormalCardConfig) };
+    // ha-form emits colors: {} (or empty-string entries) when pickers are
+    // cleared — don't persist that noise in the YAML.
+    if (value.colors) {
+      const colors = Object.fromEntries(
+        Object.entries(value.colors).filter(([, v]) => v)
+      );
+      if (Object.keys(colors).length === 0) {
+        delete value.colors;
+      } else {
+        value.colors = colors;
+      }
+    }
     this._config = value;
     this.dispatchEvent(
       new CustomEvent("config-changed", { detail: { config: value }, bubbles: true, composed: true })

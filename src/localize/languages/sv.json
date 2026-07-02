@@ -9,16 +9,10 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Inaktivera fönster-öppen visning",
-        "disable_summer": "Inaktivera sommar visning",
         "disable_eco": "Inaktivera eco visning",
-        "disable_heat": "Inaktivera värme visning",
-        "disable_off": "Inaktivera av visning",
         "disable_menu": "Inaktivera meny",
         "disable_battery_warning": "Inaktivera batterivarning",
         "disable_buttons": "Inaktivera plus/minus knappar",
-        "eco_temperature": "Eco temperatur",
-        "set_current_as_main": "Byt måltemperatur med nuvarande temperatur",
         "show_current_as_primary": "Visa aktuell temperatur som primär",
         "show_secondary": "Visa sekundär information",
         "prevent_interaction_on_scroll": "Förhindra interaktion vid rullning",
@@ -37,7 +31,6 @@
   },
   "extra_states": {
     "window_open": "Fönster öppet",
-    "night_mode": "Nattläge",
     "eco": "Eco",
     "summer": "Sommar",
     "cooling": "Kylning",

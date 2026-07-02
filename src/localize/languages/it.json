@@ -9,16 +9,10 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Disabilita indicatore Finestra",
-        "disable_summer": "Disabilita indicatore Estate",
         "disable_eco": "Disabilita tasto eco",
-        "disable_heat": "Disabilita tasto heat",
-        "disable_off": "Disabililita tasto off",
         "disable_menu": "Disabilita menu",
         "disable_battery_warning": "Disabilita avviso batteria",
         "disable_buttons": "Disabilita pulsanti più/meno",
-        "eco_temperature": "Temperatura target",
-        "set_current_as_main": "Imposta la temperatura attuale come target",
         "show_current_as_primary": "Mostra temperatura attuale come principale",
         "show_secondary": "Mostra informazioni secondarie",
         "prevent_interaction_on_scroll": "Prevenire interazione durante lo scorrimento",
@@ -37,7 +31,6 @@
   },
   "extra_states": {
     "window_open": "Finestra aperta",
-    "night_mode": "Modalità notturna",
     "eco": "Eco",
     "summer": "Estate",
     "cooling": "Raffreddamento",

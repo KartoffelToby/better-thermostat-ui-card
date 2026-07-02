@@ -10,17 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-        with:
-          submodules: recursive
       # Build
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.3.5
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Typecheck
+        run: bun run typecheck
+      - name: Test
+        run: bun test
       - name: Build the file
-        run: |
-          bun install
-          bun run build
-      # Upload build file to the releas as an asset.
+        run: bun run build
+      # Upload build file to the release as an asset.
       - name: Upload zip to release
         uses: svenstaro/upload-release-action@v1-release
 

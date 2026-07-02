@@ -36,9 +36,9 @@ export class HaControlSelect extends LitElement {
     if (this.disabled) {
       return;
     }
-    const value = (ev.currentTarget as any).value as string;
+    const value = (ev.currentTarget as HTMLElement & { value: string }).value;
     if (value !== this.value) {
-      fireEvent(this as any, "value-changed" as any, { value });
+      fireEvent(this, "value-changed", { value });
     }
   }
 
@@ -58,7 +58,7 @@ export class HaControlSelect extends LitElement {
     ev.preventDefault();
     const value = this.options[next].value;
     if (value !== this.value) {
-      fireEvent(this as any, "value-changed" as any, { value });
+      fireEvent(this, "value-changed", { value });
     }
   }
 

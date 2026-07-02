@@ -2,24 +2,33 @@ import { html, LitElement, nothing, TemplateResult, PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import {
-  ClimateEntity,
   computeRTL,
   HomeAssistant,
   isAvailable,
   UNIT_F,
 } from "mushroom-cards/src/ha";
-import { ensureElementLoaded } from "../../utils/ensure-element-loaded";
+import { ensureElementLoaded } from "../../shared/ensure-element-loaded";
+import {
+  BtClimateEntity,
+  ClimateEntityFeature,
+  supportsFeature,
+} from "../../shared/climate";
+import { alphaColor } from "../../shared/color";
 
-export const isTemperatureControlVisible = (entity: ClimateEntity) =>
-  "temperature" in entity.attributes ||
-  ("target_temp_low" in entity.attributes &&
-    "target_temp_high" in entity.attributes);
+// HA core's guard: the feature bit AND a non-null value — key presence alone
+// is not enough (integrations report temperature: null in fan_only/dry).
+export const isTemperatureControlVisible = (entity: BtClimateEntity) =>
+  (supportsFeature(entity, ClimateEntityFeature.TARGET_TEMPERATURE) &&
+    entity.attributes.temperature != null) ||
+  (supportsFeature(entity, ClimateEntityFeature.TARGET_TEMPERATURE_RANGE) &&
+    entity.attributes.target_temp_low != null &&
+    entity.attributes.target_temp_high != null);
 
 @customElement("mushroom-climate-temperature-control")
 export class ClimateTemperatureControl extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
-  @property({ attribute: false }) public entity!: ClimateEntity;
+  @property({ attribute: false }) public entity!: BtClimateEntity;
 
   @property() public fill: boolean = false;
 
@@ -63,10 +72,13 @@ export class ClimateTemperatureControl extends LitElement {
 
     const min = this.entity.attributes.min_temp ?? 0;
     const max = this.entity.attributes.max_temp ?? 100;
-    const supportsValue = "temperature" in this.entity.attributes;
+    const supportsValue =
+      supportsFeature(this.entity, ClimateEntityFeature.TARGET_TEMPERATURE) &&
+      this.entity.attributes.temperature != null;
     const supportsRange =
-      "target_temp_low" in this.entity.attributes &&
-      "target_temp_high" in this.entity.attributes;
+      supportsFeature(this.entity, ClimateEntityFeature.TARGET_TEMPERATURE_RANGE) &&
+      this.entity.attributes.target_temp_low != null &&
+      this.entity.attributes.target_temp_high != null;
     const value = this.entity.attributes.temperature ?? min;
     const low = this.entity.attributes.target_temp_low ?? min;
     const high = this.entity.attributes.target_temp_high ?? max;
@@ -81,10 +93,12 @@ export class ClimateTemperatureControl extends LitElement {
             maximumFractionDigits: 1,
           };
 
+    // Reads the inherited --bt-color-* layer: the mini card recolors
+    // --bt-color-heat to the active preset instead of reassigning triplets.
     const modeStyle = (mode: "heat" | "cool") => ({
-      "--bg-color": `rgba(var(--rgb-state-climate-${mode}), 0.05)`,
-      "--icon-color": `rgb(var(--rgb-state-climate-${mode}))`,
-      "--text-color": `rgb(var(--rgb-state-climate-${mode}))`,
+      "--bg-color": alphaColor(`var(--bt-color-${mode})`, 0.05),
+      "--icon-color": `var(--bt-color-${mode})`,
+      "--text-color": `var(--bt-color-${mode})`,
     });
 
     return html`
@@ -137,18 +151,9 @@ export class ClimateTemperatureControl extends LitElement {
     super.firstUpdated(changedProperties);
 
     await Promise.all([
-      (async () => {
-        if (!customElements.get("mushroom-button"))
-          await import("mushroom-cards/src/shared/button");
-      })(),
-      (async () => {
-        if (!customElements.get("mushroom-button-group"))
-          await import("mushroom-cards/src/shared/button-group");
-      })(),
-      (async () => {
-        if (!customElements.get("mushroom-input-number"))
-          await import("mushroom-cards/src/shared/input-number");
-      })(),
+      ensureElementLoaded("mushroom-button", () => import("mushroom-cards/src/shared/button")),
+      ensureElementLoaded("mushroom-button-group", () => import("mushroom-cards/src/shared/button-group")),
+      ensureElementLoaded("mushroom-input-number", () => import("mushroom-cards/src/shared/input-number")),
     ]);
   }
 }
