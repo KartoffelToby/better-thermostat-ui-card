@@ -493,6 +493,9 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       if (this._supportsTargetRange && !showCurrentAsPrimary) {
         return html`<div class="dual"> <button @click=${this._handleSelect} .target=${"low"} class="target-button ${classMap({ selected: this._selectTarget === "low" })}">${renderTarget(this._targetTemperature.low!, true)}</button><button @click=${this._handleSelect} .target=${"high"} class="target-button ${classMap({ selected: this._selectTarget === "high" })}">${renderTarget(this._targetTemperature.high!, true)}</button></div>`;
       }
+      // No target temperature supported (e.g. fan_only/dry mode) — show
+      // current temperature as the primary display if available.
+      if (currentTemp != null) return renderCurrent(currentTemp, true);
       return html`<p class="primary-state">${this.hass.formatEntityState(stateObj)}</p>`;
     };
 
@@ -710,10 +713,64 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     `;
   }
 
-    return html`<ha-card><div class="container" style=${styleMap({})}>
-      <div class="info">${renderLabel()}${primary()}${secondary()}${renderHumidity()}</div>
-      ${available ? actionsSection() : nothing}
-    </div></ha-card>`;
+    // Fallback: entity does not support target temperature (e.g. fan_only/dry
+    // mode where the integration drops the `temperature` attribute), or entity
+    // is unavailable. Render the full card layout — title, color vars, wrapper,
+    // menu, actions — but without the circular slider and +/- buttons, since
+    // there is no setpoint to adjust. Show current temperature as primary.
+    {
+      const active = stateActive(this._stateObj);
+      const containerSizeClass = this._sizeController.value
+        ? ` ${this._sizeController.value}`
+        : "";
+      let stateColor = stateColorCss(this._stateObj);
+      let actionColor: string | undefined;
+      const action = this._stateObj?.attributes.hvac_action;
+      if (action && action !== "idle" && action !== "off" && active) {
+        actionColor = stateColorCss(this._stateObj, CLIMATE_HVAC_ACTION_TO_MODE[action]);
+      }
+      if (window) {
+        actionColor = "var(--info-color)";
+        stateColor = "var(--info-color)";
+      }
+      if (this._stateObj?.state === "off") {
+        stateColor = "var(--rgb-grey)";
+        actionColor = "var(--rgb-grey)";
+      }
+      const name = this._config.name || this._stateObj?.attributes.friendly_name || "";
+      const controlMaxWidth = this._resizeController.value
+        ? `${Math.min(this._resizeController.value, 320)}px`
+        : undefined;
+
+      return html`
+      <ha-card>
+        <p class="title">${name}</p>
+        <div class="container">
+          <div
+            class="bt-wrapper container${containerSizeClass}"
+            style=${styleMap({
+              "--state-color": stateColor ?? "var(--primary-text-color)",
+              "--action-color": actionColor ?? "",
+              maxWidth: controlMaxWidth,
+            })}
+          >
+            <div class="info">${renderLabel()}${primary()}${secondary()}${renderHumidity()}</div>
+          </div>
+        </div>
+        ${!this._config.disable_menu ? html`<ha-icon-button
+          class="more-info"
+          .label=${localize("ui.panel.lovelace.cards.show_more_info")}
+          .path=${mdiDotsVertical}
+          @click=${(e: Event) => {
+            e.stopPropagation();
+            this._handleMoreInfo();
+          }}
+          tabindex="0"
+        ></ha-icon-button>` : nothing}
+
+        ${available ? actionsSection() : nothing}
+      </ha-card>`;
+    }
   }
 
   private renderModeButton(mode: string) {
