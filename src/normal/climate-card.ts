@@ -54,6 +54,38 @@ function simpleDebounce<T extends (...args: any[]) => void>(fn: T, timeout = 300
   };
 }
 
+/**
+ * Shared state-color computation for both the main render path and the
+ * fallback (no-target-temperature) path.  Keeps the two branches in sync so
+ * overrides (window, preset_mode, off) can never diverge again.
+ */
+function computeStateColors(
+  stateObj: ClimateEntity,
+  window: boolean,
+  active: boolean,
+): { stateColor: string; actionColor: string | undefined } {
+  let stateColor = stateColorCss(stateObj);
+  let actionColor: string | undefined;
+  const action = stateObj.attributes.hvac_action;
+  if (action && action !== "idle" && action !== "off" && active) {
+    actionColor = stateColorCss(stateObj, CLIMATE_HVAC_ACTION_TO_MODE[action]);
+  }
+  const preset_mode = (stateObj.attributes as any)?.preset_mode;
+  if (window) {
+    actionColor = "var(--info-color)";
+    stateColor = "var(--info-color)";
+  } else if (preset_mode != null && preset_mode !== "none") {
+    const pre_color = getHvacModeColor(preset_mode);
+    stateColor = `rgb(${pre_color})`;
+    actionColor = `rgb(${pre_color})`;
+  }
+  if (stateObj.state === "off") {
+    stateColor = "var(--rgb-grey)";
+    actionColor = "var(--rgb-grey)";
+  }
+  return { stateColor, actionColor };
+}
+
 registerCustomCard({
   type: CLIMATE_CARD_NAME,
   name: "Better Thermostat Climate Card",
@@ -599,35 +631,12 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
     };
 
     if ((this._supportsTargetValue || this._supportsTargetRange) && available) {
-      const mode = this._stateObj.state;
-      const action = this._stateObj.attributes.hvac_action;
       const active = stateActive(this._stateObj);
 
       const containerSizeClass = this._sizeController.value
         ? ` ${this._sizeController.value}`
         : "";
-      let actionColor: string | undefined;
-      if (action && action !== "idle" && action !== "off" && active) {
-        actionColor = stateColorCss(
-          this._stateObj,
-          CLIMATE_HVAC_ACTION_TO_MODE[action]
-        );
-      }
-      let stateColor = stateColorCss(this._stateObj);
-      const preset_mode = (this._stateObj.attributes as any).preset_mode;
-      if (window) {
-        actionColor = "var(--info-color)";
-        stateColor = "var(--info-color)";
-      } else if (preset_mode != null && preset_mode !== 'none') {
-        const pre_color = getHvacModeColor(preset_mode);
-        stateColor = `rgb(${pre_color})`;
-        actionColor = `rgb(${pre_color})`;
-      }
-
-      if (mode === "off") {
-        stateColor = "var(--rgb-grey)";
-        actionColor = "var(--rgb-grey)";
-      }
+      const { stateColor, actionColor } = computeStateColors(this._stateObj, window, active);
 
 
       const lowColor = stateColorCss(this._stateObj, active ? "heat" : "off");
@@ -723,20 +732,7 @@ export class BetterThermostatUINormalCard extends MushroomBaseElement implements
       const containerSizeClass = this._sizeController.value
         ? ` ${this._sizeController.value}`
         : "";
-      let stateColor = stateColorCss(this._stateObj);
-      let actionColor: string | undefined;
-      const action = this._stateObj?.attributes.hvac_action;
-      if (action && action !== "idle" && action !== "off" && active) {
-        actionColor = stateColorCss(this._stateObj, CLIMATE_HVAC_ACTION_TO_MODE[action]);
-      }
-      if (window) {
-        actionColor = "var(--info-color)";
-        stateColor = "var(--info-color)";
-      }
-      if (this._stateObj?.state === "off") {
-        stateColor = "var(--rgb-grey)";
-        actionColor = "var(--rgb-grey)";
-      }
+      const { stateColor, actionColor } = computeStateColors(this._stateObj, window, active);
       const name = this._config.name || this._stateObj?.attributes.friendly_name || "";
       const controlMaxWidth = this._resizeController.value
         ? `${Math.min(this._resizeController.value, 320)}px`
