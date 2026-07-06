@@ -9,7 +9,7 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_eco": "Wyłącz tryb eko",
+        "disable_eco": "Wyłącz przycisk trybu eko",
         "disable_menu": "Wyłącz menu",
         "disable_battery_warning": "Wyłącz ostrzeżenie o baterii",
         "disable_buttons": "Wyłącz przyciski plus/minus",
@@ -17,26 +17,38 @@
         "show_secondary": "Pokaż dodatkowe informacje",
         "prevent_interaction_on_scroll": "Zapobiegaj interakcji podczas przewijania",
         "disable_humidity": "Wyłącz wyświetlanie wilgotności",
-        "show_temperature_control": "Pokaż kontrolę temperatury",
-        "collapsible_controls": "Zwijane kontrolki",
+        "show_temperature_control": "Pokaż suwak temperatury",
+        "collapsible_controls": "Rozwijane menu ustawień",
         "disable_connection_lost_warning": "Wyłącz ostrzeżenie o utracie połączenia",
         "disable_degraded_warning": "Wyłącz ostrzeżenie o trybie ograniczonym",
         "low_battery_threshold": "Próg ostrzeżenia o niskim stanie baterii (%)",
         "section_display": "Wyświetlanie",
         "section_interaction": "Interakcja",
         "section_features": "Funkcje",
-        "section_warnings": "Ostrzeżenia"
+        "section_warnings": "Ostrzeżenia",
+        "disable_presets": "Wyłącz przyciski ustawień predefiniowanych",
+        "disable_all_buttons": "Wyłącz wszystkie przyciski",
+        "debug_battery": "Debug: Pokaż ostrzeżenie baterii",
+        "debug_connection": "Debug: Pokaż ostrzeżenie o utracie połączenia",
+        "debug_degraded": "Debug: Pokaż ostrzeżenie o trybie ograniczonym",
+        "section_sensors": "Czujniki zewnętrzne",
+        "window_sensor": "Czujnik otwarcia okna",
+        "humidity_sensor": "Czujnik wilgotności",
+        "not_bt_info": "Wybrana encja nie jest encją Better Thermostat. Karta nadal z nią współpracuje, ale aby wyświetlić stany otwarcia okna i wilgotności, należy wybrać pasujące czujniki w sekcji „Czujniki zewnętrzne”."
       }
     }
   },
   "extra_states": {
     "window_open": "Otwarte okno",
-    "eco": "Tryb ekonomiczny",
+    "eco": "Tryb eko",
     "summer": "Lato",
     "cooling": "Chłodzenie",
-    "heating": "Ogrzewanie",
+    "heating": "Grzanie",
     "cooling_off": "Chłodzenie wyłączone",
-    "heating_off": "Ogrzewanie wyłączone",
-    "window_closed": "Okno zamknięte"
+    "heating_off": "Grzanie wyłączone",
+    "window_closed": "Okno zamknięte",
+    "degraded_mode": "Tryb ograniczony",
+    "connection_lost": "Połączenie utracone: {name}",
+    "low_battery": "Niski poziom baterii: {name}"
   }
 }

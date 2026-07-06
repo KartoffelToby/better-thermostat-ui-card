@@ -1,7 +1,10 @@
 {
   "common": {
     "version": "version",
-    "current": "current"
+    "current": "current",
+    "current_humidity": "Current humidity",
+    "current_temperature": "Current temperature",
+    "target_temperature": "Target temperature"
   },
   "editor": {
     "card": {
@@ -47,6 +50,7 @@
     "heating_off": "Heating off",
     "degraded_mode": "Degraded mode",
     "connection_lost": "Connection lost: {name}",
-    "low_battery": "Low battery: {name}"
+    "low_battery": "Low battery: {name}",
+    "window_closed": "Window closed"
   }
 }
