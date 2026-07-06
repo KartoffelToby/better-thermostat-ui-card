@@ -6,17 +6,11 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Desactivar fiestra",
-        "disable_humidity": "Desactivar visualización de humidade",
-        "disable_summer": "Desactivar verán",
         "disable_eco": "Desactivar eco",
-        "disable_heat": "Desactivar calor",
-        "disable_off": "Desactivar apagado",
         "disable_menu": "Desactivar menú",
         "disable_battery_warning": "Desactivar alerta de batería",
         "disable_buttons": "Desactivar botóns máis/menos",
-        "eco_temperature": "Temperatura Eco",
-        "set_current_as_main": "Establecer temperatura obxectivo como temperatura actual",
+        "disable_humidity": "Desactivar visualización de humidade",
         "show_temperature_control": "Mostrar control de temperatura",
         "collapsible_controls": "Controis pregables",
         "disable_connection_lost_warning": "Desactivar aviso de perda de conexión",
@@ -31,7 +25,6 @@
   },
   "extra_states": {
     "window_open": "Fiestra aberta",
-    "night_mode": "Modo noite",
     "eco": "Eco",
     "summer": "Verán"
   }

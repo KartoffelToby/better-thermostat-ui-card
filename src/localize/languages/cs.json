@@ -9,22 +9,16 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Zakázat okno",
-        "disable_humidity": "Zakázat zobrazení vlhkosti",
-        "disable_summer": "Zakázat léto",
         "disable_eco": "Zakázat eco",
-        "disable_heat": "Zakázat topení",
-        "disable_off": "Zakázat vypnuto",
         "disable_menu": "Zakázat menu",
         "disable_battery_warning": "Zakázat upozornění baterie",
         "disable_buttons": "Zakázat tlačítka plus/minus",
-        "eco_temperature": "Eco teplota",
-        "set_current_as_main": "Prohodit místa cílové a aktuální teploty",
-        "show_temperature_control": "Zobrazit ovládání teploty",
-        "collapsible_controls": "Sbalitelné ovládání",
         "show_current_as_primary": "Zobrazit aktuální teplotu jako hlavní",
         "show_secondary": "Zobrazit sekundární informace",
         "prevent_interaction_on_scroll": "Zabránit interakci při posouvání",
+        "disable_humidity": "Zakázat zobrazení vlhkosti",
+        "show_temperature_control": "Zobrazit ovládání teploty",
+        "collapsible_controls": "Sbalitelné ovládání",
         "disable_connection_lost_warning": "Vypnout upozornění na ztrátu spojení",
         "disable_degraded_warning": "Vypnout upozornění na zhoršený režim",
         "low_battery_threshold": "Práh upozornění na nízkou baterii (%)",
@@ -37,7 +31,6 @@
   },
   "extra_states": {
     "window_open": "Okno otevřeno",
-    "night_mode": "Noční režim",
     "eco": "Eco",
     "summer": "Léto",
     "cooling": "Chlazení",

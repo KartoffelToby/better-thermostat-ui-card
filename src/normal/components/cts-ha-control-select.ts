@@ -36,9 +36,9 @@ export class HaControlSelect extends LitElement {
     if (this.disabled) {
       return;
     }
-    const value = (ev.currentTarget as any).value as string;
+    const value = (ev.currentTarget as HTMLElement & { value: string }).value;
     if (value !== this.value) {
-      fireEvent(this as any, "value-changed" as any, { value });
+      fireEvent(this, "value-changed", { value });
     }
   }
 
@@ -47,7 +47,7 @@ export class HaControlSelect extends LitElement {
       return;
     }
     const index = this.options.findIndex((o) => o.value === this.value);
-    let next = index;
+    let next: number;
     if (ev.key === "ArrowRight" || ev.key === "ArrowDown") {
       next = index === -1 ? 0 : Math.min(index + 1, this.options.length - 1);
     } else if (ev.key === "ArrowLeft" || ev.key === "ArrowUp") {
@@ -58,7 +58,7 @@ export class HaControlSelect extends LitElement {
     ev.preventDefault();
     const value = this.options[next].value;
     if (value !== this.value) {
-      fireEvent(this as any, "value-changed" as any, { value });
+      fireEvent(this, "value-changed", { value });
     }
   }
 
@@ -77,7 +77,7 @@ export class HaControlSelect extends LitElement {
         <div class="content">
           ${option.path
             ? html`<cts-ha-svg-icon .path=${option.path}></cts-ha-svg-icon>`
-            : option.icon ?? nothing}
+            : (option.icon ?? nothing)}
           ${!this.hideOptionLabel && option.label
             ? html`<span>${option.label}</span>`
             : nothing}
@@ -100,7 +100,7 @@ export class HaControlSelect extends LitElement {
           ? repeat(
               this.options,
               (option) => option.value,
-              (option) => this._renderOption(option)
+              (option) => this._renderOption(option),
             )
           : nothing}
       </div>

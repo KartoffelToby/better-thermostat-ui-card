@@ -9,22 +9,16 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Désactiver fenêtre",
-        "disable_humidity": "Désactiver l'affichage de l'humidité",
-        "disable_summer": "Désactiver été",
         "disable_eco": "Désactiver mode Éco",
-        "disable_heat": "Désactiver mode chauffe",
-        "disable_off": "Désactiver arrêt",
         "disable_menu": "Désactiver le menu",
         "disable_battery_warning": "Désactiver l'avertissement de batterie",
         "disable_buttons": "Désactiver les boutons plus/moins",
-        "eco_temperature": "Température Éco",
-        "set_current_as_main": "Échanger température cible avec température locale",
-        "show_temperature_control": "Afficher le contrôle de température",
-        "collapsible_controls": "Contrôles pliables",
         "show_current_as_primary": "Afficher la température actuelle comme principale",
         "show_secondary": "Afficher les informations secondaires",
         "prevent_interaction_on_scroll": "Empêcher l'interaction lors du défilement",
+        "disable_humidity": "Désactiver l'affichage de l'humidité",
+        "show_temperature_control": "Afficher le contrôle de température",
+        "collapsible_controls": "Contrôles pliables",
         "disable_connection_lost_warning": "Désactiver avertissement perte de connexion",
         "disable_degraded_warning": "Désactiver avertissement mode dégradé",
         "low_battery_threshold": "Seuil avertissement batterie faible (%)",
@@ -37,7 +31,6 @@
   },
   "extra_states": {
     "window_open": "Fenêtre ouverte",
-    "night_mode": "Mode nuit",
     "eco": "Éco",
     "summer": "Été",
     "cooling": "Refroidissement",

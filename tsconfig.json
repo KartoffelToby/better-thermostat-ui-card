@@ -1,35 +1,33 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "target": "es2017",
+    "target": "es2021",
     "module": "esnext",
-    "moduleResolution": "node",
+    // "node10" resolution is an error since TS 6; "bundler" matches how
+    // rollup actually resolves and keeps extensionless/directory imports
+    // (mushroom-cards) working.
+    "moduleResolution": "bundler",
     "lib": ["es2021", "dom", "dom.iterable"],
     "noEmit": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "strict": true,
+    // Blocked from full strictness: mushroom-cards ships TypeScript sources
+    // that are compiled inside this program and fail noImplicitAny (~35
+    // errors in node_modules). Our own code is kept implicit-any free,
+    // enforced by `bun run typecheck:strict` in CI.
     "noImplicitAny": false,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    // bun:test types for test/**; bundler resolution doesn't pick the
+    // @types/bun module declarations up automatically.
+    "types": ["bun"],
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "outDir": "dist",
-    "rootDir": ".",
-    "baseUrl": "./",
-    "paths": {
-      "@lit-labs/observers/resize-controller": [
-        "./node_modules/@lit-labs/observers/resize-controller.js"
-      ],
-      "lit/decorators": [
-        "src/lib/lit-decorators-guard.ts"
-      ],
-      "lit/decorators.js": [
-        "src/lib/lit-decorators-guard.ts"
-      ]
-    }
+    "rootDir": "."
   },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules", "ha-frontend/test", "ha-frontend/demo", "ha-frontend/gallery", "ha-frontend/cast", "ha-frontend/hassio"]
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules"]
 }

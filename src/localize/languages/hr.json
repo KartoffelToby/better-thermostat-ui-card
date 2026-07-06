@@ -9,16 +9,10 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Isključi indikator prozora",
-        "disable_summer": "Isključi indikator ljeta",
         "disable_eco": "Isključi prikaz eco gumba",
-        "disable_heat": "Isključi prikaz gumba paljenja",
-        "disable_off": "Isključi prikaz gumba gašenja",
         "disable_menu": "Isključi prikaz izbornika",
         "disable_battery_warning": "Isključi upozorenje baterije",
         "disable_buttons": "Isključi prikaz plus/minus gumbi",
-        "eco_temperature": "Eco temperatura",
-        "set_current_as_main": "Zamijeni prikaz željene i trenutne temperature",
         "show_current_as_primary": "Prikaži trenutnu temperaturu kao primarnu",
         "show_secondary": "Prikaži sekundarne informacije",
         "prevent_interaction_on_scroll": "Spriječi interakciju pri pomicanju",
@@ -38,7 +32,6 @@
   "extra_states": {
     "window_open": "Prozor otvoren",
     "window_closed": "Prozor zatvoren",
-    "night_mode": "Noćni način",
     "eco": "Eco",
     "summer": "Ljeto",
     "cooling": "Hlađenje",

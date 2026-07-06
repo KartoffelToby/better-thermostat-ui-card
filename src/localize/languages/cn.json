@@ -9,22 +9,16 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "禁用窗口打开显示",
-        "disable_humidity": "关闭湿度显示",
-        "disable_summer": "禁用夏季显示",
         "disable_eco": "禁用节能显示",
-        "disable_heat": "禁用加热显示",
-        "disable_off": "禁用关闭显示",
         "disable_menu": "禁用菜单",
         "disable_battery_warning": "禁用电池警告",
         "disable_buttons": "禁用加/减按钮",
-        "eco_temperature": "节能温度",
-        "set_current_as_main": "将目标温度与当前温度交换",
-        "show_temperature_control": "显示温度控制",
-        "collapsible_controls": "可折叠控制",
         "show_current_as_primary": "显示当前温度为主",
         "show_secondary": "显示次要信息",
         "prevent_interaction_on_scroll": "滚动时防止交互",
+        "disable_humidity": "关闭湿度显示",
+        "show_temperature_control": "显示温度控制",
+        "collapsible_controls": "可折叠控制",
         "disable_connection_lost_warning": "关闭连接丢失警告",
         "disable_degraded_warning": "关闭降级模式警告",
         "low_battery_threshold": "低电量警告阈值 (%)",
@@ -37,7 +31,6 @@
   },
   "extra_states": {
     "window_open": "窗口打开",
-    "night_mode": "夜间模式",
     "eco": "节能",
     "summer": "夏季",
     "cooling": "冷却",

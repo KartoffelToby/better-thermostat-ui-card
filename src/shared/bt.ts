@@ -9,7 +9,16 @@ export interface ExternalSensorsConfig {
 // Better Thermostat entities always expose `call_for_heat`; anything else is
 // treated as a plain climate entity that may rely on user-configured sensors.
 export function isBtEntity(stateObj: any): boolean {
-  return (stateObj?.attributes as any)?.call_for_heat !== undefined;
+  return stateObj?.attributes?.call_for_heat !== undefined;
+}
+
+// Stub entity for the card picker preview: prefer a Better Thermostat entity,
+// fall back to the first climate entity.
+export function findBtStubEntity(hass: HomeAssistant): string | undefined {
+  const climates = Object.keys(hass.states).filter(
+    (e) => e.split(".")[0] === "climate",
+  );
+  return climates.find((e) => isBtEntity(hass.states[e])) ?? climates[0];
 }
 
 const SENSOR_OPEN_STATES = ["on", "open", "true"];
@@ -17,12 +26,12 @@ const SENSOR_OPEN_STATES = ["on", "open", "true"];
 export function isWindowOpen(
   hass: HomeAssistant | undefined,
   stateObj: any,
-  config?: ExternalSensorsConfig
+  config?: ExternalSensorsConfig,
 ): boolean {
   if (isBtEntity(stateObj)) {
     // Only an actual boolean true or an explicit "true"-like string counts;
     // Boolean() would treat strings such as "false" as open.
-    const windowOpen = (stateObj.attributes as any).window_open;
+    const windowOpen = stateObj.attributes?.window_open;
     return (
       windowOpen === true ||
       (typeof windowOpen === "string" &&
@@ -39,11 +48,20 @@ export function isWindowOpen(
 export function formatHumidity(
   hass: HomeAssistant | undefined,
   stateObj: any,
-  config?: ExternalSensorsConfig
+  config?: ExternalSensorsConfig,
 ): string | undefined {
   if (!hass || config?.disable_humidity) return undefined;
   if (stateObj?.attributes?.current_humidity != null) {
-    return hass.formatEntityAttributeValue(stateObj, "current_humidity");
+    // Unlike a sensor entity (formatted below with the user's registry
+    // display-precision), the climate attribute carries the integration's
+    // raw value and has no precision setting — some integrations report
+    // "58.49". Whole percent is the sensible display for relative humidity.
+    const humidity = Number(stateObj.attributes.current_humidity);
+    return hass.formatEntityAttributeValue(
+      stateObj,
+      "current_humidity",
+      Number.isFinite(humidity) ? Math.round(humidity) : undefined,
+    );
   }
   if (!isBtEntity(stateObj) && config?.humidity_sensor) {
     const sensor = hass.states?.[config.humidity_sensor];

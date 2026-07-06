@@ -9,19 +9,13 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Turn off the window open indicator",
         "disable_humidity": "Turn off the humidity display",
-        "disable_summer": "Turn off the summer indicator",
         "disable_eco": "Turn off the eco button",
         "disable_presets": "Turn off the presets button",
-        "disable_heat": "Turn off the on/heat button",
-        "disable_off": "Turn off the off button",
         "disable_menu": "Disable menu",
         "disable_battery_warning": "Turn off the battery warning",
         "disable_buttons": "Turn off the plus/minus buttons",
         "disable_all_buttons": "Turn off all buttons",
-        "eco_temperature": "Target temp for night/away/eco mode triggerd by ui button",
-        "set_current_as_main": "Swap target and current temperature positions",
         "show_temperature_control": "Show temperature control",
         "collapsible_controls": "Collapsible controls",
         "show_current_as_primary": "Show current temperature as primary",
@@ -34,6 +28,8 @@
         "debug_degraded": "Debug: Show degraded mode warning",
         "low_battery_threshold": "Low battery warning threshold (%)",
         "section_display": "Display",
+        "section_colors": "Colors",
+        "section_colors_helper": "Override the colors used for HVAC modes and presets. Pick a theme color, or clear a picker to restore the default.",
         "section_interaction": "Interaction",
         "section_features": "Features",
         "section_warnings": "Warnings",
@@ -46,7 +42,6 @@
   },
   "extra_states": {
     "window_open": "Window open",
-    "night_mode": "Night mode",
     "eco": "Eco",
     "summer": "Summer",
     "cooling": "Cooling",

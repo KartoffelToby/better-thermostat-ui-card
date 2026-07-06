@@ -35,7 +35,7 @@ export class HuiCardFeatures extends LitElement {
             .feature=${feature}
             .position=${this.position}
           ></cts-hui-card-feature>
-        `
+        `,
       )}
     `;
   }

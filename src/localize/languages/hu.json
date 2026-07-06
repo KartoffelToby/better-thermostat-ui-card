@@ -9,22 +9,16 @@
   "editor": {
     "card": {
       "climate": {
-        "disable_window": "Ablak kikapcsolás",
-        "disable_humidity": "Páratartalom megjelenítés kikapcsolása",
-        "disable_summer": "Nyár kikapcsolás",
         "disable_eco": "Eco kikapcsolás",
-        "disable_heat": "Fűtés kikacsolás",
-        "disable_off": "Kikapcsolás inaktiválás",
         "disable_menu": "Menü letiltása",
         "disable_battery_warning": "Akkumulátor figyelmeztetés letiltása",
         "disable_buttons": "Plusz/mínusz gombok letiltása",
-        "eco_temperature": "Eco hőmérséklet",
-        "set_current_as_main": "Aktuális hőmérséklet használata",
-        "show_temperature_control": "Hőmérséklet-szabályzó megjelenítése",
-        "collapsible_controls": "Összecsukható vezérlők",
         "show_current_as_primary": "Jelenlegi hőmérséklet megjelenítése elsődlegesként",
         "show_secondary": "Másodlagos információk megjelenítése",
         "prevent_interaction_on_scroll": "Interakció megakadályozása görgetéskor",
+        "disable_humidity": "Páratartalom megjelenítés kikapcsolása",
+        "show_temperature_control": "Hőmérséklet-szabályzó megjelenítése",
+        "collapsible_controls": "Összecsukható vezérlők",
         "disable_connection_lost_warning": "Kapcsolatvesztés figyelmeztetés kikapcsolása",
         "disable_degraded_warning": "Korlátozott mód figyelmeztetés kikapcsolása",
         "low_battery_threshold": "Alacsony akkumulátor figyelmeztetési küszöb (%)",
@@ -37,7 +31,6 @@
   },
   "extra_states": {
     "window_open": "Ablak nyitva",
-    "night_mode": "Éjszakai mód",
     "eco": "Eco",
     "summer": "Nyár",
     "cooling": "Hűtés",

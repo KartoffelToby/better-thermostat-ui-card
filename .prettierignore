@@ -1,0 +1,7 @@
+dist/
+.dev/
+assets/
+project.inlang/
+bun.lock
+.serena/
+node_modules/

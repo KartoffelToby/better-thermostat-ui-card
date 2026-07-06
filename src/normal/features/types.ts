@@ -4,6 +4,22 @@ export interface LovelaceCardFeatureContext {
   entity_id?: string;
 }
 
+// Restrict the entity's modes to the ones the feature config selects.
+// Like HA core's card features, the CONFIGURED order defines the display
+// order (that is how users reorder the buttons); duplicates are dropped.
+export const filterModes = (
+  modes: string[] | undefined,
+  configured?: string[],
+): string[] => {
+  if (!modes) {
+    return [];
+  }
+  if (!configured) {
+    return modes;
+  }
+  return [...new Set(configured)].filter((mode) => modes.includes(mode));
+};
+
 export type LovelaceCardFeaturePosition = "bottom" | "inline";
 
 export interface LovelaceCardFeatureConfig {
