@@ -47,7 +47,7 @@ export class HaControlSelect extends LitElement {
       return;
     }
     const index = this.options.findIndex((o) => o.value === this.value);
-    let next = index;
+    let next: number;
     if (ev.key === "ArrowRight" || ev.key === "ArrowDown") {
       next = index === -1 ? 0 : Math.min(index + 1, this.options.length - 1);
     } else if (ev.key === "ArrowLeft" || ev.key === "ArrowUp") {

@@ -3,7 +3,10 @@
     "declaration": true,
     "target": "es2021",
     "module": "esnext",
-    "moduleResolution": "node",
+    // "node10" resolution is an error since TS 6; "bundler" matches how
+    // rollup actually resolves and keeps extensionless/directory imports
+    // (mushroom-cards) working.
+    "moduleResolution": "bundler",
     "lib": ["es2021", "dom", "dom.iterable"],
     "noEmit": true,
     "noUnusedParameters": true,
@@ -17,6 +20,9 @@
     "noImplicitAny": false,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    // bun:test types for test/**; bundler resolution doesn't pick the
+    // @types/bun module declarations up automatically.
+    "types": ["bun"],
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "outDir": "dist",
