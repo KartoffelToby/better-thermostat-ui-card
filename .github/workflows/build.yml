@@ -16,6 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The job only installs and builds — no git push/commit access needed.
+          persist-credentials: false
       - uses: oven-sh/setup-bun@v2
         with:
           # Keep in sync with packageManager in package.json — the lockfile
@@ -27,6 +30,8 @@ jobs:
         run: bun run lint
       - name: Typecheck
         run: bun run typecheck
+      - name: Typecheck (strict, first-party only)
+        run: bun run typecheck:strict
       - name: Test
         run: bun test
       - name: Build

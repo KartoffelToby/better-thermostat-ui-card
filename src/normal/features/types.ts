@@ -4,6 +4,17 @@ export interface LovelaceCardFeatureContext {
   entity_id?: string;
 }
 
+// Restrict the entity's modes to the ones the feature config selects.
+export const filterModes = (
+  modes: string[] | undefined,
+  configured?: string[],
+): string[] => {
+  if (!modes) {
+    return [];
+  }
+  return configured ? configured.filter((mode) => modes.includes(mode)) : modes;
+};
+
 export type LovelaceCardFeaturePosition = "bottom" | "inline";
 
 export interface LovelaceCardFeatureConfig {

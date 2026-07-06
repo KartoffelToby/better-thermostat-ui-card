@@ -313,8 +313,10 @@ export class BetterThermostatUISmallCard
               open: this._presetOverlay.open,
             })}
           >
-            ${(stateObj.attributes.preset_modes ?? []).map(
-              (mode: any) => html`
+            ${(stateObj.attributes.preset_modes ?? [])
+              .filter((mode: string) => mode !== "none")
+              .map(
+                (mode: string) => html`
                 <mushroom-button
                   style=${styleMap(iconStyle)}
                   .mode=${mode}

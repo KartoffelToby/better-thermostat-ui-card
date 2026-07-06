@@ -15,6 +15,7 @@ import {
   climateStateColor,
   getHvacModeIcon,
 } from "../../shared/climate-colors";
+import { filterModes } from "./types";
 import type {
   ClimatePresetModesCardFeatureConfig,
   LovelaceCardFeature,
@@ -35,13 +36,6 @@ export const supportsClimatePresetModesCardFeature = (
     stateObj.entity_id.startsWith("climate.") &&
     supportsFeature(stateObj, ClimateEntityFeature.PRESET_MODE)
   );
-};
-
-const filterModes = (modes: string[] | undefined, configured?: string[]) => {
-  if (!modes) {
-    return [];
-  }
-  return configured ? configured.filter((mode) => modes.includes(mode)) : modes;
 };
 
 @customElement("cts-hui-climate-preset-modes-card-feature")

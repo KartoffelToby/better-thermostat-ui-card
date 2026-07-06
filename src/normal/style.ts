@@ -122,6 +122,9 @@ export const ShadowStyles = css`
        shrink below its square :before placeholder, so the card never grows
        past its grid cell. The wrapper is then capped to the measured
        container height via the inline max-width set in render(). */
+  ha-card > .container {
+    overflow: hidden;
+  }
 
   .container:before {
     content: "";

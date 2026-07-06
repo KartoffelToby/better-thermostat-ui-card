@@ -68,7 +68,7 @@ const DEFAULT_LANG = "en";
 
 // Fallback chain: exact locale ("pt-BR"), primary subtag ("pt"), English.
 function getLangs(hass?: HomeAssistant): string[] {
-  const raw = hass?.locale.language ?? DEFAULT_LANG;
+  const raw = hass?.locale?.language ?? DEFAULT_LANG;
   const langs = [raw];
   const primary = raw.split(/[-_]/)[0];
   if (primary && primary !== raw) langs.push(primary);

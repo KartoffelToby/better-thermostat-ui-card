@@ -12,7 +12,8 @@
     "strict": true,
     // Blocked from full strictness: mushroom-cards ships TypeScript sources
     // that are compiled inside this program and fail noImplicitAny (~35
-    // errors in node_modules). Our own code is kept implicit-any free.
+    // errors in node_modules). Our own code is kept implicit-any free,
+    // enforced by `bun run typecheck:strict` in CI.
     "noImplicitAny": false,
     "skipLibCheck": true,
     "resolveJsonModule": true,

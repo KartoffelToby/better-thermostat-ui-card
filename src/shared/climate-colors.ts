@@ -70,18 +70,12 @@ export function climateColor(mode: ClimateMode | string): string {
   return colorVar(key);
 }
 
-// Action → color key; "idle" has its own color (core's --state-climate-idle),
-// unknown actions fall back to "off" like the old triplet map did.
-const CLIMATE_ACTION_COLOR_KEYS: Record<HvacAction, string> = {
-  cooling: "cool",
-  drying: "dry",
-  heating: "heat",
-  idle: "idle",
-  off: "off",
-};
-
+// Action → color: "idle" keeps its own color (core's --state-climate-idle);
+// everything else follows the mode it implies (heating → heat, fan →
+// fan_only, preheating/defrosting → heat); unknown actions fall back to off.
 export function climateActionColor(action: HvacAction | string): string {
-  return colorVar(CLIMATE_ACTION_COLOR_KEYS[action as HvacAction] ?? "off");
+  if (action === "idle") return colorVar("idle");
+  return climateColor(CLIMATE_HVAC_ACTION_TO_MODE[action] ?? "off");
 }
 
 // Color for the entity's current state: the themeable --bt-color-* layer for
@@ -168,6 +162,11 @@ export function getHvacModeIcon(hvacMode: ClimateMode | string): string {
   return CLIMATE_HVAC_MODE_ICONS[hvacMode as ClimateMode] ?? "mdi:thermostat";
 }
 
-export function getHvacActionIcon(hvacAction: HvacAction): string {
-  return CLIMATE_HVAC_ACTION_ICONS[hvacAction] ?? "";
+export function getHvacActionIcon(hvacAction: HvacAction | string): string {
+  const icon = CLIMATE_HVAC_ACTION_ICONS[hvacAction as HvacAction];
+  if (icon) return icon;
+  // Actions beyond mushroom's union (fan, preheating, defrosting) use the
+  // icon of the mode they imply.
+  const mode = CLIMATE_HVAC_ACTION_TO_MODE[hvacAction];
+  return mode ? getHvacModeIcon(mode) : "";
 }

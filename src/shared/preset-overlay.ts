@@ -3,8 +3,8 @@ import { css, ReactiveController, ReactiveControllerHost } from "lit";
 type PresetOverlayHost = ReactiveControllerHost & Element;
 
 // Manages the fullscreen preset-select overlay: open state, closing on a
-// pointerdown outside the overlay, and listener cleanup when the card is
-// removed from the DOM.
+// pointerdown outside the overlay or on Escape, and listener cleanup when
+// the card is removed from the DOM.
 export class PresetOverlayController implements ReactiveController {
   private _host: PresetOverlayHost;
 
@@ -22,25 +22,35 @@ export class PresetOverlayController implements ReactiveController {
   setOpen(open: boolean): void {
     this._open = open;
     if (open) {
-      window.addEventListener("pointerdown", this._onDocumentPointerDown);
+      this._addListeners();
     } else {
-      window.removeEventListener("pointerdown", this._onDocumentPointerDown);
+      this._removeListeners();
     }
     this._host.requestUpdate();
   }
 
   hostConnected(): void {
     if (this._open) {
-      window.addEventListener("pointerdown", this._onDocumentPointerDown);
+      this._addListeners();
     }
   }
 
   hostDisconnected(): void {
-    window.removeEventListener("pointerdown", this._onDocumentPointerDown);
+    this._removeListeners();
     this._open = false;
     // Without this, a card detached while open re-attaches with the stale
     // `open` class until an unrelated re-render.
     this._host.requestUpdate();
+  }
+
+  private _addListeners(): void {
+    window.addEventListener("pointerdown", this._onDocumentPointerDown);
+    window.addEventListener("keydown", this._onDocumentKeyDown);
+  }
+
+  private _removeListeners(): void {
+    window.removeEventListener("pointerdown", this._onDocumentPointerDown);
+    window.removeEventListener("keydown", this._onDocumentKeyDown);
   }
 
   private _onDocumentPointerDown = (ev: Event): void => {
@@ -48,6 +58,12 @@ export class PresetOverlayController implements ReactiveController {
     const presetEl = this._host.shadowRoot?.querySelector(".preset-select");
     if (!presetEl) return;
     if (!path.includes(presetEl)) {
+      this.setOpen(false);
+    }
+  };
+
+  private _onDocumentKeyDown = (ev: KeyboardEvent): void => {
+    if (ev.key === "Escape") {
       this.setOpen(false);
     }
   };

@@ -37,7 +37,13 @@ describe("climateActionColor", () => {
   it("idle keeps its own color; unknown actions fall back to off", () => {
     expect(climateActionColor("idle")).toBe("var(--bt-color-idle)");
     expect(climateActionColor("off")).toBe("var(--bt-color-off)");
-    expect(climateActionColor("preheating")).toBe("var(--bt-color-off)");
+    expect(climateActionColor("something_new")).toBe("var(--bt-color-off)");
+  });
+
+  it("extended actions resolve to the mode they imply", () => {
+    expect(climateActionColor("fan")).toBe("var(--bt-color-fan-only)");
+    expect(climateActionColor("preheating")).toBe("var(--bt-color-heat)");
+    expect(climateActionColor("defrosting")).toBe("var(--bt-color-heat)");
   });
 });
 
@@ -128,8 +134,11 @@ describe("icons", () => {
     expect(getHvacModeIcon("bogus")).toBe("mdi:thermostat");
   });
 
-  it("action icons", () => {
+  it("action icons, including extended actions via their implied mode", () => {
     expect(getHvacActionIcon("heating")).toBe("mdi:fire");
     expect(getHvacActionIcon("idle")).toBe("mdi:clock-outline");
+    expect(getHvacActionIcon("fan")).toBe("mdi:fan");
+    expect(getHvacActionIcon("preheating")).toBe("mdi:fire");
+    expect(getHvacActionIcon("something_new")).toBe("");
   });
 });

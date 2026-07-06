@@ -21,6 +21,7 @@
     "format": "prettier --write src test",
     "lint": "eslint src test",
     "test": "bun test",
+    "typecheck:strict": "tsc -p tsconfig.json --noImplicitAny 2>&1 | grep -E '^(src|test)/' && exit 1 || exit 0",
     "start:hass-stable": "docker run --pull always --rm -p 8123:8123 -v ./.dev:/config homeassistant/home-assistant:stable",
     "start:hass": "docker run --rm --pull always -p 8123:8123 -v ./.dev:/config homeassistant/home-assistant:beta",
     "start:hass-dev": "docker run --pull always --rm -p 8123:8123 -v ./.dev:/config homeassistant/home-assistant:dev",
