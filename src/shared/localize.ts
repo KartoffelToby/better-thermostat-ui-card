@@ -82,14 +82,17 @@ function getTranslatedString(key: string, lang: string): string | undefined {
       .split(".")
       .reduce(
         (o, i) => (o as Record<string, unknown>)[i],
-        languages[lang]
+        languages[lang],
       ) as string;
   } catch (_e) {
     return undefined;
   }
 }
 
-function lookup(hass: HomeAssistant | undefined, key: string): string | undefined {
+function lookup(
+  hass: HomeAssistant | undefined,
+  key: string,
+): string | undefined {
   for (const lang of getLangs(hass)) {
     const translated = getTranslatedString(key, lang);
     if (translated !== undefined) return translated;

@@ -77,7 +77,7 @@ export class HaControlSelect extends LitElement {
         <div class="content">
           ${option.path
             ? html`<cts-ha-svg-icon .path=${option.path}></cts-ha-svg-icon>`
-            : option.icon ?? nothing}
+            : (option.icon ?? nothing)}
           ${!this.hideOptionLabel && option.label
             ? html`<span>${option.label}</span>`
             : nothing}
@@ -100,7 +100,7 @@ export class HaControlSelect extends LitElement {
           ? repeat(
               this.options,
               (option) => option.value,
-              (option) => this._renderOption(option)
+              (option) => this._renderOption(option),
             )
           : nothing}
       </div>

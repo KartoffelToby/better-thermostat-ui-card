@@ -28,7 +28,7 @@ describe("setupCustomlocalize fallback chain", () => {
   it("returns the key itself when nothing matches", () => {
     const t = setupCustomlocalize(hassFor("en"));
     expect(t("editor.card.climate.does_not_exist")).toBe(
-      "editor.card.climate.does_not_exist"
+      "editor.card.climate.does_not_exist",
     );
   });
 });
@@ -54,7 +54,7 @@ describe("createChainedLocalize", () => {
 
   it("falls back to hass.localize for unknown keys", () => {
     const chained = createChainedLocalize(
-      hassFor("en", { "ui.some.backend.key": "Backend!" })
+      hassFor("en", { "ui.some.backend.key": "Backend!" }),
     );
     expect(chained("ui.some.backend.key")).toBe("Backend!");
   });
@@ -66,7 +66,7 @@ describe("createChainedLocalize", () => {
     expect(second("editor.card.climate.section_display")).toBe("Anzeige");
     // fresh hass with a different backend result, same language
     const third = createChainedLocalize(
-      hassFor("de", { "ui.only.backend": "Neu" })
+      hassFor("de", { "ui.only.backend": "Neu" }),
     );
     expect(third("ui.only.backend")).toBe("Neu");
   });

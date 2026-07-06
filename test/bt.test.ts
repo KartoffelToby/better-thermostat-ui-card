@@ -21,8 +21,9 @@ const plainEntity = (attrs: Record<string, unknown> = {}) => ({
 const hassWith = (states: Record<string, unknown>, extra: Partial<any> = {}) =>
   ({
     states,
-    formatEntityAttributeValue: (stateObj: any, attr: string) =>
-      `${stateObj.attributes[attr]} %`,
+    // Mirrors HA: a provided value overrides the attribute's raw value.
+    formatEntityAttributeValue: (stateObj: any, attr: string, value?: unknown) =>
+      `${value ?? stateObj.attributes[attr]} %`,
     formatEntityState: (stateObj: any) => `${stateObj.state} %`,
     ...extra,
   }) as any;
@@ -60,20 +61,30 @@ describe("isWindowOpen", () => {
   it("BT entity: only boolean true or explicit open-like strings count", () => {
     expect(isWindowOpen(undefined, btEntity({ window_open: true }))).toBe(true);
     expect(isWindowOpen(undefined, btEntity({ window_open: "on" }))).toBe(true);
-    expect(isWindowOpen(undefined, btEntity({ window_open: "TRUE" }))).toBe(true);
-    expect(isWindowOpen(undefined, btEntity({ window_open: "false" }))).toBe(false);
-    expect(isWindowOpen(undefined, btEntity({ window_open: false }))).toBe(false);
+    expect(isWindowOpen(undefined, btEntity({ window_open: "TRUE" }))).toBe(
+      true,
+    );
+    expect(isWindowOpen(undefined, btEntity({ window_open: "false" }))).toBe(
+      false,
+    );
+    expect(isWindowOpen(undefined, btEntity({ window_open: false }))).toBe(
+      false,
+    );
     expect(isWindowOpen(undefined, btEntity({}))).toBe(false);
   });
 
   it("non-BT entity: reads the configured window sensor", () => {
     const hass = hassWith({ "binary_sensor.window": { state: "on" } });
     expect(
-      isWindowOpen(hass, plainEntity(), { window_sensor: "binary_sensor.window" })
+      isWindowOpen(hass, plainEntity(), {
+        window_sensor: "binary_sensor.window",
+      }),
     ).toBe(true);
     expect(isWindowOpen(hass, plainEntity(), {})).toBe(false);
     expect(
-      isWindowOpen(hass, plainEntity(), { window_sensor: "binary_sensor.gone" })
+      isWindowOpen(hass, plainEntity(), {
+        window_sensor: "binary_sensor.gone",
+      }),
     ).toBe(false);
   });
 });
@@ -84,24 +95,43 @@ describe("formatHumidity", () => {
     expect(
       formatHumidity(hassWith({}), btEntity({ current_humidity: 55 }), {
         disable_humidity: true,
-      })
+      }),
     ).toBeUndefined();
   });
 
   it("prefers the entity's own current_humidity", () => {
     const hass = hassWith({});
-    expect(formatHumidity(hass, btEntity({ current_humidity: 55 }))).toBe("55 %");
+    expect(formatHumidity(hass, btEntity({ current_humidity: 55 }))).toBe(
+      "55 %",
+    );
+  });
+
+  it("rounds the attribute value to whole percent (no registry precision applies to attributes)", () => {
+    const hass = hassWith({});
+    expect(formatHumidity(hass, btEntity({ current_humidity: 58.49 }))).toBe(
+      "58 %",
+    );
+    expect(formatHumidity(hass, btEntity({ current_humidity: 53.73 }))).toBe(
+      "54 %",
+    );
+    expect(formatHumidity(hass, btEntity({ current_humidity: "54.14" }))).toBe(
+      "54 %",
+    );
+    // non-numeric attribute values fall back to the raw formatting
+    expect(formatHumidity(hass, btEntity({ current_humidity: "high" }))).toBe(
+      "high %",
+    );
   });
 
   it("falls back to a configured humidity sensor for non-BT entities", () => {
     const hass = hassWith({ "sensor.hum": { state: "47" } });
     expect(
-      formatHumidity(hass, plainEntity(), { humidity_sensor: "sensor.hum" })
+      formatHumidity(hass, plainEntity(), { humidity_sensor: "sensor.hum" }),
     ).toBe("47 %");
     // non-numeric sensor state is ignored
     const hassBad = hassWith({ "sensor.hum": { state: "unknown" } });
     expect(
-      formatHumidity(hassBad, plainEntity(), { humidity_sensor: "sensor.hum" })
+      formatHumidity(hassBad, plainEntity(), { humidity_sensor: "sensor.hum" }),
     ).toBeUndefined();
   });
 });

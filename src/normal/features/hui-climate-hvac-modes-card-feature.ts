@@ -4,10 +4,12 @@ import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import "../components/cts-ha-control-select";
 import type { ControlSelectOption } from "../components/cts-ha-control-select";
-import { stateColorCss } from "../../shared/state-color";
 import { BtClimateEntity, UNAVAILABLE } from "../../shared/climate";
 import { compareClimateHvacModes, HomeAssistant } from "mushroom-cards/src/ha";
-import { getHvacModeIcon } from "../../shared/climate-colors";
+import {
+  climateStateColor,
+  getHvacModeIcon,
+} from "../../shared/climate-colors";
 import type {
   ClimateHvacModesCardFeatureConfig,
   LovelaceCardFeature,
@@ -16,7 +18,7 @@ import type {
 
 export const supportsClimateHvacModesCardFeature = (
   hass: HomeAssistant,
-  context: LovelaceCardFeatureContext
+  context: LovelaceCardFeatureContext,
 ): boolean => {
   const stateObj = context.entity_id
     ? hass.states[context.entity_id]
@@ -31,9 +33,7 @@ const filterModes = (modes: string[] | undefined, configured?: string[]) => {
   if (!modes) {
     return [];
   }
-  return configured
-    ? configured.filter((mode) => modes.includes(mode))
-    : modes;
+  return configured ? configured.filter((mode) => modes.includes(mode)) : modes;
 };
 
 @customElement("cts-hui-climate-hvac-modes-card-feature")
@@ -66,7 +66,9 @@ export class HuiClimateHvacModesCardFeature
     if (!this.hass || !this.context?.entity_id) {
       return undefined;
     }
-    return this.hass.states[this.context.entity_id] as BtClimateEntity | undefined;
+    return this.hass.states[this.context.entity_id] as
+      | BtClimateEntity
+      | undefined;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
@@ -76,7 +78,9 @@ export class HuiClimateHvacModesCardFeature
     ) {
       const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
       const oldStateObj = this.context?.entity_id
-        ? (oldHass?.states[this.context.entity_id] as BtClimateEntity | undefined)
+        ? (oldHass?.states[this.context.entity_id] as
+            | BtClimateEntity
+            | undefined)
         : undefined;
       if (oldStateObj !== this._stateObj) {
         this._currentHvacMode = this._stateObj.state;
@@ -122,7 +126,7 @@ export class HuiClimateHvacModesCardFeature
 
     const options: ControlSelectOption[] = filterModes(
       orderedModes,
-      this._config.hvac_modes
+      this._config.hvac_modes,
     ).map((mode) => ({
       value: mode,
       label: this.hass!.formatEntityState(stateObj, mode),
@@ -137,7 +141,9 @@ export class HuiClimateHvacModesCardFeature
         @value-changed=${this._valueChanged}
         hide-option-label
         .label=${this.hass.localize("ui.card.climate.mode")}
-        style=${styleMap({ "--control-select-color": stateColorCss(stateObj) })}
+        style=${styleMap({
+          "--control-select-color": climateStateColor(stateObj),
+        })}
         .disabled=${stateObj.state === UNAVAILABLE}
       ></cts-ha-control-select>
     `;

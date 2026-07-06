@@ -76,7 +76,10 @@ export class ClimateTemperatureControl extends LitElement {
       supportsFeature(this.entity, ClimateEntityFeature.TARGET_TEMPERATURE) &&
       this.entity.attributes.temperature != null;
     const supportsRange =
-      supportsFeature(this.entity, ClimateEntityFeature.TARGET_TEMPERATURE_RANGE) &&
+      supportsFeature(
+        this.entity,
+        ClimateEntityFeature.TARGET_TEMPERATURE_RANGE,
+      ) &&
       this.entity.attributes.target_temp_low != null &&
       this.entity.attributes.target_temp_high != null;
     const value = this.entity.attributes.temperature ?? min;
@@ -151,9 +154,18 @@ export class ClimateTemperatureControl extends LitElement {
     super.firstUpdated(changedProperties);
 
     await Promise.all([
-      ensureElementLoaded("mushroom-button", () => import("mushroom-cards/src/shared/button")),
-      ensureElementLoaded("mushroom-button-group", () => import("mushroom-cards/src/shared/button-group")),
-      ensureElementLoaded("mushroom-input-number", () => import("mushroom-cards/src/shared/input-number")),
+      ensureElementLoaded(
+        "mushroom-button",
+        () => import("mushroom-cards/src/shared/button"),
+      ),
+      ensureElementLoaded(
+        "mushroom-button-group",
+        () => import("mushroom-cards/src/shared/button-group"),
+      ),
+      ensureElementLoaded(
+        "mushroom-input-number",
+        () => import("mushroom-cards/src/shared/input-number"),
+      ),
     ]);
   }
 }

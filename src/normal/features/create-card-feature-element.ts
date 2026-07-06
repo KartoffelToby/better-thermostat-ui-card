@@ -11,14 +11,14 @@ export const getCardFeatureTag = (type?: string): string | undefined =>
   type ? FEATURE_TAGS[type] : undefined;
 
 export const createCardFeatureElement = (
-  config: LovelaceCardFeatureConfig
+  config: LovelaceCardFeatureConfig,
 ): LovelaceCardFeature | undefined => {
   const tag = getCardFeatureTag(config?.type);
   if (!tag) {
     console.warn(
       `[better-thermostat-card] feature type "${config?.type}" is not bundled; skipping. Supported: ${Object.keys(
-        FEATURE_TAGS
-      ).join(", ")}`
+        FEATURE_TAGS,
+      ).join(", ")}`,
     );
     return undefined;
   }

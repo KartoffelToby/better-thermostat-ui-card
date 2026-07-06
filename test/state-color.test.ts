@@ -1,7 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import { stateActive, stateColorCss } from "../src/shared/state-color";
 
-const obj = (entityId: string, state: string, attributes: Record<string, unknown> = {}) => ({
+const obj = (
+  entityId: string,
+  state: string,
+  attributes: Record<string, unknown> = {},
+) => ({
   entity_id: entityId,
   state,
   attributes,
@@ -46,7 +50,7 @@ describe("stateActive", () => {
 describe("stateColorCss", () => {
   it("unavailable maps to the unavailable color", () => {
     expect(stateColorCss(obj("climate.a", "unavailable"))).toBe(
-      "var(--state-unavailable-color)"
+      "var(--state-unavailable-color)",
     );
   });
 
@@ -64,13 +68,13 @@ describe("stateColorCss", () => {
 
   it("battery sensors use the battery thresholds", () => {
     expect(
-      stateColorCss(obj("sensor.b", "85", { device_class: "battery" }))
+      stateColorCss(obj("sensor.b", "85", { device_class: "battery" })),
     ).toBe("var(--state-sensor-battery-high-color)");
     expect(
-      stateColorCss(obj("sensor.b", "50", { device_class: "battery" }))
+      stateColorCss(obj("sensor.b", "50", { device_class: "battery" })),
     ).toBe("var(--state-sensor-battery-medium-color)");
     expect(
-      stateColorCss(obj("sensor.b", "10", { device_class: "battery" }))
+      stateColorCss(obj("sensor.b", "10", { device_class: "battery" })),
     ).toBe("var(--state-sensor-battery-low-color)");
   });
 

@@ -3,7 +3,7 @@
 // as a thunk with a literal import path so rollup can bundle it.
 export async function ensureElementLoaded(
   tagName: string,
-  load: () => Promise<unknown>
+  load: () => Promise<unknown>,
 ): Promise<void> {
   if (customElements.get(tagName)) return;
   try {

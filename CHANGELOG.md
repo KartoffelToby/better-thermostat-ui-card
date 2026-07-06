@@ -8,6 +8,9 @@
 - Off-state dial and inactive mode buttons previously referenced an invalid color (`var(--rgb-grey)` RGB triplet used as a color) — they are now genuinely grey.
 - The dial height cap never took effect because the wrong element was measured; the dial now shrinks properly instead of being cut off.
 - Preset overlay state is reset cleanly when a card is detached and re-attached (Lovelace edit mode, tab switches).
+- Mini card: the preset button no longer disappears in the HVAC-modes view when the entity has no `eco` preset, and presets stay reachable when the card has no other controls to show.
+- Humidity from the entity's `current_humidity` attribute is rounded to whole percent (attributes have no display-precision setting; external humidity sensors keep honoring theirs).
+- Normal card: the info overlay's text elements (state label, temperatures) no longer capture clicks/touches — they created invisible dead zones on the dial ring where dragging didn't respond.
 
 ### Added
 
@@ -21,7 +24,7 @@
 - `ha-frontend` git submodule removed and dependencies pruned (~50 packages); the bundle shrank from 444 K to ~390 K.
 - Internals: shared `src/shared/` modules for both cards, HA-core-style state colors, cached localizer, `shouldUpdate` narrowing (cards no longer re-render on unrelated entity updates), memoized BT status parsing, stricter TypeScript (`as any` casts reduced from 82 to 8).
 
-## Unreleased
+## 3.1.2
 
 - Eco toggle: use preset-based flow (preset_mode "eco") when available (requires better_thermostat >= 1.8.0). Falls back to legacy `better_thermostat.set_eco_mode` for older integrations.
 - Minor: update README to document preset-based eco toggle.

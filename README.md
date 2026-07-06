@@ -36,7 +36,7 @@ You can configure the cards as you like, we use the latest HA UI Configuration t
 
 ## Custom colors
 
-Both cards accept a `colors:` option to recolor HVAC modes and Better Thermostat presets. Use the color pickers in the visual editor ("Colors" section — only the modes/presets your entity supports are shown), or set it in YAML. Values are HA theme color tokens (`red`, `deep-orange`, `light-green`, …) or any raw CSS color as escape hatch:
+Both cards accept a `colors:` option to recolor HVAC modes and Better Thermostat presets — the dial, mode/preset buttons, badges and features follow the same colors. Use the color pickers in the visual editor ("Colors" section — only the HVAC modes and presets your entity actually exposes are offered; `off` is intentionally grey and has no picker), or set it in YAML. Values are HA theme color tokens (`red`, `deep-orange`, `light-green`, …) or any raw CSS color as escape hatch:
 
 ```yaml
 type: custom:better-thermostat-normal-climate-card
@@ -47,7 +47,7 @@ colors:
   boost: "#ff00ff"
 ```
 
-Available keys: `auto`, `cool`, `dry`, `fan_only`, `heat`, `heat_cool`, `off`, `eco`, `away`, `boost`, `sleep`, `comfort`, `activity`, `home`.
+Available keys: `auto`, `cool`, `dry`, `fan_only`, `heat`, `heat_cool`, `eco`, `away`, `boost`, `sleep`, `comfort`, `activity`, `home`.
 
 Themes can override the same colors globally via the `--bt-color-<key>` CSS variables (underscores become dashes, e.g. `--bt-color-fan-only`); the legacy `--bt-state-*` RGB-triplet theme variables keep working as defaults.
 

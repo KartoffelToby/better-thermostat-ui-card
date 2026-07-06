@@ -22,7 +22,10 @@ import {
 
 const computeSchema = memoizeOne(
   (isBt: boolean, hvacModes?: string, presetModes?: string): HaFormSchema[] => [
-    { name: "entity", selector: { entity: { domain: CLIMATE_ENTITY_DOMAINS } } },
+    {
+      name: "entity",
+      selector: { entity: { domain: CLIMATE_ENTITY_DOMAINS } },
+    },
     { name: "name", selector: { text: {} } },
     ...(!isBt ? [computeSensorsSection()] : []),
     computeDisplaySection([
@@ -34,11 +37,14 @@ const computeSchema = memoizeOne(
     computeFeaturesSection(),
     // Warnings rely on BT-only attributes (batteries, errors, degraded_mode)
     ...(isBt ? [computeWarningsSection(true)] : []),
-  ]
+  ],
 );
 
 @customElement(CLIMATE_CARD_EDITOR_NAME)
-export class NormalClimateCardEditor extends MushroomBaseElement implements LovelaceCardEditor {
+export class NormalClimateCardEditor
+  extends MushroomBaseElement
+  implements LovelaceCardEditor
+{
   @state() private _config?: BetterThermostatUINormalCardConfig;
 
   static get styles(): CSSResultGroup {
@@ -82,7 +88,8 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
     const schema = computeSchema(
       isBt,
       stateObj ? (stateObj.attributes.hvac_modes ?? []).join(",") : undefined,
-      stateObj ? (stateObj.attributes.preset_modes ?? []).join(",") : undefined
+      // Only offer colors for the presets the TRV actually exposes.
+      stateObj ? (stateObj.attributes.preset_modes ?? []).join(",") : undefined,
     );
 
     return html`
@@ -95,20 +102,35 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
         : ""}
       <ha-form
         .hass=${this.hass}
-        .data=${{ ...this._config, low_battery_threshold: this._config?.low_battery_threshold ?? 10 }}
+        .data=${{
+          ...this._config,
+          low_battery_threshold: this._config?.low_battery_threshold ?? 10,
+        }}
         .schema=${schema}
         .computeLabel=${(schema: HaFormSchema) => {
           if (schema.name === "entity") {
             // Use the same localize chain to ensure the generic translation
-            return localize("ui.panel.lovelace.editor.card.generic.entity") || schema.name;
+            return (
+              localize("ui.panel.lovelace.editor.card.generic.entity") ||
+              schema.name
+            );
           }
           if (schema.name === "colors") {
-            return localize("editor.card.climate.section_colors") || schema.name;
+            return (
+              localize("editor.card.climate.section_colors") || schema.name
+            );
           }
-          const colorLabel = computeColorLabel(this.hass!, stateObj, schema.name, localize);
+          const colorLabel = computeColorLabel(
+            this.hass!,
+            stateObj,
+            schema.name,
+            localize,
+          );
           if (colorLabel !== undefined) return colorLabel;
           if (GENERIC_LABELS.includes(schema.name)) {
-            return localize(`editor.card.generic.${schema.name}`) || schema.name;
+            return (
+              localize(`editor.card.generic.${schema.name}`) || schema.name
+            );
           }
           return localize(`editor.card.climate.${schema.name}`) || schema.name;
         }}
@@ -123,12 +145,14 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
 
   private _valueChanged(ev: CustomEvent) {
     ev.stopPropagation();
-    const value = { ...(ev.detail.value as BetterThermostatUINormalCardConfig) };
+    const value = {
+      ...(ev.detail.value as BetterThermostatUINormalCardConfig),
+    };
     // ha-form emits colors: {} (or empty-string entries) when pickers are
     // cleared — don't persist that noise in the YAML.
     if (value.colors) {
       const colors = Object.fromEntries(
-        Object.entries(value.colors).filter(([, v]) => v)
+        Object.entries(value.colors).filter(([, v]) => v),
       );
       if (Object.keys(colors).length === 0) {
         delete value.colors;
@@ -138,7 +162,11 @@ export class NormalClimateCardEditor extends MushroomBaseElement implements Love
     }
     this._config = value;
     this.dispatchEvent(
-      new CustomEvent("config-changed", { detail: { config: value }, bubbles: true, composed: true })
+      new CustomEvent("config-changed", {
+        detail: { config: value },
+        bubbles: true,
+        composed: true,
+      }),
     );
   }
 }

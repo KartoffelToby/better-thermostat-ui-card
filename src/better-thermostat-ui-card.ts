@@ -5,5 +5,5 @@ import "./normal/climate-card";
 
 console.info(
   `%cBetter Thermostat UI - ${version}`,
-  "color: #ef5350; font-weight: 700;"
+  "color: #ef5350; font-weight: 700;",
 );

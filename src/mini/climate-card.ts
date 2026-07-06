@@ -46,10 +46,18 @@ import {
 } from "../shared/climate-colors";
 import { alphaColor } from "../shared/color";
 import { findBtStubEntity, formatHumidity, isWindowOpen } from "../shared/bt";
-import { getErrorEntityId, getLowBattery, isDegraded, LowBatteryEntity } from "../shared/bt-status";
+import {
+  getErrorEntityId,
+  getLowBattery,
+  isDegraded,
+  LowBatteryEntity,
+} from "../shared/bt-status";
 import { localize } from "../shared/localize";
 import { shouldUpdateForHass } from "../shared/has-changed";
-import { PresetOverlayController, presetOverlayStyle } from "../shared/preset-overlay";
+import {
+  PresetOverlayController,
+  presetOverlayStyle,
+} from "../shared/preset-overlay";
 import { btStateColorsStyle } from "../shared/styles";
 
 type ClimateCardControl = "temperature_control" | "hvac_mode_control";
@@ -73,12 +81,12 @@ export class BetterThermostatUISmallCard
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./climate-card-editor");
     return document.createElement(
-      CLIMATE_CARD_EDITOR_NAME
+      CLIMATE_CARD_EDITOR_NAME,
     ) as LovelaceCardEditor;
   }
 
   public static async getStubConfig(
-    hass: HomeAssistant
+    hass: HomeAssistant,
   ): Promise<BetterThermostatUISmallCardConfig> {
     return {
       type: `custom:${CLIMATE_CARD_NAME}`,
@@ -180,13 +188,19 @@ export class BetterThermostatUISmallCard
     const window = isWindowOpen(this.hass, stateObj, this._config);
     const summer = stateObj.attributes.call_for_heat === false;
     let stateDisplay = this.hass.formatEntityState(stateObj);
-    if (stateObj.attributes.hvac_action && stateObj.attributes.hvac_action !== "off") {
-      stateDisplay = this.hass.formatEntityAttributeValue(stateObj, "hvac_action");
+    if (
+      stateObj.attributes.hvac_action &&
+      stateObj.attributes.hvac_action !== "off"
+    ) {
+      stateDisplay = this.hass.formatEntityAttributeValue(
+        stateObj,
+        "hvac_action",
+      );
     }
     if (stateObj.attributes.current_temperature != null) {
       const temperature = this.hass.formatEntityAttributeValue(
         stateObj,
-        "current_temperature"
+        "current_temperature",
       );
       const windowOpen = localize({
         hass: this.hass,
@@ -211,13 +225,17 @@ export class BetterThermostatUISmallCard
       (!this._config.collapsible_controls || isActive(stateObj)) &&
       this._controls.length;
 
-    // disable_all_buttons hides the whole controls row, except the presets
-    // button as long as presets aren't disabled themselves.
+    // Whenever the controls row is not shown (disable_all_buttons, or the
+    // entity offers no matching controls), presets must still be reachable —
+    // like on the normal card — as long as they aren't disabled themselves
+    // and the controls aren't collapsed.
     const hasPresets =
-      (stateObj.attributes.preset_modes?.filter((p: string) => p !== "none") ?? [])
-        .length > 0;
+      (
+        stateObj.attributes.preset_modes?.filter((p: string) => p !== "none") ??
+        []
+      ).length > 0;
     const isPresetOnlyVisible =
-      !!this._config.disable_all_buttons &&
+      !isControlVisible &&
       !this._config.disable_presets &&
       hasPresets &&
       (!this._config.collapsible_controls || isActive(stateObj));
@@ -225,7 +243,10 @@ export class BetterThermostatUISmallCard
     const hvac_action = stateObj.attributes.hvac_action || "off";
 
     const actionStyle: StyleInfo = {};
-    actionStyle["--action-color"] = alphaColor(climateActionColor(hvac_action), 0.6);
+    actionStyle["--action-color"] = alphaColor(
+      climateActionColor(hvac_action),
+      0.6,
+    );
 
     const preset = this._stateObj.attributes.preset_mode;
     if (preset !== undefined && preset !== "none") {
@@ -237,9 +258,9 @@ export class BetterThermostatUISmallCard
     }
 
     if (window) {
-        actionStyle["--action-color"] = `var(--info-color)`;
+      actionStyle["--action-color"] = `var(--info-color)`;
     } else if (summer) {
-        actionStyle["--action-color"] = `var(--bt-color-summer)`;
+      actionStyle["--action-color"] = `var(--bt-color-summer)`;
     } else if (hvac_action === "off") {
       actionStyle["--action-color"] = `rgba(0, 0, 0, 0)`;
     }
@@ -250,7 +271,10 @@ export class BetterThermostatUISmallCard
     return html`
       <ha-card
         class=${classMap({ "fill-container": appearance.fill_container })}
-        style=${styleMap({ ...climateColorOverrides(this._config.colors), ...actionStyle })}
+        style=${styleMap({
+          ...climateColorOverrides(this._config.colors),
+          ...actionStyle,
+        })}
       >
         <mushroom-card .appearance=${appearance} ?rtl=${rtl}>
           <mushroom-state-item
@@ -283,26 +307,32 @@ export class BetterThermostatUISmallCard
                 `
               : nothing}
 
-  
-              <div class=${classMap({ 'preset-select': true, open: this._presetOverlay.open })}>
-            ${(stateObj.attributes.preset_modes ?? []).map((mode: any) => html`
+          <div
+            class=${classMap({
+              "preset-select": true,
+              open: this._presetOverlay.open,
+            })}
+          >
+            ${(stateObj.attributes.preset_modes ?? []).map(
+              (mode: any) => html`
                 <mushroom-button
                   style=${styleMap(iconStyle)}
                   .mode=${mode}
                   .disabled=${!isAvailable(stateObj)}
-                    .actionHandler=${actionHandler({ hasHold: true })}
-                    @action=${(e: ActionHandlerEvent) => {
-                      e.stopPropagation();
-                      if (e.detail.action === "hold") {
-                        this._presetOverlay.setOpen(true);
-                      } else if (e.detail.action === "tap") {
-                        this.triggerModeChange(mode);
-                      }
-                    }}
+                  .actionHandler=${actionHandler({ hasHold: true })}
+                  @action=${(e: ActionHandlerEvent) => {
+                    e.stopPropagation();
+                    if (e.detail.action === "hold") {
+                      this._presetOverlay.setOpen(true);
+                    } else if (e.detail.action === "tap") {
+                      this.triggerModeChange(mode);
+                    }
+                  }}
                 >
                   <ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>
                 </mushroom-button>
-            `)}
+              `,
+            )}
           </div>
         </mushroom-card>
       </ha-card>
@@ -314,17 +344,41 @@ export class BetterThermostatUISmallCard
 
     // Ensure shared mushroom components are loaded only once
     await Promise.all([
-      ensureElementLoaded("mushroom-badge-icon", () => import("mushroom-cards/src/shared/badge-icon")),
-      ensureElementLoaded("mushroom-card", () => import("mushroom-cards/src/shared/card")),
-      ensureElementLoaded("mushroom-shape-avatar", () => import("mushroom-cards/src/shared/shape-avatar")),
-      ensureElementLoaded("mushroom-shape-icon", () => import("mushroom-cards/src/shared/shape-icon")),
-      ensureElementLoaded("mushroom-state-info", () => import("mushroom-cards/src/shared/state-info")),
-      ensureElementLoaded("mushroom-state-item", () => import("mushroom-cards/src/shared/state-item")),
-      ensureElementLoaded("mushroom-button", () => import("mushroom-cards/src/shared/button")),
+      ensureElementLoaded(
+        "mushroom-badge-icon",
+        () => import("mushroom-cards/src/shared/badge-icon"),
+      ),
+      ensureElementLoaded(
+        "mushroom-card",
+        () => import("mushroom-cards/src/shared/card"),
+      ),
+      ensureElementLoaded(
+        "mushroom-shape-avatar",
+        () => import("mushroom-cards/src/shared/shape-avatar"),
+      ),
+      ensureElementLoaded(
+        "mushroom-shape-icon",
+        () => import("mushroom-cards/src/shared/shape-icon"),
+      ),
+      ensureElementLoaded(
+        "mushroom-state-info",
+        () => import("mushroom-cards/src/shared/state-info"),
+      ),
+      ensureElementLoaded(
+        "mushroom-state-item",
+        () => import("mushroom-cards/src/shared/state-item"),
+      ),
+      ensureElementLoaded(
+        "mushroom-button",
+        () => import("mushroom-cards/src/shared/button"),
+      ),
     ]);
   }
 
-  protected renderIcon(stateObj: BtClimateEntity, icon?: string): TemplateResult {
+  protected renderIcon(
+    stateObj: BtClimateEntity,
+    icon?: string,
+  ): TemplateResult {
     const available = isAvailable(stateObj);
     const window = isWindowOpen(this.hass, stateObj, this._config);
     const summer = stateObj.attributes.call_for_heat === false;
@@ -380,8 +434,21 @@ export class BetterThermostatUISmallCard
         <mushroom-badge-icon
           slot="badge"
           .icon=${"mdi:alert"}
-          title=${localize({ hass: this.hass, string: "extra_states.degraded_mode" })}
-          @click=${(ev: Event) => { ev.stopPropagation(); ev.preventDefault(); this.dispatchEvent(new CustomEvent("hass-more-info", { detail: { entityId: entity.entity_id }, bubbles: true, composed: true })); }}
+          title=${localize({
+            hass: this.hass,
+            string: "extra_states.degraded_mode",
+          })}
+          @click=${(ev: Event) => {
+            ev.stopPropagation();
+            ev.preventDefault();
+            this.dispatchEvent(
+              new CustomEvent("hass-more-info", {
+                detail: { entityId: entity.entity_id },
+                bubbles: true,
+                composed: true,
+              }),
+            );
+          }}
           style=${styleMap({
             "--icon-color": "var(--warning-color, #ffc107)",
             "--main-color": "var(--bt-badge-background)",
@@ -450,7 +517,7 @@ export class BetterThermostatUISmallCard
         detail: { entityId },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -466,7 +533,7 @@ export class BetterThermostatUISmallCard
         detail: { entityId },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -508,69 +575,73 @@ export class BetterThermostatUISmallCard
 
   private renderOtherControls(): TemplateResult | null {
     const otherControls = this._controls.filter(
-      (control) => control != this._activeControl
+      (control) => control != this._activeControl,
     );
 
     return html`
       ${otherControls.map(
         (ctrl) => html`
-          <mushroom-button @click=${(e) => this._onControlTap(ctrl, e)}>
+          <mushroom-button @click=${(e: Event) => this._onControlTap(ctrl, e)}>
             <ha-icon .icon=${CONTROLS_ICONS[ctrl]}></ha-icon>
           </mushroom-button>
-        `
+        `,
       )}
     `;
   }
 
   private renderPresetFeature(entity: BtClimateEntity) {
-          if (this._config?.disable_presets) return nothing;
-          const presetMode = entity.attributes.preset_mode;
-          const mode = (presetMode != null && presetMode !== 'none') ? presetMode : "none";
-          const iconStyle: StyleInfo = {};
-          const color = climateColor(mode);
-          const selectedMode = (presetMode != null && presetMode !== 'none') ? presetMode : mode;
-          if (presetMode != null && presetMode !== 'none') {
-            iconStyle["--icon-color"] = color;
-            iconStyle["--bg-color"] = alphaColor(color, 0.2);
-          }
-          const icon = getHvacModeIcon(mode as HvacMode);
+    if (this._config?.disable_presets) return nothing;
+    const presetMode = entity.attributes.preset_mode;
+    const mode =
+      presetMode != null && presetMode !== "none" ? presetMode : "none";
+    const iconStyle: StyleInfo = {};
+    const color = climateColor(mode);
+    const selectedMode =
+      presetMode != null && presetMode !== "none" ? presetMode : mode;
+    if (presetMode != null && presetMode !== "none") {
+      iconStyle["--icon-color"] = color;
+      iconStyle["--bg-color"] = alphaColor(color, 0.2);
+    }
+    const icon = getHvacModeIcon(mode as HvacMode);
 
-          const presets = (entity.attributes.preset_modes?.filter(p => p != "none") || [] as HvacMode[]);
-          if (presets.length === 1) {
-            return html`
-                <mushroom-button
-                  style=${styleMap(iconStyle)}
-                  .mode=${selectedMode}
-                  .actionHandler=${actionHandler({ hasHold: true })}
-                  @action=${(e: ActionHandlerEvent) => {
-                    e.stopPropagation();
-                    if (e.detail.action === 'hold') {
-                      this._presetOverlay.setOpen(true);
-                    } else if (e.detail.action === 'tap') {
-                      this.triggerModeChange(presets[0]);
-                    }
-                  }}
-                >
-                  <ha-icon .icon=${getHvacModeIcon(presets[0] as HvacMode)}></ha-icon>
-                </mushroom-button>
-                `;
-          }  else if (presets.length > 1)  {
-            return html`
-              <mushroom-button
-                style=${styleMap(iconStyle)}
-                .mode=${selectedMode}
-                .actionHandler=${actionHandler({ hasHold: true })}
-                @action=${(e: ActionHandlerEvent) => {
-                  e.stopPropagation();
-                  this._presetOverlay.setOpen(true);
-                }}
-              >
-                <ha-icon .icon=${icon}></ha-icon>
-              </mushroom-button>
-            `;
-          } else {
-            return nothing;
-          }
+    const presets =
+      entity.attributes.preset_modes?.filter((p) => p != "none") ||
+      ([] as HvacMode[]);
+    if (presets.length === 1) {
+      return html`
+        <mushroom-button
+          style=${styleMap(iconStyle)}
+          .mode=${selectedMode}
+          .actionHandler=${actionHandler({ hasHold: true })}
+          @action=${(e: ActionHandlerEvent) => {
+            e.stopPropagation();
+            if (e.detail.action === "hold") {
+              this._presetOverlay.setOpen(true);
+            } else if (e.detail.action === "tap") {
+              this.triggerModeChange(presets[0]);
+            }
+          }}
+        >
+          <ha-icon .icon=${getHvacModeIcon(presets[0] as HvacMode)}></ha-icon>
+        </mushroom-button>
+      `;
+    } else if (presets.length > 1) {
+      return html`
+        <mushroom-button
+          style=${styleMap(iconStyle)}
+          .mode=${selectedMode}
+          .actionHandler=${actionHandler({ hasHold: true })}
+          @action=${(e: ActionHandlerEvent) => {
+            e.stopPropagation();
+            this._presetOverlay.setOpen(true);
+          }}
+        >
+          <ha-icon .icon=${icon}></ha-icon>
+        </mushroom-button>
+      `;
+    } else {
+      return nothing;
+    }
   }
 
   private triggerModeChange(mode: string) {
@@ -624,24 +695,28 @@ export class BetterThermostatUISmallCard
 
           --bt-state-window: var(--info-color);
         }
-        :host>* {
+        :host > * {
           overflow: hidden;
         }
-        :host>*::before {
-            display: block;
-            content: "";
-            position: absolute;
-            right: -10%;
-            bottom: -10%;
-            background: radial-gradient(100% 60% at 50% 90%, var(--action-color, transparent) 0%, transparent 100%);
-            opacity: 0.3;
-            pointer-events: none;
-            transform: translate(-50%, -20%);
-            left: 50% !important;
-            z-index: 0;
-            top: 50% !important;
-            width: 100%;
-            height: 100%;
+        :host > *::before {
+          display: block;
+          content: "";
+          position: absolute;
+          right: -10%;
+          bottom: -10%;
+          background: radial-gradient(
+            100% 60% at 50% 90%,
+            var(--action-color, transparent) 0%,
+            transparent 100%
+          );
+          opacity: 0.3;
+          pointer-events: none;
+          transform: translate(-50%, -20%);
+          left: 50% !important;
+          z-index: 0;
+          top: 50% !important;
+          width: 100%;
+          height: 100%;
         }
         mushroom-state-item {
           cursor: pointer;

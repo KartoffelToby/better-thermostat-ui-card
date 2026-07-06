@@ -1,4 +1,13 @@
-import { any, array, boolean, number, object, optional, record, string } from "superstruct";
+import {
+  any,
+  array,
+  boolean,
+  number,
+  object,
+  optional,
+  record,
+  string,
+} from "superstruct";
 import { ClimateColorsConfig } from "./climate-colors";
 
 // Config fields shared by the normal and mini cards.

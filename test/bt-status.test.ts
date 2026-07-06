@@ -64,7 +64,7 @@ describe("parseErrorEntityId", () => {
 
   it("returns the first string entry", () => {
     expect(parseErrorEntityId('["climate.trv1","climate.trv2"]')).toBe(
-      "climate.trv1"
+      "climate.trv1",
     );
   });
 
@@ -82,7 +82,7 @@ describe("config-aware wrappers", () => {
       battery: 5,
     });
     expect(getErrorEntityId(entity({}), { debug_connection: true })).toBe(
-      "Debug Connection"
+      "Debug Connection",
     );
     expect(isDegraded(entity({}), { debug_degraded: true })).toBe(true);
   });
@@ -90,17 +90,17 @@ describe("config-aware wrappers", () => {
   it("disable flags suppress warnings even when the attribute is present", () => {
     const batteries = JSON.stringify({ "sensor.a": { battery: "1" } });
     expect(
-      getLowBattery(entity({ batteries }), { disable_battery_warning: true })
+      getLowBattery(entity({ batteries }), { disable_battery_warning: true }),
     ).toBeUndefined();
     expect(
       getErrorEntityId(entity({ errors: '["climate.a"]' }), {
         disable_connection_lost_warning: true,
-      })
+      }),
     ).toBeUndefined();
     expect(
       isDegraded(entity({ degraded_mode: true }), {
         disable_degraded_warning: true,
-      })
+      }),
     ).toBe(false);
   });
 

@@ -7,6 +7,7 @@ import {
   climateColor,
   climateColorDefaultStyles,
   climateColorOverrides,
+  climateStateColor,
   getHvacActionIcon,
   getHvacModeIcon,
 } from "../src/shared/climate-colors";
@@ -40,22 +41,40 @@ describe("climateActionColor", () => {
   });
 });
 
+describe("climateStateColor", () => {
+  it("maps the entity state through the --bt-color-* layer", () => {
+    expect(climateStateColor({ state: "heat" })).toBe("var(--bt-color-heat)");
+    expect(climateStateColor({ state: "fan_only" })).toBe(
+      "var(--bt-color-fan-only)",
+    );
+    expect(climateStateColor({ state: "off" })).toBe("var(--bt-color-off)");
+  });
+
+  it("unavailable keeps HA's unavailable color", () => {
+    expect(climateStateColor({ state: "unavailable" })).toBe(
+      "var(--state-unavailable-color)",
+    );
+  });
+});
+
 describe("climateColorOverrides", () => {
   it("returns an empty object without config", () => {
     expect(climateColorOverrides(undefined)).toEqual({});
   });
 
   it("maps config keys to variables, resolving theme tokens", () => {
-    expect(climateColorOverrides({ heat: "deep-orange", fan_only: "#ff00ff" })).toEqual({
+    expect(
+      climateColorOverrides({ heat: "deep-orange", fan_only: "#ff00ff" }),
+    ).toEqual({
       "--bt-color-heat": "var(--deep-orange-color)",
       "--bt-color-fan-only": "#ff00ff",
     });
   });
 
   it("ignores unknown keys and empty values", () => {
-    expect(
-      climateColorOverrides({ bogus: "red", heat: "" } as any)
-    ).toEqual({});
+    expect(climateColorOverrides({ bogus: "red", heat: "" } as any)).toEqual(
+      {},
+    );
   });
 });
 
@@ -94,10 +113,10 @@ describe("computeCssColor", () => {
 describe("alphaColor", () => {
   it("builds a color-mix with percentage alpha", () => {
     expect(alphaColor("var(--bt-color-heat)", 0.2)).toBe(
-      "color-mix(in srgb, var(--bt-color-heat) 20%, transparent)"
+      "color-mix(in srgb, var(--bt-color-heat) 20%, transparent)",
     );
     expect(alphaColor("#fff", 0.05)).toBe(
-      "color-mix(in srgb, #fff 5%, transparent)"
+      "color-mix(in srgb, #fff 5%, transparent)",
     );
   });
 });

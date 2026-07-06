@@ -1,4 +1,8 @@
-import type { ClimateEntity, HomeAssistant, LovelaceCardConfig } from "mushroom-cards/src/ha";
+import type {
+  ClimateEntity,
+  HomeAssistant,
+  LovelaceCardConfig,
+} from "mushroom-cards/src/ha";
 
 // Deep import: the ha barrel touches `window` at module scope, which would
 // break Node-side consumers (bun test).
@@ -64,9 +68,11 @@ export type BtClimateEntity = Omit<ClimateEntity, "attributes"> & {
 export function setClimateMode(
   hass: HomeAssistant,
   stateObj: BtClimateEntity,
-  mode: string
+  mode: string,
 ): boolean {
-  if ((stateObj.attributes.hvac_modes as string[] | undefined)?.includes(mode)) {
+  if (
+    (stateObj.attributes.hvac_modes as string[] | undefined)?.includes(mode)
+  ) {
     hass.callService("climate", "set_hvac_mode", {
       entity_id: stateObj.entity_id,
       hvac_mode: mode,

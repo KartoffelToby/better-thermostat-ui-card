@@ -15,5 +15,5 @@ export type BetterThermostatUINormalCardConfig = LovelaceCardConfig &
 export const betterThermostatUINormalCardConfigStruct = assign(
   lovelaceCardConfigStruct,
   entitySharedConfigStruct,
-  sharedBtConfigStruct
+  sharedBtConfigStruct,
 );

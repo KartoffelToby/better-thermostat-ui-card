@@ -28,12 +28,12 @@ export const climateCardConfigStruct = assign(
   assign(
     entitySharedConfigStruct,
     appearanceSharedConfigStruct,
-    actionsSharedConfigStruct
+    actionsSharedConfigStruct,
   ),
   assign(
     sharedBtConfigStruct,
     object({
       show_temperature_control: optional(boolean()),
-    })
-  )
+    }),
+  ),
 );

@@ -84,9 +84,19 @@ export function climateActionColor(action: HvacAction | string): string {
   return colorVar(CLIMATE_ACTION_COLOR_KEYS[action as HvacAction] ?? "off");
 }
 
+// Color for the entity's current state: the themeable --bt-color-* layer for
+// known modes (so the `colors:` config and themes apply everywhere — dial,
+// buttons, features alike), HA's unavailable color for unavailable entities.
+export function climateStateColor(stateObj: { state: string }): string {
+  if (stateObj.state === "unavailable") {
+    return "var(--state-unavailable-color)";
+  }
+  return climateColor(stateObj.state);
+}
+
 // Inline style overrides for the ha-card element from the `colors:` config.
 export function climateColorOverrides(
-  colors?: ClimateColorsConfig
+  colors?: ClimateColorsConfig,
 ): Record<string, string> {
   const styles: Record<string, string> = {};
   if (!colors) return styles;

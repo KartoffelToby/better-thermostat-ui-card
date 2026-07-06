@@ -14,12 +14,13 @@ import { BtClimateEntity } from "../../shared/climate";
 import { climateColor, getHvacModeIcon } from "../../shared/climate-colors";
 import { alphaColor } from "../../shared/color";
 
-export const isHvacModesVisible = (entity: BtClimateEntity, modes?: HvacMode[]) =>
+export const isHvacModesVisible = (
+  entity: BtClimateEntity,
+  modes?: HvacMode[],
+) =>
   modes === undefined
     ? (entity.attributes.hvac_modes || []).length > 0
-    : (entity.attributes.hvac_modes || []).some((mode) =>
-        modes.includes(mode)
-      );
+    : (entity.attributes.hvac_modes || []).some((mode) => modes.includes(mode));
 
 @customElement("mushroom-climate-hvac-modes-control")
 export class ClimateHvacModesControl extends LitElement {
@@ -35,7 +36,7 @@ export class ClimateHvacModesControl extends LitElement {
   public disableEco: boolean = false;
 
   @property({ attribute: false })
-  public feature?: TemplateResult;
+  public feature?: TemplateResult | typeof nothing;
 
   private callService(e: CustomEvent) {
     e.stopPropagation();
@@ -52,7 +53,8 @@ export class ClimateHvacModesControl extends LitElement {
     // Toggle the 'eco' preset if available, otherwise fall back to legacy flag.
     const presetMode = this.entity.attributes.preset_mode;
     const hasEcoPreset = this.entity.attributes.preset_modes?.includes("eco");
-    const isEco = presetMode === "eco" || this.entity.attributes.eco_mode === true;
+    const isEco =
+      presetMode === "eco" || this.entity.attributes.eco_mode === true;
 
     if (hasEcoPreset) {
       const newMode = isEco ? "none" : "eco";
@@ -96,17 +98,32 @@ export class ClimateHvacModesControl extends LitElement {
       .sort(compareClimateHvacModes);
 
     const presetModes = this.entity.attributes.preset_modes || [];
-    const hasEco = (presetModes.includes("eco") || this.entity.attributes.eco_mode === true) && !this.disableEco;
+    const hasEco =
+      (presetModes.includes("eco") ||
+        this.entity.attributes.eco_mode === true) &&
+      !this.disableEco;
+
+    // Slot rendered before the "off" button: the card's preset feature
+    // whenever it has content (regardless of eco — previously the preset
+    // button was wrongly tied to the entity exposing an eco preset), with
+    // the legacy eco toggle as fallback. The feature can be lit's `nothing`
+    // (presets disabled/none) — that must not suppress the eco button.
+    const hasFeature = this.feature != null && this.feature !== nothing;
+    const slot = hasFeature
+      ? this.feature
+      : hasEco
+        ? this.renderEcoButton()
+        : undefined;
 
     return html`
       <mushroom-button-group .fill=${this.fill} ?rtl=${rtl}>
         ${modes.map((mode) => {
-          if (mode === "off" && hasEco) {
-            return html`${this.feature ?? this.renderEcoButton()}${this.renderModeButton(mode)}`;
+          if (mode === "off" && slot !== undefined) {
+            return html`${slot}${this.renderModeButton(mode)}`;
           }
           return this.renderModeButton(mode);
         })}
-        ${hasEco && !modes.includes("off") ? (this.feature ?? this.renderEcoButton()) : nothing}
+        ${slot !== undefined && !modes.includes("off") ? slot : nothing}
       </mushroom-button-group>
     `;
   }
@@ -135,8 +152,14 @@ export class ClimateHvacModesControl extends LitElement {
     super.firstUpdated(changedProperties);
 
     await Promise.all([
-      ensureElementLoaded("mushroom-button", () => import("mushroom-cards/src/shared/button")),
-      ensureElementLoaded("mushroom-button-group", () => import("mushroom-cards/src/shared/button-group")),
+      ensureElementLoaded(
+        "mushroom-button",
+        () => import("mushroom-cards/src/shared/button"),
+      ),
+      ensureElementLoaded(
+        "mushroom-button-group",
+        () => import("mushroom-cards/src/shared/button-group"),
+      ),
     ]);
     this.requestUpdate();
   }

@@ -25,9 +25,16 @@ import {
 
 const computeSchema = memoizeOne(
   (isBt: boolean, hvacModes?: string, presetModes?: string): HaFormSchema[] => [
-    { name: "entity", selector: { entity: { domain: CLIMATE_ENTITY_DOMAINS } } },
+    {
+      name: "entity",
+      selector: { entity: { domain: CLIMATE_ENTITY_DOMAINS } },
+    },
     { name: "name", selector: { text: {} } },
-    { name: "icon", selector: { icon: {} }, context: { icon_entity: "entity" } },
+    {
+      name: "icon",
+      selector: { icon: {} },
+      context: { icon_entity: "entity" },
+    },
     ...APPEARANCE_FORM_SCHEMA,
     ...(!isBt ? [computeSensorsSection()] : []),
     computeDisplaySection([
@@ -40,7 +47,7 @@ const computeSchema = memoizeOne(
     // Warnings rely on BT-only attributes (batteries, errors, degraded_mode)
     ...(isBt ? [computeWarningsSection(true)] : []),
     ...computeActionsFormSchema(),
-  ]
+  ],
 );
 
 @customElement(CLIMATE_CARD_EDITOR_NAME)
@@ -87,7 +94,12 @@ export class ClimateCardEditor
     if (schema.name === "colors") {
       return localize("editor.card.climate.section_colors");
     }
-    const colorLabel = computeColorLabel(this.hass!, this._stateObj, schema.name, localize);
+    const colorLabel = computeColorLabel(
+      this.hass!,
+      this._stateObj,
+      schema.name,
+      localize,
+    );
     if (colorLabel !== undefined) return colorLabel;
     if (GENERIC_LABELS.includes(schema.name)) {
       return localize(`editor.card.generic.${schema.name}`);
@@ -96,13 +108,15 @@ export class ClimateCardEditor
       return localize(`editor.card.climate.${schema.name}`);
     }
     return this.hass!.localize(
-      `ui.panel.lovelace.editor.card.generic.${schema.name}`
+      `ui.panel.lovelace.editor.card.generic.${schema.name}`,
     );
   };
 
   private _computeHelper = (schema: HaFormSchema) =>
     schema.name === "colors"
-      ? createChainedLocalize(this.hass!)("editor.card.climate.section_colors_helper")
+      ? createChainedLocalize(this.hass!)(
+          "editor.card.climate.section_colors_helper",
+        )
       : undefined;
 
   protected render() {
@@ -120,7 +134,8 @@ export class ClimateCardEditor
     const schema = computeSchema(
       isBt,
       stateObj ? (stateObj.attributes.hvac_modes ?? []).join(",") : undefined,
-      stateObj ? (stateObj.attributes.preset_modes ?? []).join(",") : undefined
+      // Only offer colors for the presets the TRV actually exposes.
+      stateObj ? (stateObj.attributes.preset_modes ?? []).join(",") : undefined,
     );
 
     return html`
@@ -129,7 +144,7 @@ export class ClimateCardEditor
             <ha-alert alert-type="warning">
               ${this.hass.localize(
                 "ui.panel.lovelace.warning.entity_not_found",
-                { entity: this._config.entity }
+                { entity: this._config.entity },
               )}
             </ha-alert>
           `
@@ -137,7 +152,9 @@ export class ClimateCardEditor
       ${stateObj && !isBt
         ? html`
             <ha-alert alert-type="info">
-              ${createChainedLocalize(this.hass)("editor.card.climate.not_bt_info")}
+              ${createChainedLocalize(this.hass)(
+                "editor.card.climate.not_bt_info",
+              )}
             </ha-alert>
           `
         : nothing}
@@ -158,7 +175,7 @@ export class ClimateCardEditor
     // cleared — don't persist that noise in the YAML.
     if (value.colors) {
       const colors = Object.fromEntries(
-        Object.entries(value.colors).filter(([, v]) => v)
+        Object.entries(value.colors).filter(([, v]) => v),
       );
       if (Object.keys(colors).length === 0) {
         delete value.colors;

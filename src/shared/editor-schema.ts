@@ -72,7 +72,7 @@ export const computeSensorsSection = (): HaFormSchema =>
 
 // Each card passes exactly the toggles it actually reads.
 export const computeDisplaySection = (
-  toggles: { name: string }[]
+  toggles: { name: string }[],
 ): HaFormSchema =>
   ({
     name: "section_display",
@@ -96,17 +96,19 @@ export const computeDisplaySection = (
 // undefined means "entity unknown" and falls back to all keys.
 export const computeColorsSchema = memoizeOne(
   (hvacModes?: string, presetModes?: string): HaFormSchema => {
-    const hvacSlots =
+    // "off" is deliberately grey, not a color — no picker for it.
+    const hvacSlots = (
       hvacModes === undefined
         ? [...CLIMATE_HVAC_COLOR_KEYS]
         : CLIMATE_HVAC_COLOR_KEYS.filter((key) =>
-            hvacModes.split(",").includes(key)
-          );
+            hvacModes.split(",").includes(key),
+          )
+    ).filter((key) => key !== "off");
     const presetSlots =
       presetModes === undefined
         ? [...CLIMATE_PRESET_COLOR_KEYS]
         : CLIMATE_PRESET_COLOR_KEYS.filter((key) =>
-            presetModes.split(",").includes(key)
+            presetModes.split(",").includes(key),
           );
     return {
       name: "colors",
@@ -123,7 +125,7 @@ export const computeColorsSchema = memoizeOne(
         },
       ],
     } as any;
-  }
+  },
 );
 
 // Labels for the color pickers come from HA's own backend translations
@@ -132,7 +134,7 @@ export const computeColorLabel = (
   hass: HomeAssistant,
   stateObj: any | undefined,
   key: string,
-  localize: (k: string) => string
+  localize: (k: string) => string,
 ): string | undefined => {
   if (!(CLIMATE_COLOR_KEYS as readonly string[]).includes(key)) {
     return undefined;
@@ -144,7 +146,9 @@ export const computeColorLabel = (
   }
   return (
     hass.localize(`component.climate.entity_component._.state.${key}`) ||
-    hass.localize(`state_attributes.climate.preset_mode.${key}`) ||
+    hass.localize(
+      `component.climate.entity_component._.state_attributes.preset_mode.state.${key}`,
+    ) ||
     localize(`editor.card.climate.${key}`) ||
     key
   );
@@ -202,7 +206,10 @@ export const computeWarningsSection = (includeDebug: boolean): HaFormSchema =>
         name: "",
         schema: [
           { name: "disable_battery_warning", selector: { boolean: {} } },
-          { name: "disable_connection_lost_warning", selector: { boolean: {} } },
+          {
+            name: "disable_connection_lost_warning",
+            selector: { boolean: {} },
+          },
           { name: "disable_degraded_warning", selector: { boolean: {} } },
           ...(includeDebug
             ? [
@@ -217,7 +224,13 @@ export const computeWarningsSection = (includeDebug: boolean): HaFormSchema =>
         name: "low_battery_threshold",
         default: 10,
         selector: {
-          number: { min: 0, max: 100, step: 1, mode: "box", unit_of_measurement: "%" },
+          number: {
+            min: 0,
+            max: 100,
+            step: 1,
+            mode: "box",
+            unit_of_measurement: "%",
+          },
         },
       },
     ],

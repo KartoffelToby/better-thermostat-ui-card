@@ -19,12 +19,12 @@ export interface LowBatteryEntity {
 // every render.
 export const parseLowBattery = memoizeOne(function (
   batteriesRaw: string | undefined,
-  threshold: number
+  threshold: number,
 ): LowBatteryEntity | undefined {
   if (batteriesRaw === undefined) return undefined;
   try {
     const batteries = Object.entries(
-      JSON.parse(batteriesRaw) as Record<string, BatteryState>
+      JSON.parse(batteriesRaw) as Record<string, BatteryState>,
     );
     const parsed = batteries.map(([name, data]) => ({
       name,
@@ -44,7 +44,7 @@ export const parseLowBattery = memoizeOne(function (
 // `errors` is a JSON array of entity ids (strings) or objects naming the
 // unreachable entity. Memoized on the raw attribute string.
 export const parseErrorEntityId = memoizeOne(function (
-  errorsRaw: string | undefined
+  errorsRaw: string | undefined,
 ): string | undefined {
   if (errorsRaw === undefined) return undefined;
   try {
@@ -63,19 +63,19 @@ export const parseErrorEntityId = memoizeOne(function (
 
 export function getLowBattery(
   entity: BtClimateEntity,
-  config?: SharedBtCardConfig
+  config?: SharedBtCardConfig,
 ): LowBatteryEntity | undefined {
   if (config?.debug_battery) return { name: "Debug Battery", battery: 5 };
   if (config?.disable_battery_warning) return undefined;
   return parseLowBattery(
     entity.attributes?.batteries,
-    config?.low_battery_threshold ?? 10
+    config?.low_battery_threshold ?? 10,
   );
 }
 
 export function getErrorEntityId(
   entity: BtClimateEntity,
-  config?: SharedBtCardConfig
+  config?: SharedBtCardConfig,
 ): string | undefined {
   if (config?.debug_connection) return "Debug Connection";
   if (config?.disable_connection_lost_warning) return undefined;
@@ -84,7 +84,7 @@ export function getErrorEntityId(
 
 export function isDegraded(
   entity: BtClimateEntity,
-  config?: SharedBtCardConfig
+  config?: SharedBtCardConfig,
 ): boolean {
   return (
     !!config?.debug_degraded ||

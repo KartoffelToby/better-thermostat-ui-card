@@ -44,7 +44,7 @@ function batteryStateColorProperty(state: string) {
 }
 
 function computeCssVariable(
-  props: string[] | string | undefined
+  props: string[] | string | undefined,
 ): string | undefined {
   if (Array.isArray(props)) {
     return props
@@ -52,7 +52,7 @@ function computeCssVariable(
       .reverse()
       .reduce<string | undefined>(
         (str, variable) => `var(${variable}${str ? `, ${str}` : ""})`,
-        undefined
+        undefined,
       );
   }
   return `var(${props})`;
@@ -62,7 +62,7 @@ function domainColorProperties(
   domain: string,
   deviceClass: string | undefined,
   state: string,
-  active: boolean
+  active: boolean,
 ) {
   const properties: string[] = [];
   const stateKey = slugify(state, "_");
@@ -73,7 +73,7 @@ function domainColorProperties(
   properties.push(
     `--state-${domain}-${stateKey}-color`,
     `--state-${domain}-${activeKey}-color`,
-    `--state-${activeKey}-color`
+    `--state-${activeKey}-color`,
   );
   return properties;
 }
@@ -81,7 +81,7 @@ function domainColorProperties(
 function domainStateColorProperties(
   domain: string,
   stateObj: any,
-  state?: string
+  state?: string,
 ): string[] {
   const compareState = state !== undefined ? state : stateObj.state;
   const active = stateActive(stateObj, state);
@@ -89,7 +89,7 @@ function domainStateColorProperties(
     domain,
     stateObj.attributes?.device_class,
     compareState,
-    active
+    active,
   );
 }
 
@@ -169,7 +169,7 @@ export function stateActive(stateObj: any, state?: string): boolean {
 
 export const stateColorCss = (
   stateObj: any,
-  state?: string
+  state?: string,
 ): string | undefined => {
   const compareState = state !== undefined ? state : stateObj?.state;
   if (compareState === UNAVAILABLE) return `var(--state-unavailable-color)`;
@@ -180,7 +180,7 @@ export const stateColorCss = (
 
 export const stateColorProperties = (
   stateObj: any,
-  state?: string
+  state?: string,
 ): string[] | undefined => {
   const compareState = state !== undefined ? state : stateObj?.state;
   const domain = computeDomain(stateObj.entity_id);
@@ -198,7 +198,7 @@ export const stateColorProperties = (
       return domainStateColorProperties(
         groupDomain as unknown as string,
         stateObj,
-        state
+        state,
       );
     }
   }
