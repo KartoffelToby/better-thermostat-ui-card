@@ -46,10 +46,13 @@ export const btAnimationsStyle = css`
   .actions,
   ha-big-number,
   ha-control-circular-slider,
-  cts-hui-card-features {
+  cts-hui-card-features,
+  :host > *::before,
+  ha-control-circular-slider::after {
     transition:
       color 200ms ease,
       background-color 200ms ease,
+      background 200ms ease,
       box-shadow 200ms ease,
       opacity 200ms ease;
   }
@@ -70,7 +73,9 @@ export const btAnimationsStyle = css`
     .actions,
     ha-big-number,
     ha-control-circular-slider,
-    cts-hui-card-features {
+    cts-hui-card-features,
+    :host > *::before,
+    ha-control-circular-slider::after {
       transition: none;
     }
   }
