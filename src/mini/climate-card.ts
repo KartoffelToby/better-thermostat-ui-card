@@ -198,10 +198,13 @@ export class BetterThermostatUISmallCard
       );
     }
     if (stateObj.attributes.current_temperature != null) {
-      const temperature = this.hass.formatEntityAttributeValue(
+      let temperature = this.hass.formatEntityAttributeValue(
         stateObj,
         "current_temperature",
       );
+      if (!temperature) {
+        temperature = `${stateObj.attributes.current_temperature} ${this.hass.config.unit_system.temperature}`;
+      }
       const windowOpen = localize({
         hass: this.hass,
         string: "extra_states.window_open",
