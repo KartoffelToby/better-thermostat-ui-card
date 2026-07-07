@@ -62,7 +62,7 @@ import {
   PresetOverlayController,
   presetOverlayStyle,
 } from "../shared/preset-overlay";
-import { btStateColorsStyle } from "../shared/styles";
+import { btStateColorsStyle, btAnimationsStyle } from "../shared/styles";
 import "./features/hui-card-features";
 import type { LovelaceCardFeatureContext } from "./features/types";
 
@@ -675,12 +675,16 @@ export class BetterThermostatUINormalCard
         ></ha-big-number>
       `;
     }
+    let formatted = this.hass.formatEntityAttributeValue(
+      this._stateObj!,
+      "current_temperature",
+      temperature,
+    );
+    if (!formatted) {
+      formatted = `${temperature} ${this.hass.config.unit_system.temperature}`;
+    }
     return html`
-      ${this.hass.formatEntityAttributeValue(
-        this._stateObj!,
-        "current_temperature",
-        temperature,
-      )}
+      ${formatted}
     `;
   }
 
@@ -821,7 +825,7 @@ export class BetterThermostatUINormalCard
     const stateObj = this._stateObj!;
     const config = this._config!;
     const currentTemp = stateObj.attributes.current_temperature;
-    if (!config.show_secondary) return html`<p class="label secondary"></p>`;
+    if (config.show_secondary === false) return html`<p class="label secondary"></p>`;
     if (currentTemp != null && !showCurrentAsBig) {
       return html`<p class="label secondary">
         <ha-svg-icon .path=${mdiThermometer}></ha-svg-icon>
@@ -1082,6 +1086,7 @@ export class BetterThermostatUINormalCard
       btStateColorsStyle,
       climateColorDefaultStyles,
       presetOverlayStyle,
+      btAnimationsStyle,
       ShadowStyles,
     ];
   }

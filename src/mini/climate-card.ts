@@ -58,7 +58,7 @@ import {
   PresetOverlayController,
   presetOverlayStyle,
 } from "../shared/preset-overlay";
-import { btStateColorsStyle } from "../shared/styles";
+import { btStateColorsStyle, btAnimationsStyle } from "../shared/styles";
 
 type ClimateCardControl = "temperature_control" | "hvac_mode_control";
 
@@ -198,10 +198,13 @@ export class BetterThermostatUISmallCard
       );
     }
     if (stateObj.attributes.current_temperature != null) {
-      const temperature = this.hass.formatEntityAttributeValue(
+      let temperature = this.hass.formatEntityAttributeValue(
         stateObj,
         "current_temperature",
       );
+      if (!temperature) {
+        temperature = `${stateObj.attributes.current_temperature} ${this.hass.config.unit_system.temperature}`;
+      }
       const windowOpen = localize({
         hass: this.hass,
         string: "extra_states.window_open",
@@ -691,6 +694,7 @@ export class BetterThermostatUISmallCard
       btStateColorsStyle,
       climateColorDefaultStyles,
       presetOverlayStyle,
+      btAnimationsStyle,
       css`
         :host {
           --rgb-state-climate-heat: 244, 99, 108;
