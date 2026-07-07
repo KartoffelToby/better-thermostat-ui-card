@@ -58,7 +58,7 @@ import {
   PresetOverlayController,
   presetOverlayStyle,
 } from "../shared/preset-overlay";
-import { btStateColorsStyle } from "../shared/styles";
+import { btStateColorsStyle, btAnimationsStyle } from "../shared/styles";
 
 type ClimateCardControl = "temperature_control" | "hvac_mode_control";
 
@@ -691,6 +691,7 @@ export class BetterThermostatUISmallCard
       btStateColorsStyle,
       climateColorDefaultStyles,
       presetOverlayStyle,
+      btAnimationsStyle,
       css`
         :host {
           --rgb-state-climate-heat: 244, 99, 108;

@@ -62,7 +62,7 @@ import {
   PresetOverlayController,
   presetOverlayStyle,
 } from "../shared/preset-overlay";
-import { btStateColorsStyle } from "../shared/styles";
+import { btStateColorsStyle, btAnimationsStyle } from "../shared/styles";
 import "./features/hui-card-features";
 import type { LovelaceCardFeatureContext } from "./features/types";
 
@@ -1082,6 +1082,7 @@ export class BetterThermostatUINormalCard
       btStateColorsStyle,
       climateColorDefaultStyles,
       presetOverlayStyle,
+      btAnimationsStyle,
       ShadowStyles,
     ];
   }
