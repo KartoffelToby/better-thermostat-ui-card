@@ -509,7 +509,7 @@ export class BetterThermostatUINormalCard
     if (stateObj.state === "off") {
       // Off dial is genuinely grey — but window-open and summer win so the
       // shine matches the label instead of being clobbered to grey.
-      if (summer) {
+      if (summer && !windowOpen) {
         stateColor = "var(--bt-color-summer)";
         actionColor = "var(--bt-color-summer)";
       } else if (!windowOpen) {
