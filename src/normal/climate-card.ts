@@ -203,7 +203,7 @@ export class BetterThermostatUINormalCard
   public getGridOptions(): LovelaceGridOptions {
     const columns = 12;
     let rows = 5;
-    let min_rows = 3;
+    let min_rows = 4;
     const min_columns = 6;
     // Like the HA core thermostat card: reserve extra rows for features so
     // they don't eat into the dial's space.
@@ -505,11 +505,17 @@ export class BetterThermostatUINormalCard
       actionColor = presetColor;
     }
 
+    const summer = stateObj.attributes.call_for_heat === false;
     if (stateObj.state === "off") {
-      // Previously assigned the invalid triplet var(--rgb-grey) as a color —
-      // the off dial is now genuinely grey (documented visual fix).
-      stateColor = "var(--bt-color-grey)";
-      actionColor = "var(--bt-color-grey)";
+      // Off dial is genuinely grey — but window-open and summer win so the
+      // shine matches the label instead of being clobbered to grey.
+      if (summer && !windowOpen) {
+        stateColor = "var(--bt-color-summer)";
+        actionColor = "var(--bt-color-summer)";
+      } else if (!windowOpen) {
+        stateColor = "var(--bt-color-grey)";
+        actionColor = "var(--bt-color-grey)";
+      }
     }
 
     const lowColor = active ? climateColor("heat") : climateColor("off");

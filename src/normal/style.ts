@@ -116,21 +116,19 @@ export const ShadowStyles = css`
     max-width: 100%;
     box-sizing: border-box;
     flex: 1;
-  }
-
-  .container:before {
-    content: "";
-    display: block;
-    padding-top: 100%;
+    min-height: 0;
   }
 
   .container > .bt-wrapper {
     width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1 / 1;
+    max-height: 100%;
+    margin: 0 auto;
     position: relative;
     container-type: inline-size;
     container-name: container;
     box-sizing: border-box;
-    max-width: 320px;
   }
 
   .info {
