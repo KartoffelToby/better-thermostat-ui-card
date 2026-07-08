@@ -203,7 +203,7 @@ export class BetterThermostatUINormalCard
   public getGridOptions(): LovelaceGridOptions {
     const columns = 12;
     let rows = 5;
-    let min_rows = 3;
+    let min_rows = 4;
     const min_columns = 6;
     // Like the HA core thermostat card: reserve extra rows for features so
     // they don't eat into the dial's space.
