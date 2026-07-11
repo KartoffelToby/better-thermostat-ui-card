@@ -23,22 +23,31 @@
         "prevent_interaction_on_scroll": "滚动时防止交互",
         "disable_connection_lost_warning": "关闭连接丢失警告",
         "disable_degraded_warning": "关闭降级模式警告",
+        "debug_battery": "调试：显示电池警告",
+        "debug_connection": "调试：显示连接丢失警告",
+        "debug_degraded": "调试：显示降级模式警告",
         "low_battery_threshold": "低电量警告阈值 (%)",
         "section_display": "显示",
+        "section_colors": "颜色",
+        "section_colors_helper": "覆盖暖通空调（HVAC）模式和预设的颜色。选择一个主题颜色，或清除选择器以恢复默认设置。",
         "section_interaction": "交互",
         "section_features": "功能",
-        "section_warnings": "警告"
+        "section_warnings": "警告",
+        "section_sensors": "外部传感器",
+        "window_sensor": "窗户传感器",
+        "humidity_sensor": "湿度传感器",
+        "not_bt_info": "所选实体并非Better Thermostat entity。该卡片仍可使用，但要显示窗户开启状态和湿度状态，您需要在“外部传感器”部分选择相应的传感器。"
       }
     }
   },
   "extra_states": {
-    "window_open": "窗口打开",
+    "window_open": "窗户打开",
     "eco": "节能",
     "summer": "夏季",
-    "cooling": "冷却",
-    "heating": "加热",
-    "cooling_off": "冷却关闭",
-    "heating_off": "加热关闭",
-    "window_closed": "窗口关闭"
+    "cooling": "制冷",
+    "heating": "制热",
+    "cooling_off": "关闭制冷",
+    "heating_off": "关闭制热",
+    "window_closed": "窗户关闭"
   }
 }
