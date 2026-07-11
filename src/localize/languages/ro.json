@@ -9,16 +9,16 @@
   "editor": {
     "card": {
       "climate": {
+        "disable_humidity": "Dezactivează afișarea umidității",
         "disable_eco": "Dezactivează eco",
         "disable_menu": "Dezactivează meniul",
         "disable_battery_warning": "Dezactivează avertizarea bateriei",
         "disable_buttons": "Dezactivează butoanele plus/minus",
+        "show_temperature_control": "Afișează controlul temperaturii",
+        "collapsible_controls": "Controale pliabile",
         "show_current_as_primary": "Afișează temperatura curentă ca principală",
         "show_secondary": "Afișează informații secundare",
         "prevent_interaction_on_scroll": "Previne interacțiunea la derulare",
-        "disable_humidity": "Dezactivează afișarea umidității",
-        "show_temperature_control": "Afișează controlul temperaturii",
-        "collapsible_controls": "Controale pliabile",
         "disable_connection_lost_warning": "Dezactivează avertismentul de pierdere a conexiunii",
         "disable_degraded_warning": "Dezactivează avertismentul de mod degradat",
         "low_battery_threshold": "Prag avertisment baterie descărcată (%)",

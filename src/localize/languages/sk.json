@@ -9,16 +9,16 @@
   "editor": {
     "card": {
       "climate": {
+        "disable_humidity": "Vypnúť zobrazenie vlhkosti",
         "disable_eco": "Zakázať eco",
         "disable_menu": "Zakázať menu",
         "disable_battery_warning": "Zakázať upozornenie na batériu",
         "disable_buttons": "Zakázať plus/mínus tlačidlá",
+        "show_temperature_control": "Zobraziť ovládanie teploty",
+        "collapsible_controls": "Skladateľné ovládanie",
         "show_current_as_primary": "Zobraziť aktuálnu teplotu ako hlavnú",
         "show_secondary": "Zobraziť sekundárne informácie",
         "prevent_interaction_on_scroll": "Zabrániť interakcii pri posúvaní",
-        "disable_humidity": "Vypnúť zobrazenie vlhkosti",
-        "show_temperature_control": "Zobraziť ovládanie teploty",
-        "collapsible_controls": "Skladateľné ovládanie",
         "disable_connection_lost_warning": "Vypnúť upozornenie na stratu spojenia",
         "disable_degraded_warning": "Vypnúť upozornenie na zhoršený režim",
         "low_battery_threshold": "Prah varovania o nízkej batérii (%)",

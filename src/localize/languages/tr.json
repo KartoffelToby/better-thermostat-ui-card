@@ -9,16 +9,16 @@
   "editor": {
     "card": {
       "climate": {
+        "disable_humidity": "Nem gösterimini kapat",
         "disable_eco": "Eco'yu devre dışı bırak",
         "disable_menu": "Menüyü devre dışı bırak",
         "disable_battery_warning": "Pil uyarısını devre dışı bırak",
         "disable_buttons": "Artı/eksi düğmelerini devre dışı bırak",
+        "show_temperature_control": "Sıcaklık kontrolünü göster",
+        "collapsible_controls": "Daraltılabilir kontroller",
         "show_current_as_primary": "Mevcut sıcaklığı birincil olarak göster",
         "show_secondary": "İkincil bilgileri göster",
         "prevent_interaction_on_scroll": "Kaydırma sırasında etkileşimi önle",
-        "disable_humidity": "Nem gösterimini kapat",
-        "show_temperature_control": "Sıcaklık kontrolünü göster",
-        "collapsible_controls": "Daraltılabilir kontroller",
         "disable_connection_lost_warning": "Bağlantı kesildi uyarısını kapat",
         "disable_degraded_warning": "Düşük mod uyarısını kapat",
         "low_battery_threshold": "Düşük pil uyarı eşiği (%)",

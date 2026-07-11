@@ -9,16 +9,16 @@
   "editor": {
     "card": {
       "climate": {
+        "disable_humidity": "Izslēgt mitruma rādījumu",
         "disable_eco": "Atspējot ekonomisko režīmu",
         "disable_menu": "Atspējot izvēlni",
         "disable_battery_warning": "Atspējot baterijas brīdinājumu",
         "disable_buttons": "Atspējot plus/mīnus pogas",
+        "show_temperature_control": "Rādīt temperatūras kontroli",
+        "collapsible_controls": "Salocāmas vadīklas",
         "show_current_as_primary": "Rādīt pašreizējo temperatūru kā galveno",
         "show_secondary": "Rādīt sekundāro informāciju",
         "prevent_interaction_on_scroll": "Novērst mijiedarbību ritinot",
-        "disable_humidity": "Izslēgt mitruma rādījumu",
-        "show_temperature_control": "Rādīt temperatūras kontroli",
-        "collapsible_controls": "Salocāmas vadīklas",
         "disable_connection_lost_warning": "Izslēgt savienojuma zaudēšanas brīdinājumu",
         "disable_degraded_warning": "Izslēgt pasliktināta režīma brīdinājumu",
         "low_battery_threshold": "Zemas baterijas brīdinājuma slieksnis (%)",
