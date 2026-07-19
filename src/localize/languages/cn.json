@@ -48,6 +48,9 @@
     "heating": "制热",
     "cooling_off": "关闭制冷",
     "heating_off": "关闭制热",
+    "degraded_mode": "降级模式",
+    "connection_lost": "连接丢失：{name}",
+    "low_battery": "电量低：{name}",
     "window_closed": "窗户关闭"
   }
 }
