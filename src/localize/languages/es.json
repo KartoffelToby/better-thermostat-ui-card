@@ -9,16 +9,16 @@
   "editor": {
     "card": {
       "climate": {
+        "disable_humidity": "Desactivar la visualización de humedad",
         "disable_eco": "Deshabilitar eco",
         "disable_menu": "Deshabilitar menú",
         "disable_battery_warning": "Deshabilitar alerta de batería",
         "disable_buttons": "Deshabilitar botones más/menos",
+        "show_temperature_control": "Mostrar control de temperatura",
+        "collapsible_controls": "Controles plegables",
         "show_current_as_primary": "Mostrar temperatura actual como principal",
         "show_secondary": "Mostrar información secundaria",
         "prevent_interaction_on_scroll": "Evitar interacción al desplazarse",
-        "disable_humidity": "Desactivar la visualización de humedad",
-        "show_temperature_control": "Mostrar control de temperatura",
-        "collapsible_controls": "Controles plegables",
         "disable_connection_lost_warning": "Desactivar aviso de pérdida de conexión",
         "disable_degraded_warning": "Desactivar aviso de modo degradado",
         "low_battery_threshold": "Umbral de aviso de batería baja (%)",

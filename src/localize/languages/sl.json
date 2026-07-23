@@ -9,16 +9,16 @@
   "editor": {
     "card": {
       "climate": {
+        "disable_humidity": "Onemogoči prikaz vlažnosti",
         "disable_eco": "Onemogoči prikaz eco",
         "disable_menu": "Onemogoči meni",
         "disable_battery_warning": "Onemogoči opozorilo o bateriji",
         "disable_buttons": "Onemogoči gumbe plus/minus",
+        "show_temperature_control": "Prikaži nadzor temperature",
+        "collapsible_controls": "Zložljivi kontrolniki",
         "show_current_as_primary": "Prikaži trenutno temperaturo kot primarno",
         "show_secondary": "Prikaži sekundarne informacije",
         "prevent_interaction_on_scroll": "Prepreči interakcijo med drsenjem",
-        "disable_humidity": "Onemogoči prikaz vlažnosti",
-        "show_temperature_control": "Prikaži nadzor temperature",
-        "collapsible_controls": "Zložljivi kontrolniki",
         "disable_connection_lost_warning": "Onemogoči opozorilo o izgubi povezave",
         "disable_degraded_warning": "Onemogoči opozorilo o zmanjšanem načinu",
         "low_battery_threshold": "Prag opozorila za nizko baterijo (%)",
