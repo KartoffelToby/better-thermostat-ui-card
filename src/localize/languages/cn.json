@@ -36,7 +36,7 @@
         "section_sensors": "外部传感器",
         "window_sensor": "窗户传感器",
         "humidity_sensor": "湿度传感器",
-        "not_bt_info": "所选实体并非Better Thermostat entity。该卡片仍可使用，但要显示窗户开启状态和湿度状态，您需要在“外部传感器”部分选择相应的传感器。"
+        "not_bt_info": "所选实体并非Better Thermostat 实体。该卡片仍可使用，但要显示窗户开启状态和湿度状态，您需要在“外部传感器”部分选择相应的传感器。"
       }
     }
   },
