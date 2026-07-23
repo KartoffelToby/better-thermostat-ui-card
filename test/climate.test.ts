@@ -1,6 +1,7 @@
 import { describe, expect, it, mock } from "bun:test";
 import {
   ClimateEntityFeature,
+  isEcoModeActive,
   setClimateMode,
   supportsFeature,
   supportsFeatureFromAttributes,
@@ -44,6 +45,22 @@ describe("feature gating (Phase 5 guard building blocks)", () => {
         {},
         ClimateEntityFeature.TARGET_TEMPERATURE,
       ),
+    ).toBe(false);
+  });
+});
+
+describe("isEcoModeActive", () => {
+  it("recognizes the current preset-based Eco state", () => {
+    expect(isEcoModeActive(entity({ preset_mode: "eco" }))).toBe(true);
+  });
+
+  it("keeps recognizing the legacy Eco attribute", () => {
+    expect(isEcoModeActive(entity({ eco_mode: true }))).toBe(true);
+  });
+
+  it("returns false when neither Eco representation is active", () => {
+    expect(
+      isEcoModeActive(entity({ preset_mode: "none", eco_mode: false })),
     ).toBe(false);
   });
 });

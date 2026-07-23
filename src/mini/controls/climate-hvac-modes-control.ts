@@ -10,7 +10,7 @@ import {
   isAvailable,
 } from "mushroom-cards/src/ha";
 import { ensureElementLoaded } from "../../shared/ensure-element-loaded";
-import { BtClimateEntity } from "../../shared/climate";
+import { BtClimateEntity, isEcoModeActive } from "../../shared/climate";
 import { climateColor, getHvacModeIcon } from "../../shared/climate-colors";
 import { alphaColor } from "../../shared/color";
 
@@ -51,10 +51,8 @@ export class ClimateHvacModesControl extends LitElement {
     e.stopPropagation();
     // Prefer the preset-based flow introduced in better_thermostat >= 1.8.0.
     // Toggle the 'eco' preset if available, otherwise fall back to legacy flag.
-    const presetMode = this.entity.attributes.preset_mode;
     const hasEcoPreset = this.entity.attributes.preset_modes?.includes("eco");
-    const isEco =
-      presetMode === "eco" || this.entity.attributes.eco_mode === true;
+    const isEco = isEcoModeActive(this.entity);
 
     if (hasEcoPreset) {
       const newMode = isEco ? "none" : "eco";
@@ -72,7 +70,7 @@ export class ClimateHvacModesControl extends LitElement {
   }
 
   private renderEcoButton() {
-    const isEco = this.entity.attributes.eco_mode === true;
+    const isEco = isEcoModeActive(this.entity);
     const iconStyle: StyleInfo = {};
     if (isEco) {
       iconStyle["--icon-color"] = `var(--bt-color-eco)`;
