@@ -736,7 +736,11 @@ export class BetterThermostatUISmallCard
           justify-content: space-evenly;
           gap: 15px;
           padding: 0 1em 0em 1em;
-          background-color: rgba(var(--rgb-card-background-color), 0.3);
+          background-color: color-mix(
+            in srgb,
+            var(--card-background-color) 30%,
+            transparent
+          );
         }
       `,
     ];
