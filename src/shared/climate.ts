@@ -62,6 +62,13 @@ export type BtClimateEntity = Omit<ClimateEntity, "attributes"> & {
   attributes: BtClimateAttributes;
 };
 
+export function isEcoModeActive(stateObj: BtClimateEntity): boolean {
+  return (
+    stateObj.attributes.preset_mode === "eco" ||
+    stateObj.attributes.eco_mode === true
+  );
+}
+
 // Set an hvac mode or preset by name. A name matching one of the entity's
 // hvac_modes wins; otherwise it is treated as a preset (selecting the active
 // preset again clears it back to "none"). Returns whether a service was called.

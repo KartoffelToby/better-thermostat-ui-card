@@ -13,3 +13,4 @@ dist
 !.dev/www
 !.dev/packages
 .dev/www/community/*
+.zcode

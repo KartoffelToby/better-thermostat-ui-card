@@ -9,16 +9,16 @@
   "editor": {
     "card": {
       "climate": {
+        "disable_humidity": "Deaktiver fugtighedsvisning",
         "disable_eco": "Deaktiver Eco indikator",
         "disable_menu": "Deaktiver menu",
         "disable_battery_warning": "Deaktiver batteriadvarsel",
         "disable_buttons": "Deaktiver plus/minus knapper",
+        "show_temperature_control": "Vis temperaturkontrol",
+        "collapsible_controls": "Sammenklappelige kontroller",
         "show_current_as_primary": "Vis nuværende temperatur som primær",
         "show_secondary": "Vis sekundær information",
         "prevent_interaction_on_scroll": "Forhindre interaktion ved scrolling",
-        "disable_humidity": "Deaktiver fugtighedsvisning",
-        "show_temperature_control": "Vis temperaturkontrol",
-        "collapsible_controls": "Sammenklappelige kontroller",
         "disable_connection_lost_warning": "Deaktiver advarsel om mistet forbindelse",
         "disable_degraded_warning": "Deaktiver advarsel om forringet tilstand",
         "low_battery_threshold": "Grænse for advarsel om lavt batteri (%)",

@@ -356,7 +356,11 @@ export const ShadowStyles = css`
     align-content: center;
     gap: 12px;
     flex-wrap: wrap;
-    background-color: rgba(var(--rgb-card-background-color), 0.6);
+    background-color: color-mix(
+      in srgb,
+      var(--card-background-color) 60%,
+      transparent
+    );
     padding: 16px;
   }
 `;

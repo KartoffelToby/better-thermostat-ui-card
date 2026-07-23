@@ -75,7 +75,7 @@ export class HaControlSelect extends LitElement {
         @click=${this._handleOptionClick}
       >
         <div class="content">
-          ${option.path
+          ${option.path && option.path.trim().startsWith("M")
             ? html`<cts-ha-svg-icon .path=${option.path}></cts-ha-svg-icon>`
             : (option.icon ?? nothing)}
           ${!this.hideOptionLabel && option.label
