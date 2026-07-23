@@ -124,7 +124,6 @@ export class HuiClimateHvacModesCardFeature
     ).map((mode) => ({
       value: mode,
       label: this.hass!.formatEntityState(stateObj, mode),
-      path: getHvacModeIcon(mode).replace("mdi:", ""), // fallback if path doesn't work directly
       icon: html`<ha-icon .icon=${getHvacModeIcon(mode)}></ha-icon>`,
     }));
 
