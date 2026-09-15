@@ -58,6 +58,7 @@ import {
   PresetOverlayController,
   presetOverlayStyle,
 } from "../shared/preset-overlay";
+import { computeEntityName } from "../shared/entity-name";
 import { btStateColorsStyle, btAnimationsStyle } from "../shared/styles";
 
 type ClimateCardControl = "temperature_control" | "hvac_mode_control";
@@ -181,7 +182,7 @@ export class BetterThermostatUISmallCard
       return this.renderNotFound(this._config);
     }
 
-    const name = this._config.name || stateObj.attributes.friendly_name || "";
+    const name = computeEntityName(this.hass, stateObj, this._config.name);
     const icon = this._config.icon;
     const appearance = computeAppearance(this._config);
     const picture = computeEntityPicture(stateObj, appearance.icon_type);

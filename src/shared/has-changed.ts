@@ -1,4 +1,5 @@
 import { HomeAssistant } from "mushroom-cards/src/ha";
+import { entityNamesChanged } from "./entity-name";
 
 // hass is replaced on every state tick of ANY entity. Only re-render when a
 // watched entity, the locale, themes (also carries dark mode), the unit
@@ -9,6 +10,10 @@ export function shouldUpdateForHass(
   entityIds: (string | undefined)[],
 ): boolean {
   if (!oldHass) return true;
+  // Names resolve against the entity/device/area/floor registries, and HA swaps
+  // the real formatEntityName in asynchronously once translations load. Neither
+  // changes an entity state, so the entity checks below miss both.
+  if (entityNamesChanged(oldHass, newHass)) return true;
   if (
     oldHass.locale !== newHass.locale ||
     oldHass.themes !== newHass.themes ||

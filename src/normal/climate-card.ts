@@ -58,6 +58,7 @@ import {
 } from "../shared/bt-status";
 import { shouldUpdateForHass } from "../shared/has-changed";
 import { createChainedLocalize } from "../shared/localize";
+import { computeEntityName } from "../shared/entity-name";
 import {
   PresetOverlayController,
   presetOverlayStyle,
@@ -526,7 +527,7 @@ export class BetterThermostatUINormalCard
     const controlMaxWidth = this._resizeController.value
       ? `${Math.min(this._resizeController.value, 320)}px`
       : undefined;
-    const name = this._config.name || stateObj.attributes.friendly_name || "";
+    const name = computeEntityName(this.hass, stateObj, this._config.name);
 
     return html`
       <ha-card style=${styleMap(climateColorOverrides(this._config.colors))}>
