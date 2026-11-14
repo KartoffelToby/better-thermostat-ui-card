@@ -45,7 +45,11 @@ import {
   getHvacModeIcon,
 } from "../shared/climate-colors";
 import { alphaColor } from "../shared/color";
-import { findBtStubEntity, formatHumidity, isWindowOpen } from "../shared/bt";
+import {
+  findBtStubEntity,
+  isDoorOpen,
+  isWindowOpen,
+} from "../shared/bt";
 import {
   getErrorEntityId,
   getLowBattery,
@@ -58,6 +62,8 @@ import {
   PresetOverlayController,
   presetOverlayStyle,
 } from "../shared/preset-overlay";
+import { computeEntityName } from "../shared/entity-name";
+import { formatMiniStateDisplay } from "./state-display";
 import { btStateColorsStyle, btAnimationsStyle } from "../shared/styles";
 
 type ClimateCardControl = "temperature_control" | "hvac_mode_control";
@@ -181,46 +187,18 @@ export class BetterThermostatUISmallCard
       return this.renderNotFound(this._config);
     }
 
-    const name = this._config.name || stateObj.attributes.friendly_name || "";
+    const name = computeEntityName(this.hass, stateObj, this._config.name);
     const icon = this._config.icon;
     const appearance = computeAppearance(this._config);
     const picture = computeEntityPicture(stateObj, appearance.icon_type);
     const window = isWindowOpen(this.hass, stateObj, this._config);
+    const door = isDoorOpen(stateObj);
     const summer = stateObj.attributes.call_for_heat === false;
-    let stateDisplay = this.hass.formatEntityState(stateObj);
-    if (
-      stateObj.attributes.hvac_action &&
-      stateObj.attributes.hvac_action !== "off"
-    ) {
-      stateDisplay = this.hass.formatEntityAttributeValue(
-        stateObj,
-        "hvac_action",
-      );
-    }
-    if (stateObj.attributes.current_temperature != null) {
-      let temperature = this.hass.formatEntityAttributeValue(
-        stateObj,
-        "current_temperature",
-      );
-      if (!temperature) {
-        temperature = `${stateObj.attributes.current_temperature} ${this.hass.config.unit_system.temperature}`;
-      }
-      const windowOpen = localize({
-        hass: this.hass,
-        string: "extra_states.window_open",
-      });
-      const summerLabel =
-        localize({
-          hass: this.hass,
-          string: "extra_states.summer",
-        }) || "Summer";
-      let humidity = "";
-      const humidityDisplay = formatHumidity(this.hass, stateObj, this._config);
-      if (humidityDisplay) {
-        humidity = ` ⸱ ${humidityDisplay}`;
-      }
-      stateDisplay += ` ⸱ ${window ? `(${windowOpen}) ` : summer ? `(${summerLabel}) ` : ""}${temperature}${humidity}`;
-    }
+    const stateDisplay = formatMiniStateDisplay(
+      this.hass,
+      stateObj,
+      this._config,
+    );
     const rtl = computeRTL(this.hass);
 
     const isControlVisible =
@@ -260,7 +238,7 @@ export class BetterThermostatUISmallCard
       actionStyle["--bt-color-heat"] = presetColor;
     }
 
-    if (window) {
+    if (window || door) {
       actionStyle["--action-color"] = `var(--info-color)`;
     } else if (summer) {
       actionStyle["--action-color"] = `var(--bt-color-summer)`;
@@ -385,7 +363,8 @@ export class BetterThermostatUISmallCard
     icon?: string,
   ): TemplateResult {
     const available = isAvailable(stateObj);
-    const window = isWindowOpen(this.hass, stateObj, this._config);
+    const contactOpen =
+      isWindowOpen(this.hass, stateObj, this._config) || isDoorOpen(stateObj);
     const summer = stateObj.attributes.call_for_heat === false;
     const eco = stateObj.attributes.eco_mode === true;
     const hvacAction = stateObj.attributes.hvac_action;
@@ -399,7 +378,7 @@ export class BetterThermostatUISmallCard
     iconStyle["--icon-color"] = color;
     iconStyle["--shape-color"] = alphaColor(color, 0.2);
 
-    if (window) {
+    if (contactOpen) {
       iconStyle["--icon-color"] = `var(--info-color)`;
       iconStyle["--shape-color"] = `rgba(0,0,0, 0.1)`;
     } else if (summer) {
@@ -473,8 +452,11 @@ export class BetterThermostatUISmallCard
             string: "extra_states.connection_lost",
             search: "{name}",
             replace:
-              this.hass?.states?.[errorEntityId]?.attributes?.friendly_name ??
-              errorEntityId,
+              computeEntityName(
+                this.hass,
+                this.hass?.states?.[errorEntityId],
+                undefined,
+              ) || errorEntityId,
           })}
           @click=${(ev: Event) => this._handleErrorClick(ev, errorEntityId)}
           style=${styleMap({
@@ -545,16 +527,20 @@ export class BetterThermostatUISmallCard
   renderActionBadge(entity: BtClimateEntity) {
     const hvac_action = entity.attributes.hvac_action;
     const windowOpen = isWindowOpen(this.hass, entity, this._config);
+    const doorOpen = isDoorOpen(entity);
+    const contactOpen = windowOpen || doorOpen;
     const summer = entity.attributes.call_for_heat === false;
 
     // Non BT entities may not report hvac_action at all — still show the
     // badge when the configured window sensor reports open.
-    if ((!hvac_action || hvac_action === "off") && !windowOpen && !summer)
+    if ((!hvac_action || hvac_action === "off") && !contactOpen && !summer)
       return nothing;
 
     let icon = getHvacActionIcon(hvac_action || "off");
     if (windowOpen) {
       icon = "mdi:window-open-variant";
+    } else if (doorOpen) {
+      icon = "mdi:door-open";
     } else if (summer) {
       icon = "mdi:white-balance-sunny";
     }
@@ -562,16 +548,16 @@ export class BetterThermostatUISmallCard
     if (!icon) return nothing;
 
     let finalColor = climateActionColor(hvac_action || "off");
-    if (summer && !windowOpen) finalColor = "var(--bt-color-summer)";
+    if (summer && !contactOpen) finalColor = "var(--bt-color-summer)";
 
     return html`
       <mushroom-badge-icon
         slot="badge"
         .icon=${icon}
         style=${styleMap({
-          "--icon-color": windowOpen ? `var(--info-color)` : finalColor,
+          "--icon-color": contactOpen ? `var(--info-color)` : finalColor,
           "--main-color": "var(--bt-badge-background)",
-          border: `1px solid ${windowOpen ? `var(--info-color)` : finalColor}`,
+          border: `1px solid ${contactOpen ? `var(--info-color)` : finalColor}`,
           borderRadius: "50%",
         })}
       ></mushroom-badge-icon>

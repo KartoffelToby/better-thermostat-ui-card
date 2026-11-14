@@ -51,6 +51,7 @@ export type BtClimateAttributes = Omit<
   max_temp?: number;
   call_for_heat?: boolean;
   window_open?: boolean | string;
+  door_open?: boolean | string;
   batteries?: string;
   errors?: string;
   degraded_mode?: boolean;

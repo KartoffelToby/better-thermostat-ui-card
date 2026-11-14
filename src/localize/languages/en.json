@@ -43,6 +43,7 @@
   },
   "extra_states": {
     "window_open": "Window open",
+    "door_open": "Door open",
     "eco": "Eco",
     "summer": "Summer",
     "cooling": "Cooling",
