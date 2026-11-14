@@ -23,26 +23,40 @@ export function findBtStubEntity(hass: HomeAssistant): string | undefined {
 
 const SENSOR_OPEN_STATES = ["on", "open", "true"];
 
+// Only an actual boolean true or an explicit "true"-like string counts;
+// Boolean() would treat strings such as "false" as open.
+function isOpenAttribute(value: unknown): boolean {
+  return (
+    value === true ||
+    (typeof value === "string" &&
+      SENSOR_OPEN_STATES.includes(value.toLowerCase()))
+  );
+}
+
 export function isWindowOpen(
   hass: HomeAssistant | undefined,
   stateObj: any,
   config?: ExternalSensorsConfig,
 ): boolean {
   if (isBtEntity(stateObj)) {
-    // Only an actual boolean true or an explicit "true"-like string counts;
-    // Boolean() would treat strings such as "false" as open.
-    const windowOpen = stateObj.attributes?.window_open;
-    return (
-      windowOpen === true ||
-      (typeof windowOpen === "string" &&
-        SENSOR_OPEN_STATES.includes(windowOpen.toLowerCase()))
-    );
+    return isOpenAttribute(stateObj.attributes?.window_open);
   }
   const sensorId = config?.window_sensor;
   if (!sensorId) return false;
   const sensor = hass?.states?.[sensorId];
   if (!sensor) return false;
   return SENSOR_OPEN_STATES.includes(String(sensor.state).toLowerCase());
+}
+
+// Better Thermostat reports a configured door contact separately from the
+// window contact; both suspend heating. The card has no door sensor option
+// for plain climate entities.
+export function isDoorOpen(
+  stateObj: { attributes?: Record<string, unknown> } | undefined,
+): boolean {
+  return (
+    isBtEntity(stateObj) && isOpenAttribute(stateObj?.attributes?.door_open)
+  );
 }
 
 export function formatHumidity(

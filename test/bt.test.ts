@@ -3,6 +3,7 @@ import {
   findBtStubEntity,
   formatHumidity,
   isBtEntity,
+  isDoorOpen,
   isWindowOpen,
 } from "../src/shared/bt";
 
@@ -86,6 +87,25 @@ describe("isWindowOpen", () => {
         window_sensor: "binary_sensor.gone",
       }),
     ).toBe(false);
+  });
+});
+
+describe("isDoorOpen", () => {
+  it("BT entity: reads door_open independently of window_open", () => {
+    expect(isDoorOpen(btEntity({ door_open: true, window_open: false }))).toBe(
+      true,
+    );
+    expect(isDoorOpen(btEntity({ door_open: "on" }))).toBe(true);
+    expect(isDoorOpen(btEntity({ door_open: "false" }))).toBe(false);
+    expect(isDoorOpen(btEntity({ door_open: false }))).toBe(false);
+    expect(isDoorOpen(btEntity({ door_open: null }))).toBe(false);
+    expect(isDoorOpen(btEntity({ window_open: true }))).toBe(false);
+    expect(isWindowOpen(undefined, btEntity({ door_open: true }))).toBe(false);
+  });
+
+  it("non-BT entity: never open", () => {
+    expect(isDoorOpen(plainEntity({ door_open: true }))).toBe(false);
+    expect(isDoorOpen(undefined)).toBe(false);
   });
 });
 

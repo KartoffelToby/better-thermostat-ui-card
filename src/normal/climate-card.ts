@@ -25,6 +25,7 @@ import {
   mdiThermometer,
   mdiThermostat,
   mdiWindowOpenVariant,
+  mdiDoorOpen,
   mdiDotsVertical,
   mdiWaterPercent,
   mdiAlert,
@@ -50,7 +51,12 @@ import {
   getHvacModeIcon,
 } from "../shared/climate-colors";
 import { alphaColor } from "../shared/color";
-import { findBtStubEntity, formatHumidity, isWindowOpen } from "../shared/bt";
+import {
+  findBtStubEntity,
+  formatHumidity,
+  isDoorOpen,
+  isWindowOpen,
+} from "../shared/bt";
 import {
   getErrorEntityId,
   getLowBattery,
@@ -475,6 +481,8 @@ export class BetterThermostatUINormalCard
     );
 
     const windowOpen = isWindowOpen(this.hass, stateObj, this._config);
+    const doorOpen = isDoorOpen(stateObj);
+    const contactOpen = windowOpen || doorOpen;
     // Show the current temperature as the big number when configured, or when
     // there is no adjustable setpoint (readonly dial fallback, like HA core's
     // thermostat card) — the state text is then shown by _renderLabel() only.
@@ -497,7 +505,7 @@ export class BetterThermostatUINormalCard
     // the `colors:` config and themes recolor both consistently.
     let stateColor: string | undefined = climateStateColor(stateObj);
     const preset_mode = stateObj.attributes.preset_mode;
-    if (windowOpen) {
+    if (contactOpen) {
       actionColor = "var(--info-color)";
       stateColor = "var(--info-color)";
     } else if (preset_mode != null && preset_mode !== "none") {
@@ -508,12 +516,12 @@ export class BetterThermostatUINormalCard
 
     const summer = stateObj.attributes.call_for_heat === false;
     if (stateObj.state === "off") {
-      // Off dial is genuinely grey — but window-open and summer win so the
-      // shine matches the label instead of being clobbered to grey.
-      if (summer && !windowOpen) {
+      // Off dial is genuinely grey — but window/door-open and summer win so
+      // the shine matches the label instead of being clobbered to grey.
+      if (summer && !contactOpen) {
         stateColor = "var(--bt-color-summer)";
         actionColor = "var(--bt-color-summer)";
-      } else if (!windowOpen) {
+      } else if (!contactOpen) {
         stateColor = "var(--bt-color-grey)";
         actionColor = "var(--bt-color-grey)";
       }
@@ -544,7 +552,7 @@ export class BetterThermostatUINormalCard
           >
             ${this._renderCircularSlider(active)}
             <div class="info">
-              ${this._renderLabel(windowOpen)}${this._renderPrimary(
+              ${this._renderLabel(windowOpen, doorOpen)}${this._renderPrimary(
                 showCurrentAsBig,
               )}${this._renderSecondary(
                 showCurrentAsBig,
@@ -697,7 +705,7 @@ export class BetterThermostatUINormalCard
     `;
   }
 
-  private _renderLabel(windowOpen: boolean) {
+  private _renderLabel(windowOpen: boolean, doorOpen: boolean) {
     const stateObj = this._stateObj!;
     const lowBatteryEntity = getLowBattery(stateObj, this._config);
     const errorEntityId = getErrorEntityId(stateObj, this._config);
@@ -761,11 +769,13 @@ export class BetterThermostatUINormalCard
         </p>
       </div>`;
     }
-    if (windowOpen) {
+    if (windowOpen || doorOpen) {
       return html`<div class="label-container">
         ${warningIcons}
         <p class="label window-label">
-          <ha-svg-icon .path=${mdiWindowOpenVariant}></ha-svg-icon>
+          <ha-svg-icon
+            .path=${windowOpen ? mdiWindowOpenVariant : mdiDoorOpen}
+          ></ha-svg-icon>
         </p>
       </div>`;
     }
