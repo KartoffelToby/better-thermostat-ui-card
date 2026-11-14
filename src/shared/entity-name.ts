@@ -12,7 +12,11 @@ const supportsEntityNames = (hass: HomeAssistant | undefined): boolean => {
   // A hass can report a recent version without carrying the helper (a test
   // harness, or a hass that has not finished initialising), and calling it
   // then throws - so the version gate alone is not enough.
-  if (!hass || typeof (hass as { formatEntityName?: unknown }).formatEntityName !== 'function') {
+  if (
+    !hass ||
+    typeof (hass as { formatEntityName?: unknown }).formatEntityName !==
+      "function"
+  ) {
     return false;
   }
   const [major, minor] = (hass?.config?.version ?? "").split(".", 2);
@@ -45,7 +49,13 @@ export const computeEntityName = (
  * Neither shows up as an entity state change, so without this a rename (or that
  * swap) leaves the rendered name stale until an unrelated update forces a render.
  */
-const NAME_SOURCES = ["formatEntityName", "entities", "devices", "areas", "floors"] as const;
+const NAME_SOURCES = [
+  "formatEntityName",
+  "entities",
+  "devices",
+  "areas",
+  "floors",
+] as const;
 
 export const entityNamesChanged = (
   oldHass: HomeAssistant | undefined,

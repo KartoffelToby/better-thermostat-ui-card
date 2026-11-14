@@ -47,7 +47,6 @@ import {
 import { alphaColor } from "../shared/color";
 import {
   findBtStubEntity,
-  formatHumidity,
   isDoorOpen,
   isWindowOpen,
 } from "../shared/bt";
@@ -64,6 +63,7 @@ import {
   presetOverlayStyle,
 } from "../shared/preset-overlay";
 import { computeEntityName } from "../shared/entity-name";
+import { formatMiniStateDisplay } from "./state-display";
 import { btStateColorsStyle, btAnimationsStyle } from "../shared/styles";
 
 type ClimateCardControl = "temperature_control" | "hvac_mode_control";
@@ -194,44 +194,11 @@ export class BetterThermostatUISmallCard
     const window = isWindowOpen(this.hass, stateObj, this._config);
     const door = isDoorOpen(stateObj);
     const summer = stateObj.attributes.call_for_heat === false;
-    let stateDisplay = this.hass.formatEntityState(stateObj);
-    if (
-      stateObj.attributes.hvac_action &&
-      stateObj.attributes.hvac_action !== "off"
-    ) {
-      stateDisplay = this.hass.formatEntityAttributeValue(
-        stateObj,
-        "hvac_action",
-      );
-    }
-    if (stateObj.attributes.current_temperature != null) {
-      let temperature = this.hass.formatEntityAttributeValue(
-        stateObj,
-        "current_temperature",
-      );
-      if (!temperature) {
-        temperature = `${stateObj.attributes.current_temperature} ${this.hass.config.unit_system.temperature}`;
-      }
-      const windowOpen = localize({
-        hass: this.hass,
-        string: "extra_states.window_open",
-      });
-      const doorOpen = localize({
-        hass: this.hass,
-        string: "extra_states.door_open",
-      });
-      const summerLabel =
-        localize({
-          hass: this.hass,
-          string: "extra_states.summer",
-        }) || "Summer";
-      let humidity = "";
-      const humidityDisplay = formatHumidity(this.hass, stateObj, this._config);
-      if (humidityDisplay) {
-        humidity = ` ⸱ ${humidityDisplay}`;
-      }
-      stateDisplay += ` ⸱ ${window ? `(${windowOpen}) ` : door ? `(${doorOpen}) ` : summer ? `(${summerLabel}) ` : ""}${temperature}${humidity}`;
-    }
+    const stateDisplay = formatMiniStateDisplay(
+      this.hass,
+      stateObj,
+      this._config,
+    );
     const rtl = computeRTL(this.hass);
 
     const isControlVisible =
@@ -485,8 +452,11 @@ export class BetterThermostatUISmallCard
             string: "extra_states.connection_lost",
             search: "{name}",
             replace:
-              this.hass?.states?.[errorEntityId]?.attributes?.friendly_name ??
-              errorEntityId,
+              computeEntityName(
+                this.hass,
+                this.hass?.states?.[errorEntityId],
+                undefined,
+              ) || errorEntityId,
           })}
           @click=${(ev: Event) => this._handleErrorClick(ev, errorEntityId)}
           style=${styleMap({
