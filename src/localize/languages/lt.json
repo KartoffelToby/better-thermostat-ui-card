@@ -1,32 +1,58 @@
 {
   "common": {
     "version": "versija",
-    "current": "dabartinė"
+    "current": "dabartinė",
+    "current_humidity": "Dabartinė drėgmė",
+    "current_temperature": "Dabartinė temperatūra",
+    "target_temperature": "Tikslinė temperatūra"
   },
   "editor": {
     "card": {
       "climate": {
+        "disable_humidity": "Išjungti drėgmės rodymą",
         "disable_eco": "Išjungti ECO rėžimą",
+        "disable_presets": "Išjungti išankstinių nustatymų mygtuką",
         "disable_menu": "Išjungti meniu",
         "disable_battery_warning": "Išjungti baterijos pranešimą",
         "disable_buttons": "Nerodyti plius/minus mygtukų",
-		"disable_slider": "Išjungti slankiklį",
-        "disable_humidity": "Išjungti drėgmės rodymą",
+        "disable_slider": "Išjungti slankiklį",
+        "disable_all_buttons": "Išjungti visus mygtukus",
         "show_temperature_control": "Rodyti temperatūros valdymą",
         "collapsible_controls": "Sulankstomi valdikliai",
+        "show_current_as_primary": "Rodyti dabartinę temperatūrą kaip pagrindinę",
+        "show_secondary": "Rodyti papildomą informaciją",
+        "prevent_interaction_on_scroll": "Neleisti sąveikos slenkant",
         "disable_connection_lost_warning": "Išjungti ryšio praradimo įspėjimą",
         "disable_degraded_warning": "Išjungti pabloginto režimo įspėjimą",
+        "debug_battery": "Derinimas: Rodyti baterijos įspėjimą",
+        "debug_connection": "Derinimas: Rodyti ryšio praradimo įspėjimą",
+        "debug_degraded": "Derinimas: Rodyti pabloginto režimo įspėjimą",
         "low_battery_threshold": "Žemo akumuliatoriaus įspėjimo riba (%)",
         "section_display": "Rodymas",
+        "section_colors": "Spalvos",
+        "section_colors_helper": "Pakeiskite spalvas, naudojamas HVAC režimams ir išankstiniams nustatymams. Pasirinkite temos spalvą arba išvalykite parinkiklį, kad atkurtumėte numatytąją spalvą.",
         "section_interaction": "Sąveika",
         "section_features": "Funkcijos",
-        "section_warnings": "Įspėjimai"
+        "section_warnings": "Įspėjimai",
+        "section_sensors": "Išoriniai jutikliai",
+        "window_sensor": "Lango jutiklis",
+        "humidity_sensor": "Drėgmės jutiklis",
+        "not_bt_info": "Pasirinktas objektas nėra Better Thermostat objektas. Kortelė su juo vis tiek veikia, tačiau norint rodyti atidaryto lango ir drėgmės būsenas, skiltyje „Išoriniai jutikliai“ reikia pasirinkti atitinkamus jutiklius."
       }
     }
   },
   "extra_states": {
     "window_open": "Atidarytas langas",
+    "door_open": "Atidarytos durys",
     "eco": "ECO",
-    "summer": "Vasaros rėžimas"
+    "summer": "Vasaros rėžimas",
+    "cooling": "Vėsinama",
+    "heating": "Šildoma",
+    "cooling_off": "Vėsinimas išjungtas",
+    "heating_off": "Šildymas išjungtas",
+    "degraded_mode": "Pablogintas režimas",
+    "connection_lost": "Ryšys prarastas: {name}",
+    "low_battery": "Senka baterija: {name}",
+    "window_closed": "Uždarytas langas"
   }
 }

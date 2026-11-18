@@ -15,7 +15,7 @@
         "disable_menu": "Menü deaktivieren",
         "disable_battery_warning": "Batterie-Warnung deaktivieren",
         "disable_buttons": "Plus/Minus Buttons deaktivieren",
-		"disable_slider": "Regler deaktivieren",
+        "disable_slider": "Regler deaktivieren",
         "disable_all_buttons": "Alle Buttons deaktivieren",
         "show_temperature_control": "Temperaturregelung anzeigen",
         "collapsible_controls": "Einklappbare Steuerung",
@@ -43,6 +43,7 @@
   },
   "extra_states": {
     "window_open": "Fenster offen",
+    "door_open": "Tür offen",
     "eco": "Eco",
     "summer": "Sommer",
     "cooling": "Kühlen",

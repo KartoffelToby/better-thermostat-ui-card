@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Poista kosteusnäyttö käytöstä",
         "disable_eco": "Poista Eco -ilmoitus käytöstä",
+        "disable_presets": "Poista esiasetuspainike käytöstä",
         "disable_menu": "Poista valikko käytöstä",
         "disable_battery_warning": "Poista akun varoitus käytöstä",
         "disable_buttons": "Poista plus/miinus -painikkeet käytöstä",
-		"disable_slider": "Poista liukusäädin käytöstä",
+        "disable_slider": "Poista liukusäädin käytöstä",
+        "disable_all_buttons": "Poista kaikki painikkeet käytöstä",
         "show_temperature_control": "Näytä lämpötilan säätö",
         "collapsible_controls": "Kokoon taittuvat säätimet",
         "show_current_as_primary": "Näytä nykyinen lämpötila ensisijaisena",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Estä vuorovaikutus vieritettäessä",
         "disable_connection_lost_warning": "Poista yhteyden katkeamisen varoitus käytöstä",
         "disable_degraded_warning": "Poista heikentyneen tilan varoitus käytöstä",
+        "debug_battery": "Debug: Näytä akun varoitus",
+        "debug_connection": "Debug: Näytä yhteyden katkeamisen varoitus",
+        "debug_degraded": "Debug: Näytä heikentyneen tilan varoitus",
         "low_battery_threshold": "Alhaisen akun varoituskynnys (%)",
         "section_display": "Näyttö",
+        "section_colors": "Värit",
+        "section_colors_helper": "Korvaa HVAC-tiloille ja esiasetuksille käytetyt värit. Valitse teeman väri tai tyhjennä valitsin palauttaaksesi oletusvärin.",
         "section_interaction": "Vuorovaikutus",
         "section_features": "Ominaisuudet",
-        "section_warnings": "Varoitukset"
+        "section_warnings": "Varoitukset",
+        "section_sensors": "Ulkoiset anturit",
+        "window_sensor": "Ikkuna-anturi",
+        "humidity_sensor": "Kosteusanturi",
+        "not_bt_info": "Valittu entiteetti ei ole Better Thermostat -entiteetti. Kortti toimii silti, mutta avoimen ikkunan ja kosteuden tilojen näyttämiseksi sinun on valittava vastaavat anturit osiossa 'Ulkoiset anturit'."
       }
     }
   },
   "extra_states": {
     "window_open": "Ikkuna auki",
+    "door_open": "Ovi auki",
     "eco": "Eco",
     "summer": "Kesä",
     "cooling": "Jäähdytys",
     "heating": "Lämmitys",
     "cooling_off": "Jäähdytys pois päältä",
     "heating_off": "Lämmitys pois päältä",
+    "degraded_mode": "Heikentynyt tila",
+    "connection_lost": "Yhteys katkennut: {name}",
+    "low_battery": "Akku vähissä: {name}",
     "window_closed": "Ikkuna kiinni"
   }
 }

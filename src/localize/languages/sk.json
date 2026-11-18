@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Vypnúť zobrazenie vlhkosti",
         "disable_eco": "Zakázať eco",
+        "disable_presets": "Zakázať tlačidlo predvolieb",
         "disable_menu": "Zakázať menu",
         "disable_battery_warning": "Zakázať upozornenie na batériu",
         "disable_buttons": "Zakázať plus/mínus tlačidlá",
-		"disable_slider": "Zakázať posuvník",
+        "disable_slider": "Zakázať posuvník",
+        "disable_all_buttons": "Zakázať všetky tlačidlá",
         "show_temperature_control": "Zobraziť ovládanie teploty",
         "collapsible_controls": "Skladateľné ovládanie",
         "show_current_as_primary": "Zobraziť aktuálnu teplotu ako hlavnú",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Zabrániť interakcii pri posúvaní",
         "disable_connection_lost_warning": "Vypnúť upozornenie na stratu spojenia",
         "disable_degraded_warning": "Vypnúť upozornenie na zhoršený režim",
+        "debug_battery": "Debug: Zobraziť upozornenie na batériu",
+        "debug_connection": "Debug: Zobraziť upozornenie na stratu spojenia",
+        "debug_degraded": "Debug: Zobraziť upozornenie na zhoršený režim",
         "low_battery_threshold": "Prah varovania o nízkej batérii (%)",
         "section_display": "Zobrazenie",
+        "section_colors": "Farby",
+        "section_colors_helper": "Prepíšte farby použité pre režimy HVAC a predvoľby. Vyberte farbu motívu alebo výber vymažte na obnovenie predvolenej farby.",
         "section_interaction": "Interakcia",
         "section_features": "Funkcie",
-        "section_warnings": "Upozornenia"
+        "section_warnings": "Upozornenia",
+        "section_sensors": "Externé senzory",
+        "window_sensor": "Okenný senzor",
+        "humidity_sensor": "Senzor vlhkosti",
+        "not_bt_info": "Vybraná entita nie je entitou Better Thermostat. Karta s ňou stále funguje, ale na zobrazenie stavu otvoreného okna a vlhkosti musíte vybrať zodpovedajúce senzory v sekcii „Externé senzory“."
       }
     }
   },
   "extra_states": {
     "window_open": "Okno otvorené",
+    "door_open": "Dvere otvorené",
     "eco": "Eco",
     "summer": "Leto",
     "cooling": "Chladenie",
     "heating": "Kúrenie",
     "cooling_off": "Chladenie vypnuté",
     "heating_off": "Kúrenie vypnuté",
+    "degraded_mode": "Zhoršený režim",
+    "connection_lost": "Strata spojenia: {name}",
+    "low_battery": "Slabá batéria: {name}",
     "window_closed": "Okno zatvorené"
   }
 }

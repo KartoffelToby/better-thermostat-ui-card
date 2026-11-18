@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Páratartalom megjelenítés kikapcsolása",
         "disable_eco": "Eco kikapcsolás",
+        "disable_presets": "Előbeállítások gomb kikapcsolása",
         "disable_menu": "Menü letiltása",
         "disable_battery_warning": "Akkumulátor figyelmeztetés letiltása",
         "disable_buttons": "Plusz/mínusz gombok letiltása",
-		"disable_slider": "Csúszka letiltása",
+        "disable_slider": "Csúszka letiltása",
+        "disable_all_buttons": "Összes gomb kikapcsolása",
         "show_temperature_control": "Hőmérséklet-szabályzó megjelenítése",
         "collapsible_controls": "Összecsukható vezérlők",
         "show_current_as_primary": "Jelenlegi hőmérséklet megjelenítése elsődlegesként",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Interakció megakadályozása görgetéskor",
         "disable_connection_lost_warning": "Kapcsolatvesztés figyelmeztetés kikapcsolása",
         "disable_degraded_warning": "Korlátozott mód figyelmeztetés kikapcsolása",
+        "debug_battery": "Debug: Akkumulátor figyelmeztetés megjelenítése",
+        "debug_connection": "Debug: Kapcsolatvesztés figyelmeztetés megjelenítése",
+        "debug_degraded": "Debug: Korlátozott mód figyelmeztetés megjelenítése",
         "low_battery_threshold": "Alacsony akkumulátor figyelmeztetési küszöb (%)",
         "section_display": "Megjelenítés",
+        "section_colors": "Színek",
+        "section_colors_helper": "A HVAC módokhoz és előbeállításokhoz használt színek felülírása. Válassz egy témaszínt, vagy töröld a választót az alapértelmezett szín visszaállításához.",
         "section_interaction": "Interakció",
         "section_features": "Funkciók",
-        "section_warnings": "Figyelmeztetések"
+        "section_warnings": "Figyelmeztetések",
+        "section_sensors": "Külső érzékelők",
+        "window_sensor": "Ablakérzékelő",
+        "humidity_sensor": "Páratartalom-érzékelő",
+        "not_bt_info": "A kiválasztott entitás nem Better Thermostat entitás. A kártya így is működik vele, de a nyitott ablak és a páratartalom állapotának megjelenítéséhez ki kell választanod a megfelelő érzékelőket a „Külső érzékelők” szakaszban."
       }
     }
   },
   "extra_states": {
     "window_open": "Ablak nyitva",
+    "door_open": "Ajtó nyitva",
     "eco": "Eco",
     "summer": "Nyár",
     "cooling": "Hűtés",
     "heating": "Fűtés",
     "cooling_off": "Hűtés kikapcsolva",
     "heating_off": "Fűtés kikapcsolva",
+    "degraded_mode": "Korlátozott mód",
+    "connection_lost": "Kapcsolat megszakadt: {name}",
+    "low_battery": "Alacsony akkumulátorszint: {name}",
     "window_closed": "Ablak zárva"
   }
 }

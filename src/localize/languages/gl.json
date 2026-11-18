@@ -1,32 +1,58 @@
 {
   "common": {
     "version": "versión",
-    "current": "Actual"
+    "current": "Actual",
+    "current_humidity": "Humidade actual",
+    "current_temperature": "Temperatura actual",
+    "target_temperature": "Temperatura obxectivo"
   },
   "editor": {
     "card": {
       "climate": {
         "disable_humidity": "Desactivar visualización de humidade",
         "disable_eco": "Desactivar eco",
+        "disable_presets": "Desactivar o botón de predefinidos",
         "disable_menu": "Desactivar menú",
         "disable_battery_warning": "Desactivar alerta de batería",
         "disable_buttons": "Desactivar botóns máis/menos",
-		"disable_slider": "Desactivar desprazador",
+        "disable_slider": "Desactivar desprazador",
+        "disable_all_buttons": "Desactivar todos os botóns",
         "show_temperature_control": "Mostrar control de temperatura",
         "collapsible_controls": "Controis pregables",
+        "show_current_as_primary": "Mostrar a temperatura actual como principal",
+        "show_secondary": "Mostrar información secundaria",
+        "prevent_interaction_on_scroll": "Evitar interacción ao desprazarse",
         "disable_connection_lost_warning": "Desactivar aviso de perda de conexión",
         "disable_degraded_warning": "Desactivar aviso de modo degradado",
+        "debug_battery": "Depuración: Mostrar alerta de batería",
+        "debug_connection": "Depuración: Mostrar aviso de perda de conexión",
+        "debug_degraded": "Depuración: Mostrar aviso de modo degradado",
         "low_battery_threshold": "Limiar de aviso de batería baixa (%)",
         "section_display": "Visualización",
+        "section_colors": "Cores",
+        "section_colors_helper": "Substitúe as cores empregadas para os modos HVAC e os predefinidos. Escolle unha cor do tema ou baleira un selector para restaurar o valor predeterminado.",
         "section_interaction": "Interacción",
         "section_features": "Funcionalidades",
-        "section_warnings": "Avisos"
+        "section_warnings": "Avisos",
+        "section_sensors": "Sensores externos",
+        "window_sensor": "Sensor de fiestra",
+        "humidity_sensor": "Sensor de humidade",
+        "not_bt_info": "A entidade seleccionada non é unha entidade de Better Thermostat. A tarxeta segue funcionando con ela, pero para mostrar os estados de fiestra aberta e humidade debes seleccionar os sensores correspondentes na sección «Sensores externos»."
       }
     }
   },
   "extra_states": {
     "window_open": "Fiestra aberta",
+    "door_open": "Porta aberta",
     "eco": "Eco",
-    "summer": "Verán"
+    "summer": "Verán",
+    "cooling": "Arrefriando",
+    "heating": "Quentando",
+    "cooling_off": "Arrefriamento apagado",
+    "heating_off": "Calefacción apagada",
+    "degraded_mode": "Modo degradado",
+    "connection_lost": "Conexión perdida: {name}",
+    "low_battery": "Batería baixa: {name}",
+    "window_closed": "Fiestra pechada"
   }
 }

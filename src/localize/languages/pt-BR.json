@@ -9,35 +9,50 @@
   "editor": {
     "card": {
       "climate": {
+        "disable_humidity": "Desativar exibição de umidade",
         "disable_eco": "Desabilitar eco",
+        "disable_presets": "Desativar o botão de predefinições",
         "disable_menu": "Desabilitar menu",
         "disable_battery_warning": "Desabilitar aviso de bateria",
         "disable_buttons": "Desabilitar botões mais/menos",
-		"disable_slider": "Desabilitar controle deslizante",
+        "disable_slider": "Desabilitar controle deslizante",
+        "disable_all_buttons": "Desativar todos os botões",
+        "show_temperature_control": "Mostrar controle de temperatura",
+        "collapsible_controls": "Controles recolhíveis",
         "show_current_as_primary": "Mostrar temperatura atual como principal",
         "show_secondary": "Mostrar informações secundárias",
         "prevent_interaction_on_scroll": "Prevenir interação ao rolar",
-        "disable_humidity": "Desativar exibição de umidade",
-        "show_temperature_control": "Mostrar controle de temperatura",
-        "collapsible_controls": "Controles recolhíveis",
         "disable_connection_lost_warning": "Desativar aviso de perda de conexão",
         "disable_degraded_warning": "Desativar aviso de modo degradado",
+        "debug_battery": "Depuração: Mostrar aviso de bateria",
+        "debug_connection": "Depuração: Mostrar aviso de perda de conexão",
+        "debug_degraded": "Depuração: Mostrar aviso de modo degradado",
         "low_battery_threshold": "Limite de aviso de bateria fraca (%)",
         "section_display": "Exibição",
+        "section_colors": "Cores",
+        "section_colors_helper": "Substitua as cores usadas para os modos HVAC e as predefinições. Escolha uma cor do tema ou limpe um seletor para restaurar o padrão.",
         "section_interaction": "Interação",
         "section_features": "Funcionalidades",
-        "section_warnings": "Avisos"
+        "section_warnings": "Avisos",
+        "section_sensors": "Sensores externos",
+        "window_sensor": "Sensor de janela",
+        "humidity_sensor": "Sensor de umidade",
+        "not_bt_info": "A entidade selecionada não é uma entidade do Better Thermostat. O cartão continua funcionando com ela, mas para mostrar os estados de janela aberta e umidade você precisa selecionar os sensores correspondentes na seção 'Sensores externos'."
       }
     }
   },
   "extra_states": {
     "window_open": "Janela aberta",
-    "window_closed": "Janela fechada",
+    "door_open": "Porta aberta",
     "eco": "Eco",
     "summer": "Verão",
     "cooling": "Resfriando",
     "heating": "Aquecendo",
     "cooling_off": "Resfriamento desligado",
-    "heating_off": "Aquecimento desligado"
+    "heating_off": "Aquecimento desligado",
+    "degraded_mode": "Modo degradado",
+    "connection_lost": "Conexão perdida: {name}",
+    "low_battery": "Bateria fraca: {name}",
+    "window_closed": "Janela fechada"
   }
 }

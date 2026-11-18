@@ -1,4 +1,6 @@
 import { describe, expect, it } from "bun:test";
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import setupCustomlocalize, {
   createChainedLocalize,
   localize,
@@ -70,4 +72,36 @@ describe("createChainedLocalize", () => {
     );
     expect(third("ui.only.backend")).toBe("Neu");
   });
+});
+
+describe("Home Assistant language code aliases", () => {
+  it("maps HA codes to the card's translation files", () => {
+    expect(
+      setupCustomlocalize(hassFor("zh-Hans"))("extra_states.window_open"),
+    ).toBe("窗户打开");
+    expect(setupCustomlocalize(hassFor("ko"))("extra_states.eco")).toBe("절전");
+    expect(
+      setupCustomlocalize(hassFor("nb"))("editor.card.climate.section_display"),
+    ).toBe("Visning");
+  });
+});
+
+describe("translation files", () => {
+  const dir = join(import.meta.dir, "../src/localize/languages");
+  const flatten = (obj: Record<string, unknown>, prefix = ""): string[] =>
+    Object.entries(obj).flatMap(([key, value]) =>
+      value && typeof value === "object"
+        ? flatten(value as Record<string, unknown>, `${prefix}${key}.`)
+        : [`${prefix}${key}`],
+    );
+  const read = (file: string) =>
+    flatten(JSON.parse(readFileSync(join(dir, file), "utf-8")));
+  const enKeys = read("en.json");
+
+  for (const file of readdirSync(dir).filter((f) => f.endsWith(".json"))) {
+    it(`${file} has every key from en.json`, () => {
+      const keys = new Set(read(file));
+      expect(enKeys.filter((key) => !keys.has(key))).toEqual([]);
+    });
+  }
 });

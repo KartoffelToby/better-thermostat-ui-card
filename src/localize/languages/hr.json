@@ -9,35 +9,50 @@
   "editor": {
     "card": {
       "climate": {
+        "disable_humidity": "Isključi prikaz vlažnosti",
         "disable_eco": "Isključi prikaz eco gumba",
+        "disable_presets": "Isključi gumb za predloške",
         "disable_menu": "Isključi prikaz izbornika",
         "disable_battery_warning": "Isključi upozorenje baterije",
         "disable_buttons": "Isključi prikaz plus/minus gumbi",
-		"disable_slider": "Isključi klizni regulator",
+        "disable_slider": "Isključi klizni regulator",
+        "disable_all_buttons": "Isključi sve gumbe",
+        "show_temperature_control": "Prikaži kontrolu temperature",
+        "collapsible_controls": "Sklopive kontrole",
         "show_current_as_primary": "Prikaži trenutnu temperaturu kao primarnu",
         "show_secondary": "Prikaži sekundarne informacije",
         "prevent_interaction_on_scroll": "Spriječi interakciju pri pomicanju",
-        "disable_humidity": "Isključi prikaz vlažnosti",
-        "show_temperature_control": "Prikaži kontrolu temperature",
-        "collapsible_controls": "Sklopive kontrole",
         "disable_connection_lost_warning": "Isključi upozorenje o gubitku veze",
         "disable_degraded_warning": "Isključi upozorenje o degradiranom načinu",
+        "debug_battery": "Debug: Prikaži upozorenje baterije",
+        "debug_connection": "Debug: Prikaži upozorenje o gubitku veze",
+        "debug_degraded": "Debug: Prikaži upozorenje o degradiranom načinu",
         "low_battery_threshold": "Prag upozorenja za nisku bateriju (%)",
         "section_display": "Prikaz",
+        "section_colors": "Boje",
+        "section_colors_helper": "Promijenite boje koje se koriste za HVAC načine rada i predloške. Odaberite boju teme ili očistite odabir za vraćanje zadane boje.",
         "section_interaction": "Interakcija",
         "section_features": "Značajke",
-        "section_warnings": "Upozorenja"
+        "section_warnings": "Upozorenja",
+        "section_sensors": "Vanjski senzori",
+        "window_sensor": "Senzor prozora",
+        "humidity_sensor": "Senzor vlažnosti",
+        "not_bt_info": "Odabrani entitet nije Better Thermostat entitet. Kartica i dalje radi s njim, ali za prikaz stanja otvorenog prozora i vlažnosti morate odabrati odgovarajuće senzore u odjeljku 'Vanjski senzori'."
       }
     }
   },
   "extra_states": {
     "window_open": "Prozor otvoren",
-    "window_closed": "Prozor zatvoren",
+    "door_open": "Vrata otvorena",
     "eco": "Eco",
     "summer": "Ljeto",
     "cooling": "Hlađenje",
     "heating": "Grijanje",
     "cooling_off": "Hlađenje isključeno",
-    "heating_off": "Grijanje isključeno"
+    "heating_off": "Grijanje isključeno",
+    "degraded_mode": "Degradirani način",
+    "connection_lost": "Veza izgubljena: {name}",
+    "low_battery": "Slaba baterija: {name}",
+    "window_closed": "Prozor zatvoren"
   }
 }

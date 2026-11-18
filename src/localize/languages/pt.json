@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Desativar exibição de humidade",
         "disable_eco": "Desactivar Eco",
+        "disable_presets": "Desativar o botão de predefinições",
         "disable_menu": "Desativar menu",
         "disable_battery_warning": "Desativar aviso de bateria",
         "disable_buttons": "Desativar botões de mais/menos",
-		"disable_slider": "Desativar controlo deslizante",
+        "disable_slider": "Desativar controlo deslizante",
+        "disable_all_buttons": "Desativar todos os botões",
         "show_temperature_control": "Mostrar controlo de temperatura",
         "collapsible_controls": "Controlos recolhíveis",
         "show_current_as_primary": "Mostrar temperatura atual como principal",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Prevenir interação ao rolar",
         "disable_connection_lost_warning": "Desativar aviso de perda de ligação",
         "disable_degraded_warning": "Desativar aviso de modo degradado",
+        "debug_battery": "Depuração: Mostrar aviso de bateria",
+        "debug_connection": "Depuração: Mostrar aviso de perda de ligação",
+        "debug_degraded": "Depuração: Mostrar aviso de modo degradado",
         "low_battery_threshold": "Limiar de aviso de bateria fraca (%)",
         "section_display": "Exibição",
+        "section_colors": "Cores",
+        "section_colors_helper": "Substitua as cores utilizadas para os modos AVAC e as predefinições. Escolha uma cor do tema ou limpe um seletor para repor a predefinição.",
         "section_interaction": "Interação",
         "section_features": "Funcionalidades",
-        "section_warnings": "Avisos"
+        "section_warnings": "Avisos",
+        "section_sensors": "Sensores externos",
+        "window_sensor": "Sensor de janela",
+        "humidity_sensor": "Sensor de humidade",
+        "not_bt_info": "A entidade selecionada não é uma entidade do Better Thermostat. O cartão continua a funcionar com ela, mas para mostrar os estados de janela aberta e humidade tem de selecionar os sensores correspondentes na secção 'Sensores externos'."
       }
     }
   },
   "extra_states": {
     "window_open": "Janela aberta",
+    "door_open": "Porta aberta",
     "eco": "Eco",
     "summer": "Verão",
     "cooling": "Refrigeração",
     "heating": "Aquecimento",
     "cooling_off": "Refrigeração desligada",
     "heating_off": "Aquecimento desligado",
+    "degraded_mode": "Modo degradado",
+    "connection_lost": "Ligação perdida: {name}",
+    "low_battery": "Bateria fraca: {name}",
     "window_closed": "Janela fechada"
   }
 }

@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Izslēgt mitruma rādījumu",
         "disable_eco": "Atspējot ekonomisko režīmu",
+        "disable_presets": "Atspējot priekšiestatījumu pogu",
         "disable_menu": "Atspējot izvēlni",
         "disable_battery_warning": "Atspējot baterijas brīdinājumu",
         "disable_buttons": "Atspējot plus/mīnus pogas",
-		"disable_slider": "Atspējot slīdni",
+        "disable_slider": "Atspējot slīdni",
+        "disable_all_buttons": "Atspējot visas pogas",
         "show_temperature_control": "Rādīt temperatūras kontroli",
         "collapsible_controls": "Salocāmas vadīklas",
         "show_current_as_primary": "Rādīt pašreizējo temperatūru kā galveno",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Novērst mijiedarbību ritinot",
         "disable_connection_lost_warning": "Izslēgt savienojuma zaudēšanas brīdinājumu",
         "disable_degraded_warning": "Izslēgt pasliktināta režīma brīdinājumu",
+        "debug_battery": "Debug: Rādīt baterijas brīdinājumu",
+        "debug_connection": "Debug: Rādīt savienojuma zaudēšanas brīdinājumu",
+        "debug_degraded": "Debug: Rādīt pasliktināta režīma brīdinājumu",
         "low_battery_threshold": "Zemas baterijas brīdinājuma slieksnis (%)",
         "section_display": "Displejs",
+        "section_colors": "Krāsas",
+        "section_colors_helper": "Aizstāj krāsas, kas tiek izmantotas HVAC režīmiem un priekšiestatījumiem. Izvēlies tēmas krāsu vai notīri izvēli, lai atjaunotu noklusējuma krāsu.",
         "section_interaction": "Mijiedarbība",
         "section_features": "Funkcijas",
-        "section_warnings": "Brīdinājumi"
+        "section_warnings": "Brīdinājumi",
+        "section_sensors": "Ārējie sensori",
+        "window_sensor": "Loga sensors",
+        "humidity_sensor": "Mitruma sensors",
+        "not_bt_info": "Izvēlētā entītija nav Better Thermostat entītija. Kartīte ar to joprojām darbojas, taču, lai rādītu atvērta loga un mitruma stāvokli, sadaļā 'Ārējie sensori' jāizvēlas atbilstošie sensori."
       }
     }
   },
   "extra_states": {
     "window_open": "Logs atvērts",
+    "door_open": "Durvis atvērtas",
     "eco": "Eko režīms",
     "summer": "Vasaras režīms",
     "cooling": "Dzesēšana",
     "heating": "Apkure",
     "cooling_off": "Dzesēšana izslēgta",
     "heating_off": "Apkure izslēgta",
+    "degraded_mode": "Pasliktināts režīms",
+    "connection_lost": "Savienojums zaudēts: {name}",
+    "low_battery": "Zems baterijas līmenis: {name}",
     "window_closed": "Logs aizvērts"
   }
 }

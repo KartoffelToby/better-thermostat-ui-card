@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Desactivar la visualización de humedad",
         "disable_eco": "Deshabilitar eco",
+        "disable_presets": "Desactivar el botón de preajustes",
         "disable_menu": "Deshabilitar menú",
         "disable_battery_warning": "Deshabilitar alerta de batería",
         "disable_buttons": "Deshabilitar botones más/menos",
-		"disable_slider": "Deshabilitar deslizador",
+        "disable_slider": "Deshabilitar deslizador",
+        "disable_all_buttons": "Desactivar todos los botones",
         "show_temperature_control": "Mostrar control de temperatura",
         "collapsible_controls": "Controles plegables",
         "show_current_as_primary": "Mostrar temperatura actual como principal",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Evitar interacción al desplazarse",
         "disable_connection_lost_warning": "Desactivar aviso de pérdida de conexión",
         "disable_degraded_warning": "Desactivar aviso de modo degradado",
+        "debug_battery": "Depuración: Mostrar alerta de batería",
+        "debug_connection": "Depuración: Mostrar aviso de pérdida de conexión",
+        "debug_degraded": "Depuración: Mostrar aviso de modo degradado",
         "low_battery_threshold": "Umbral de aviso de batería baja (%)",
         "section_display": "Pantalla",
+        "section_colors": "Colores",
+        "section_colors_helper": "Sustituye los colores usados para los modos HVAC y los preajustes. Elige un color del tema o borra un selector para restaurar el valor predeterminado.",
         "section_interaction": "Interacción",
         "section_features": "Funciones",
-        "section_warnings": "Advertencias"
+        "section_warnings": "Advertencias",
+        "section_sensors": "Sensores externos",
+        "window_sensor": "Sensor de ventana",
+        "humidity_sensor": "Sensor de humedad",
+        "not_bt_info": "La entidad seleccionada no es una entidad de Better Thermostat. La tarjeta sigue funcionando con ella, pero para mostrar los estados de ventana abierta y humedad debes seleccionar los sensores correspondientes en la sección «Sensores externos»."
       }
     }
   },
   "extra_states": {
     "window_open": "Ventana abierta",
+    "door_open": "Puerta abierta",
     "eco": "Eco",
     "summer": "Verano",
     "cooling": "Enfriamiento",
     "heating": "Calefacción",
     "cooling_off": "Enfriamiento apagado",
     "heating_off": "Calefacción apagada",
+    "degraded_mode": "Modo degradado",
+    "connection_lost": "Conexión perdida: {name}",
+    "low_battery": "Batería baja: {name}",
     "window_closed": "Ventana cerrada"
   }
 }
