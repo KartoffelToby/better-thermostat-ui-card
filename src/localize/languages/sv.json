@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Inaktivera fuktighetsvisning",
         "disable_eco": "Inaktivera eco visning",
+        "disable_presets": "Inaktivera förinställningsknapp",
         "disable_menu": "Inaktivera meny",
         "disable_battery_warning": "Inaktivera batterivarning",
         "disable_buttons": "Inaktivera plus/minus knappar",
-		"disable_slider": "Inaktivera skjutreglage",
+        "disable_slider": "Inaktivera skjutreglage",
+        "disable_all_buttons": "Inaktivera alla knappar",
         "show_temperature_control": "Visa temperaturkontroll",
         "collapsible_controls": "Ihopfällbara kontroller",
         "show_current_as_primary": "Visa aktuell temperatur som primär",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Förhindra interaktion vid rullning",
         "disable_connection_lost_warning": "Inaktivera varning för tappad anslutning",
         "disable_degraded_warning": "Inaktivera varning för försämrat läge",
+        "debug_battery": "Debug: Visa batterivarning",
+        "debug_connection": "Debug: Visa varning för tappad anslutning",
+        "debug_degraded": "Debug: Visa varning för försämrat läge",
         "low_battery_threshold": "Tröskelvärde för varning om låg batterinivå (%)",
         "section_display": "Visning",
+        "section_colors": "Färger",
+        "section_colors_helper": "Åsidosätt färgerna som används för HVAC-lägen och förinställningar. Välj en temafärg eller rensa en väljare för att återställa standardfärgen.",
         "section_interaction": "Interaktion",
         "section_features": "Funktioner",
-        "section_warnings": "Varningar"
+        "section_warnings": "Varningar",
+        "section_sensors": "Externa sensorer",
+        "window_sensor": "Fönstersensor",
+        "humidity_sensor": "Fuktighetssensor",
+        "not_bt_info": "Den valda entiteten är inte en Better Thermostat-entitet. Kortet fungerar fortfarande med den, men för att visa tillstånden för öppet fönster och fuktighet måste du välja motsvarande sensorer i avsnittet 'Externa sensorer'."
       }
     }
   },
   "extra_states": {
     "window_open": "Fönster öppet",
+    "door_open": "Dörr öppen",
     "eco": "Eco",
     "summer": "Sommar",
     "cooling": "Kylning",
     "heating": "Uppvärmning",
     "cooling_off": "Kylning av",
     "heating_off": "Uppvärmning av",
+    "degraded_mode": "Försämrat läge",
+    "connection_lost": "Anslutning tappad: {name}",
+    "low_battery": "Lågt batteri: {name}",
     "window_closed": "Fönster stängt"
   }
 }

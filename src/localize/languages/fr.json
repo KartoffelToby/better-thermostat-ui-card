@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Désactiver l'affichage de l'humidité",
         "disable_eco": "Désactiver mode Éco",
+        "disable_presets": "Désactiver le bouton des préréglages",
         "disable_menu": "Désactiver le menu",
         "disable_battery_warning": "Désactiver l'avertissement de batterie",
         "disable_buttons": "Désactiver les boutons plus/moins",
-		"disable_slider": "Désactiver le curseur",
+        "disable_slider": "Désactiver le curseur",
+        "disable_all_buttons": "Désactiver tous les boutons",
         "show_temperature_control": "Afficher le contrôle de température",
         "collapsible_controls": "Contrôles pliables",
         "show_current_as_primary": "Afficher la température actuelle comme principale",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Empêcher l'interaction lors du défilement",
         "disable_connection_lost_warning": "Désactiver avertissement perte de connexion",
         "disable_degraded_warning": "Désactiver avertissement mode dégradé",
+        "debug_battery": "Débogage : Afficher l'avertissement de batterie",
+        "debug_connection": "Débogage : Afficher l'avertissement de perte de connexion",
+        "debug_degraded": "Débogage : Afficher l'avertissement de mode dégradé",
         "low_battery_threshold": "Seuil avertissement batterie faible (%)",
         "section_display": "Affichage",
+        "section_colors": "Couleurs",
+        "section_colors_helper": "Remplacez les couleurs utilisées pour les modes CVC et les préréglages. Choisissez une couleur du thème ou videz un sélecteur pour rétablir la valeur par défaut.",
         "section_interaction": "Interaction",
         "section_features": "Fonctionnalités",
-        "section_warnings": "Avertissements"
+        "section_warnings": "Avertissements",
+        "section_sensors": "Capteurs externes",
+        "window_sensor": "Capteur de fenêtre",
+        "humidity_sensor": "Capteur d'humidité",
+        "not_bt_info": "L'entité sélectionnée n'est pas une entité Better Thermostat. La carte fonctionne toujours avec elle, mais pour afficher les états de fenêtre ouverte et d'humidité, vous devez sélectionner les capteurs correspondants dans la section « Capteurs externes »."
       }
     }
   },
   "extra_states": {
     "window_open": "Fenêtre ouverte",
+    "door_open": "Porte ouverte",
     "eco": "Éco",
     "summer": "Été",
     "cooling": "Refroidissement",
     "heating": "Chauffage",
     "cooling_off": "Refroidissement éteint",
     "heating_off": "Chauffage éteint",
+    "degraded_mode": "Mode dégradé",
+    "connection_lost": "Connexion perdue : {name}",
+    "low_battery": "Batterie faible : {name}",
     "window_closed": "Fenêtre fermée"
   }
 }

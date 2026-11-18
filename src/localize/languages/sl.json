@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Onemogoči prikaz vlažnosti",
         "disable_eco": "Onemogoči prikaz eco",
+        "disable_presets": "Onemogoči gumb prednastavitev",
         "disable_menu": "Onemogoči meni",
         "disable_battery_warning": "Onemogoči opozorilo o bateriji",
         "disable_buttons": "Onemogoči gumbe plus/minus",
-		"disable_slider": "Onemogoči drsnik",
+        "disable_slider": "Onemogoči drsnik",
+        "disable_all_buttons": "Onemogoči vse gumbe",
         "show_temperature_control": "Prikaži nadzor temperature",
         "collapsible_controls": "Zložljivi kontrolniki",
         "show_current_as_primary": "Prikaži trenutno temperaturo kot primarno",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Prepreči interakcijo med drsenjem",
         "disable_connection_lost_warning": "Onemogoči opozorilo o izgubi povezave",
         "disable_degraded_warning": "Onemogoči opozorilo o zmanjšanem načinu",
+        "debug_battery": "Debug: Prikaži opozorilo o bateriji",
+        "debug_connection": "Debug: Prikaži opozorilo o izgubi povezave",
+        "debug_degraded": "Debug: Prikaži opozorilo o zmanjšanem načinu",
         "low_battery_threshold": "Prag opozorila za nizko baterijo (%)",
         "section_display": "Prikaz",
+        "section_colors": "Barve",
+        "section_colors_helper": "Preglasi barve, uporabljene za načine HVAC in prednastavitve. Izberi barvo teme ali počisti izbirnik za obnovitev privzete barve.",
         "section_interaction": "Interakcija",
         "section_features": "Funkcije",
-        "section_warnings": "Opozorila"
+        "section_warnings": "Opozorila",
+        "section_sensors": "Zunanji senzorji",
+        "window_sensor": "Senzor okna",
+        "humidity_sensor": "Senzor vlažnosti",
+        "not_bt_info": "Izbrana entiteta ni entiteta Better Thermostat. Kartica z njo še vedno deluje, vendar moraš za prikaz stanj odprtega okna in vlažnosti izbrati ustrezne senzorje v razdelku 'Zunanji senzorji'."
       }
     }
   },
   "extra_states": {
     "window_open": "Okno odprto",
+    "door_open": "Vrata odprta",
     "eco": "Eko",
     "summer": "Poletje",
     "cooling": "Hlajenje",
     "heating": "Ogrevanje",
     "cooling_off": "Hlajenje izklopljeno",
     "heating_off": "Ogrevanje izklopljeno",
+    "degraded_mode": "Zmanjšan način",
+    "connection_lost": "Povezava izgubljena: {name}",
+    "low_battery": "Nizka baterija: {name}",
     "window_closed": "Okno zaprto"
   }
 }

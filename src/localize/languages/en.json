@@ -15,7 +15,7 @@
         "disable_menu": "Disable menu",
         "disable_battery_warning": "Turn off the battery warning",
         "disable_buttons": "Turn off the plus/minus buttons",
-		"disable_slider": "Disable slider interaction",
+        "disable_slider": "Disable slider interaction",
         "disable_all_buttons": "Turn off all buttons",
         "show_temperature_control": "Show temperature control",
         "collapsible_controls": "Collapsible controls",

@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Deaktiver fugtighedsvisning",
         "disable_eco": "Deaktiver Eco indikator",
+        "disable_presets": "Deaktiver forudindstillingsknap",
         "disable_menu": "Deaktiver menu",
         "disable_battery_warning": "Deaktiver batteriadvarsel",
         "disable_buttons": "Deaktiver plus/minus knapper",
-		"disable_slider": "Deaktiver skyder",
+        "disable_slider": "Deaktiver skyder",
+        "disable_all_buttons": "Deaktiver alle knapper",
         "show_temperature_control": "Vis temperaturkontrol",
         "collapsible_controls": "Sammenklappelige kontroller",
         "show_current_as_primary": "Vis nuværende temperatur som primær",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Forhindre interaktion ved scrolling",
         "disable_connection_lost_warning": "Deaktiver advarsel om mistet forbindelse",
         "disable_degraded_warning": "Deaktiver advarsel om forringet tilstand",
+        "debug_battery": "Debug: Vis batteriadvarsel",
+        "debug_connection": "Debug: Vis advarsel om mistet forbindelse",
+        "debug_degraded": "Debug: Vis advarsel om forringet tilstand",
         "low_battery_threshold": "Grænse for advarsel om lavt batteri (%)",
         "section_display": "Visning",
+        "section_colors": "Farver",
+        "section_colors_helper": "Tilsidesæt farverne for HVAC-tilstande og forudindstillinger. Vælg en temafarve, eller ryd en vælger for at gendanne standardfarven.",
         "section_interaction": "Interaktion",
         "section_features": "Funktioner",
-        "section_warnings": "Advarsler"
+        "section_warnings": "Advarsler",
+        "section_sensors": "Eksterne sensorer",
+        "window_sensor": "Vinduessensor",
+        "humidity_sensor": "Fugtighedssensor",
+        "not_bt_info": "Den valgte enhed er ikke en Better Thermostat-enhed. Kortet virker stadig med den, men for at vise tilstandene for åbent vindue og fugtighed skal du vælge de tilsvarende sensorer i sektionen 'Eksterne sensorer'."
       }
     }
   },
   "extra_states": {
     "window_open": "Vindue åbent",
+    "door_open": "Dør åben",
     "eco": "Eco",
     "summer": "Sommer",
     "cooling": "Køling",
     "heating": "Opvarmning",
     "cooling_off": "Køling slukket",
     "heating_off": "Opvarmning slukket",
+    "degraded_mode": "Forringet tilstand",
+    "connection_lost": "Forbindelse mistet: {name}",
+    "low_battery": "Lavt batteri: {name}",
     "window_closed": "Vindue lukket"
   }
 }

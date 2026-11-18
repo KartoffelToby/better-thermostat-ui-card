@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Desactivar la visualització d'humitat",
         "disable_eco": "Desactivar indicador eco",
+        "disable_presets": "Desactivar el botó de predefinits",
         "disable_menu": "Desactivar menú",
         "disable_battery_warning": "Desactivar advertència de bateria",
         "disable_buttons": "Desactivar botons de més/menys",
-		"disable_slider": "Desactivar el lliscador",
+        "disable_slider": "Desactivar el lliscador",
+        "disable_all_buttons": "Desactivar tots els botons",
         "show_temperature_control": "Mostra el control de temperatura",
         "collapsible_controls": "Controls plegables",
         "show_current_as_primary": "Mostra la temperatura actual com a principal",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Evitar la interacció en desplaçar-se",
         "disable_connection_lost_warning": "Desactiva avís de pèrdua de connexió",
         "disable_degraded_warning": "Desactiva avís de mode degradat",
+        "debug_battery": "Depuració: Mostrar advertència de bateria",
+        "debug_connection": "Depuració: Mostrar avís de pèrdua de connexió",
+        "debug_degraded": "Depuració: Mostrar avís de mode degradat",
         "low_battery_threshold": "Llindar d'avís de bateria baixa (%)",
         "section_display": "Visualització",
+        "section_colors": "Colors",
+        "section_colors_helper": "Substitueix els colors utilitzats per als modes HVAC i els predefinits. Tria un color del tema o esborra un selector per restaurar el valor per defecte.",
         "section_interaction": "Interacció",
         "section_features": "Funcionalitats",
-        "section_warnings": "Avisos"
+        "section_warnings": "Avisos",
+        "section_sensors": "Sensors externs",
+        "window_sensor": "Sensor de finestra",
+        "humidity_sensor": "Sensor d'humitat",
+        "not_bt_info": "L'entitat seleccionada no és una entitat de Better Thermostat. La targeta continua funcionant, però per mostrar els estats de finestra oberta i d'humitat cal seleccionar els sensors corresponents a la secció «Sensors externs»."
       }
     }
   },
   "extra_states": {
     "window_open": "Finestra oberta",
+    "door_open": "Porta oberta",
     "eco": "Eco",
     "summer": "Estiu",
     "cooling": "Refredament",
     "heating": "Escalfament",
     "cooling_off": "Refredament apagat",
     "heating_off": "Escalfament apagat",
+    "degraded_mode": "Mode degradat",
+    "connection_lost": "Connexió perduda: {name}",
+    "low_battery": "Bateria baixa: {name}",
     "window_closed": "Finestra tancada"
   }
 }

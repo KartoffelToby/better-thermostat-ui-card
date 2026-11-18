@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Dezactivează afișarea umidității",
         "disable_eco": "Dezactivează eco",
+        "disable_presets": "Dezactivează butonul de presetări",
         "disable_menu": "Dezactivează meniul",
         "disable_battery_warning": "Dezactivează avertizarea bateriei",
         "disable_buttons": "Dezactivează butoanele plus/minus",
-		"disable_slider": "Dezactivează glisorul",
+        "disable_slider": "Dezactivează glisorul",
+        "disable_all_buttons": "Dezactivează toate butoanele",
         "show_temperature_control": "Afișează controlul temperaturii",
         "collapsible_controls": "Controale pliabile",
         "show_current_as_primary": "Afișează temperatura curentă ca principală",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Previne interacțiunea la derulare",
         "disable_connection_lost_warning": "Dezactivează avertismentul de pierdere a conexiunii",
         "disable_degraded_warning": "Dezactivează avertismentul de mod degradat",
+        "debug_battery": "Depanare: Afișează avertizarea bateriei",
+        "debug_connection": "Depanare: Afișează avertismentul de pierdere a conexiunii",
+        "debug_degraded": "Depanare: Afișează avertismentul de mod degradat",
         "low_battery_threshold": "Prag avertisment baterie descărcată (%)",
         "section_display": "Afișare",
+        "section_colors": "Culori",
+        "section_colors_helper": "Înlocuiește culorile folosite pentru modurile HVAC și presetări. Alege o culoare din temă sau golește un selector pentru a restabili valoarea implicită.",
         "section_interaction": "Interacțiune",
         "section_features": "Funcționalități",
-        "section_warnings": "Avertismente"
+        "section_warnings": "Avertismente",
+        "section_sensors": "Senzori externi",
+        "window_sensor": "Senzor de fereastră",
+        "humidity_sensor": "Senzor de umiditate",
+        "not_bt_info": "Entitatea selectată nu este o entitate Better Thermostat. Cardul funcționează în continuare cu ea, dar pentru a afișa stările de fereastră deschisă și umiditate trebuie să selectezi senzorii corespunzători în secțiunea „Senzori externi”."
       }
     }
   },
   "extra_states": {
     "window_open": "Fereastră deschisă",
+    "door_open": "Ușă deschisă",
     "eco": "Eco",
     "summer": "Vara",
     "cooling": "Răcire",
     "heating": "Încălzire",
     "cooling_off": "Răcire oprită",
     "heating_off": "Încălzire oprită",
+    "degraded_mode": "Mod degradat",
+    "connection_lost": "Conexiune pierdută: {name}",
+    "low_battery": "Baterie descărcată: {name}",
     "window_closed": "Fereastră închisă"
   }
 }

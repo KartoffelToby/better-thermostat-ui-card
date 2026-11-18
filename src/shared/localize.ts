@@ -66,12 +66,24 @@ const languages: Record<string, unknown> = {
 
 const DEFAULT_LANG = "en";
 
+// Home Assistant language codes whose translation file uses a different name.
+const LANGUAGE_ALIASES: Record<string, string> = {
+  "zh-Hans": "cn",
+  ko: "kr",
+  nb: "no",
+  nn: "no",
+};
+
 // Fallback chain: exact locale ("pt-BR"), primary subtag ("pt"), English.
 function getLangs(hass?: HomeAssistant): string[] {
   const raw = hass?.locale?.language ?? DEFAULT_LANG;
   const langs = [raw];
   const primary = raw.split(/[-_]/)[0];
   if (primary && primary !== raw) langs.push(primary);
+  for (const lang of [...langs]) {
+    const alias = LANGUAGE_ALIASES[lang];
+    if (alias && !langs.includes(alias)) langs.push(alias);
+  }
   if (!langs.includes(DEFAULT_LANG)) langs.push(DEFAULT_LANG);
   return langs;
 }

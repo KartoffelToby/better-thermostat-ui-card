@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Nem gösterimini kapat",
         "disable_eco": "Eco'yu devre dışı bırak",
+        "disable_presets": "Ön ayar düğmesini kapat",
         "disable_menu": "Menüyü devre dışı bırak",
         "disable_battery_warning": "Pil uyarısını devre dışı bırak",
         "disable_buttons": "Artı/eksi düğmelerini devre dışı bırak",
-		"disable_slider": "Kaydırıcıyı devre dışı bırak",
+        "disable_slider": "Kaydırıcıyı devre dışı bırak",
+        "disable_all_buttons": "Tüm düğmeleri kapat",
         "show_temperature_control": "Sıcaklık kontrolünü göster",
         "collapsible_controls": "Daraltılabilir kontroller",
         "show_current_as_primary": "Mevcut sıcaklığı birincil olarak göster",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Kaydırma sırasında etkileşimi önle",
         "disable_connection_lost_warning": "Bağlantı kesildi uyarısını kapat",
         "disable_degraded_warning": "Düşük mod uyarısını kapat",
+        "debug_battery": "Hata ayıklama: Pil uyarısını göster",
+        "debug_connection": "Hata ayıklama: Bağlantı kesildi uyarısını göster",
+        "debug_degraded": "Hata ayıklama: Düşük mod uyarısını göster",
         "low_battery_threshold": "Düşük pil uyarı eşiği (%)",
         "section_display": "Görünüm",
+        "section_colors": "Renkler",
+        "section_colors_helper": "HVAC modları ve ön ayarlar için kullanılan renkleri değiştirin. Bir tema rengi seçin veya varsayılana dönmek için seçiciyi temizleyin.",
         "section_interaction": "Etkileşim",
         "section_features": "Özellikler",
-        "section_warnings": "Uyarılar"
+        "section_warnings": "Uyarılar",
+        "section_sensors": "Harici sensörler",
+        "window_sensor": "Pencere sensörü",
+        "humidity_sensor": "Nem sensörü",
+        "not_bt_info": "Seçilen varlık bir Better Thermostat varlığı değil. Kart onunla çalışmaya devam eder, ancak açık pencere ve nem durumlarını göstermek için 'Harici sensörler' bölümünde ilgili sensörleri seçmeniz gerekir."
       }
     }
   },
   "extra_states": {
     "window_open": "Pencere açık",
+    "door_open": "Kapı açık",
     "eco": "Eco",
     "summer": "Yaz",
     "cooling": "Soğutma",
     "heating": "Isıtma",
     "cooling_off": "Soğutma kapalı",
     "heating_off": "Isıtma kapalı",
+    "degraded_mode": "Düşük mod",
+    "connection_lost": "Bağlantı kesildi: {name}",
+    "low_battery": "Pil zayıf: {name}",
     "window_closed": "Pencere kapalı"
   }
 }

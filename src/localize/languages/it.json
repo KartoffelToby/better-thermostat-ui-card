@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Disattiva visualizzazione umidità",
         "disable_eco": "Disabilita tasto eco",
+        "disable_presets": "Disabilita il pulsante dei preset",
         "disable_menu": "Disabilita menu",
         "disable_battery_warning": "Disabilita avviso batteria",
         "disable_buttons": "Disabilita pulsanti più/meno",
-		"disable_slider": "Disabilita cursore",
+        "disable_slider": "Disabilita cursore",
+        "disable_all_buttons": "Disabilita tutti i pulsanti",
         "show_temperature_control": "Mostra controllo temperatura",
         "collapsible_controls": "Controlli comprimibili",
         "show_current_as_primary": "Mostra temperatura attuale come principale",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Prevenire interazione durante lo scorrimento",
         "disable_connection_lost_warning": "Disabilita avviso perdita connessione",
         "disable_degraded_warning": "Disabilita avviso modalità degradata",
+        "debug_battery": "Debug: Mostra avviso batteria",
+        "debug_connection": "Debug: Mostra avviso perdita connessione",
+        "debug_degraded": "Debug: Mostra avviso modalità degradata",
         "low_battery_threshold": "Soglia avviso batteria scarica (%)",
         "section_display": "Schermo",
+        "section_colors": "Colori",
+        "section_colors_helper": "Sostituisci i colori usati per le modalità HVAC e i preset. Scegli un colore del tema o svuota un selettore per ripristinare il valore predefinito.",
         "section_interaction": "Interazione",
         "section_features": "Funzionalità",
-        "section_warnings": "Avvisi"
+        "section_warnings": "Avvisi",
+        "section_sensors": "Sensori esterni",
+        "window_sensor": "Sensore finestra",
+        "humidity_sensor": "Sensore di umidità",
+        "not_bt_info": "L'entità selezionata non è un'entità Better Thermostat. La card funziona comunque, ma per mostrare gli stati di finestra aperta e umidità devi selezionare i sensori corrispondenti nella sezione 'Sensori esterni'."
       }
     }
   },
   "extra_states": {
     "window_open": "Finestra aperta",
+    "door_open": "Porta aperta",
     "eco": "Eco",
     "summer": "Estate",
     "cooling": "Raffreddamento",
     "heating": "Riscaldamento",
     "cooling_off": "Raffreddamento spento",
     "heating_off": "Riscaldamento spento",
+    "degraded_mode": "Modalità degradata",
+    "connection_lost": "Connessione persa: {name}",
+    "low_battery": "Batteria scarica: {name}",
     "window_closed": "Finestra chiusa"
   }
 }

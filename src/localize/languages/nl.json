@@ -11,10 +11,12 @@
       "climate": {
         "disable_humidity": "Vochtigheidsweergave uitschakelen",
         "disable_eco": "Eco-weergave uitschakelen",
+        "disable_presets": "Voorinstellingenknop uitschakelen",
         "disable_menu": "Menu uitschakelen",
         "disable_battery_warning": "Batterijwaarschuwing uitschakelen",
         "disable_buttons": "Plus/min-knoppen uitschakelen",
-		"disable_slider": "Schuifregelaar uitschakelen",
+        "disable_slider": "Schuifregelaar uitschakelen",
+        "disable_all_buttons": "Alle knoppen uitschakelen",
         "show_temperature_control": "Temperatuurregeling tonen",
         "collapsible_controls": "Inklapbare bedieningselementen",
         "show_current_as_primary": "Toon huidige temperatuur als primair",
@@ -22,22 +24,35 @@
         "prevent_interaction_on_scroll": "Voorkom interactie tijdens scrollen",
         "disable_connection_lost_warning": "Waarschuwing verbinding verbroken uitschakelen",
         "disable_degraded_warning": "Waarschuwing verminderde modus uitschakelen",
+        "debug_battery": "Debug: Batterijwaarschuwing tonen",
+        "debug_connection": "Debug: Waarschuwing verbinding verbroken tonen",
+        "debug_degraded": "Debug: Waarschuwing verminderde modus tonen",
         "low_battery_threshold": "Drempel batterijwaarschuwing (%)",
         "section_display": "Weergave",
+        "section_colors": "Kleuren",
+        "section_colors_helper": "Overschrijf de kleuren voor HVAC-modi en voorinstellingen. Kies een themakleur of maak een kiezer leeg om de standaardkleur te herstellen.",
         "section_interaction": "Interactie",
         "section_features": "Functies",
-        "section_warnings": "Waarschuwingen"
+        "section_warnings": "Waarschuwingen",
+        "section_sensors": "Externe sensoren",
+        "window_sensor": "Venstersensor",
+        "humidity_sensor": "Vochtigheidssensor",
+        "not_bt_info": "De geselecteerde entiteit is geen Better Thermostat-entiteit. De kaart werkt er nog steeds mee, maar om de status van open venster en vochtigheid te tonen moet je de bijbehorende sensoren selecteren in de sectie 'Externe sensoren'."
       }
     }
   },
   "extra_states": {
     "window_open": "Venster open",
+    "door_open": "Deur open",
     "eco": "Eco",
     "summer": "Zomer",
     "cooling": "Koeling",
     "heating": "Verwarming",
     "cooling_off": "Koeling uit",
     "heating_off": "Verwarming uit",
+    "degraded_mode": "Verminderde modus",
+    "connection_lost": "Verbinding verbroken: {name}",
+    "low_battery": "Batterij bijna leeg: {name}",
     "window_closed": "Venster gesloten"
   }
 }
